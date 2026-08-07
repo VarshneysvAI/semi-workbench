@@ -1,35 +1,52 @@
-import { type LucideIcon, Cpu, FileOutput, Radar, Scale, ScrollText, ShieldCheck } from 'lucide-react'
+import { type LucideIcon, Activity, Cpu, FileOutput, Radar, Scale, ScrollText, ShieldCheck } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { cn } from '../lib/cn'
 
-const NAV: Array<{ to: string; label: string; tag: string; icon: LucideIcon }> = [
-  { to: '/', label: 'Overview', tag: '00', icon: Cpu },
-  { to: '/discovery', label: 'Discovery', tag: '01', icon: Radar },
-  { to: '/audit', label: 'Adversarial Audit', tag: '02', icon: ShieldCheck },
-  { to: '/consensus', label: 'Consensus', tag: '03', icon: Scale },
-  { to: '/output', label: 'Schema Output', tag: '04', icon: FileOutput },
-  { to: '/evidence', label: 'Evidence', tag: '05', icon: ScrollText },
+const NAV: Array<{ to: string; label: string; icon: LucideIcon }> = [
+  { to: '/', label: 'Command Center', icon: Cpu },
+  { to: '/discovery', label: 'Discovery', icon: Radar },
+  { to: '/audit', label: 'Adversarial Audit', icon: ShieldCheck },
+  { to: '/consensus', label: 'Consensus', icon: Scale },
+  { to: '/output', label: 'Schema Output', icon: FileOutput },
+  { to: '/evidence', label: 'Evidence', icon: ScrollText },
 ]
 
+function useClock() {
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(id)
+  }, [])
+  return {
+    time: now.toLocaleTimeString('en-GB', { hour12: false }),
+    date: now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+  }
+}
+
 export default function Sidebar() {
+  const { time, date } = useClock()
+
   return (
-    <aside className="flex w-60 flex-none flex-col border-r border-white/[0.06] bg-ink-2/80">
+    <aside className="flex w-[232px] flex-none flex-col border-r border-white/[0.06]">
       <div className="flex items-center gap-3 px-4 py-5">
-        <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400/80 to-violet-500/80 shadow-sm">
-          <span className="font-mono text-base font-bold text-ink">S</span>
-          <span className="absolute inset-0 rounded-xl ring-1 ring-inset ring-white/20" />
+        <div className="relative">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 shadow-glow">
+            <span className="font-mono text-sm font-extrabold text-ink">S</span>
+          </div>
+          <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-ink bg-emerald-400" />
         </div>
-        <div>
-          <div className="text-[15px] font-bold tracking-tight text-white">SEMI</div>
-          <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-slate-500">Intelligence console</div>
+        <div className="min-w-0">
+          <div className="truncate text-[15px] font-bold tracking-tight text-white">SEMI</div>
+          <div className="truncate text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500">Manufacturer Intelligence</div>
         </div>
       </div>
 
-      <div className="px-4 pb-2 pt-3">
-        <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-600">Workspace</div>
+      <div className="px-4 pb-2 pt-2">
+        <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-600">Workspace</div>
       </div>
 
-      <nav className="flex flex-1 flex-col gap-1 px-3">
+      <nav className="flex flex-1 flex-col gap-0.5 px-3">
         {NAV.map((item) => (
           <NavLink
             key={item.to}
@@ -37,21 +54,26 @@ export default function Sidebar() {
             end={item.to === '/'}
             className={({ isActive }) =>
               cn(
-                'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-colors',
-                isActive ? 'text-white' : 'text-slate-400 hover:text-slate-200',
+                'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-all duration-200',
+                isActive
+                  ? 'bg-gradient-to-r from-cyan-400/10 via-cyan-400/5 to-transparent text-white shadow-panel'
+                  : 'text-slate-400 hover:bg-white/[0.03] hover:text-slate-200',
               )
             }
           >
             {({ isActive }) => (
               <>
                 {isActive && (
-                  <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/[0.16] to-violet-500/[0.07] ring-1 ring-inset ring-white/[0.07]" />
+                  <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-cyan-400 shadow-glow" />
                 )}
-                <item.icon className="relative h-4 w-4 shrink-0" strokeWidth={1.8} />
-                <span className="relative flex-1">{item.label}</span>
-                <span className={cn('relative font-mono text-[10px]', isActive ? 'text-emerald-300/80' : 'text-slate-600')}>
-                  {item.tag}
-                </span>
+                <item.icon
+                  className={cn(
+                    'h-4 w-4 shrink-0 transition-colors',
+                    isActive ? 'text-cyan-300' : 'text-slate-500 group-hover:text-slate-300',
+                  )}
+                  strokeWidth={1.8}
+                />
+                <span className="truncate">{item.label}</span>
               </>
             )}
           </NavLink>
@@ -61,12 +83,18 @@ export default function Sidebar() {
       <div className="border-t border-white/[0.06] px-4 py-4">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
-            <span className="absolute h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-            <span className="relative h-2 w-2 rounded-full bg-emerald-400" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
           </span>
-          <span className="text-[11px] font-medium text-emerald-300/90">7 systems operational</span>
+          <span className="text-[11px] font-medium text-emerald-300/90">All systems operational</span>
         </div>
-        <div className="mt-1 text-[10px] text-slate-600">Gemma 4 12B · BGE-M3 · local stack</div>
+        <div className="mt-3 flex items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2">
+          <Activity className="h-3.5 w-3.5 text-cyan-300" />
+          <div className="text-right">
+            <div className="font-mono font-num text-[11px] font-bold text-slate-100">{time}</div>
+            <div className="text-[9px] uppercase tracking-wider text-slate-500">{date}</div>
+          </div>
+        </div>
       </div>
     </aside>
   )

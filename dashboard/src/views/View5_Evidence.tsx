@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { ExternalLink, ScanSearch } from 'lucide-react'
 import { SOURCE_ROWS } from '../data/mock'
-import { Panel, SectionTitle, StatusPill, type Tone } from '../components/ui'
+import { GlassCard, PanelHeader, StatusPill, type Tone } from '../components/ui'
 
 const KIND_META: Record<string, { label: string; tone: Tone }> = {
   spec: { label: 'spec', tone: 'emerald' },
@@ -21,11 +21,11 @@ const EXTRACTS: Array<{ field: string; value: string; sourceId: string; page: st
 
 export default function EvidenceView() {
   return (
-    <div className="mx-auto max-w-6xl px-6 py-8">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
+    <div className="mx-auto max-w-[1280px] px-6 py-8">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
         <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03]">
-            <ScanSearch className="h-5 w-5 text-emerald-300" strokeWidth={1.8} />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-400/20 bg-violet-400/10">
+            <ScanSearch className="h-5 w-5 text-violet-300" strokeWidth={1.8} />
           </div>
           <div>
             <h1 className="text-xl font-bold tracking-tight text-white">Evidence Chain</h1>
@@ -33,22 +33,19 @@ export default function EvidenceView() {
           </div>
         </div>
 
-        <Panel className="p-5">
-          <div className="mb-4 flex items-center justify-between">
-            <SectionTitle>Extraction traces — BV-3001</SectionTitle>
-            <StatusPill label="all URLs sourced" tone="emerald" />
-          </div>
+        <GlassCard glow delay={0.1}>
+          <PanelHeader title="Extraction Traces — BV-3001" subtitle="full provenance per field" right={<StatusPill label="all URLs sourced" tone="emerald" />} />
           <div className="overflow-x-auto">
             <table className="w-full text-left text-[12px]">
               <thead>
-                <tr className="border-b border-white/[0.06] text-[10px] uppercase tracking-[0.14em] text-slate-500">
-                  <th className="pb-2 pr-3 font-semibold">attribute</th>
-                  <th className="pb-2 pr-3 font-semibold">extracted value</th>
-                  <th className="pb-2 pr-3 font-semibold">source</th>
-                  <th className="pb-2 pr-3 font-semibold">loc</th>
-                  <th className="pb-2 pr-3 font-semibold">bbox</th>
-                  <th className="pb-2 pr-3 font-semibold">extractor</th>
-                  <th className="pb-2 text-right font-semibold">conf</th>
+                <tr className="border-b border-white/[0.06] text-[10px] uppercase tracking-[0.16em] text-slate-500">
+                  <th className="px-4 pb-2.5 font-semibold">Attribute</th>
+                  <th className="pb-2.5 font-semibold">Value</th>
+                  <th className="pb-2.5 font-semibold">Source</th>
+                  <th className="pb-2.5 font-semibold">Location</th>
+                  <th className="pb-2.5 font-semibold">Bbox</th>
+                  <th className="pb-2.5 font-semibold">Extractor</th>
+                  <th className="pr-4 pb-2.5 text-right font-semibold">Conf</th>
                 </tr>
               </thead>
               <tbody>
@@ -56,30 +53,30 @@ export default function EvidenceView() {
                   const src = SOURCE_ROWS.find((s) => s.id === ex.sourceId)
                   const kind = src ? KIND_META[src.kind] : null
                   return (
-                    <tr key={i} className="border-b border-white/[0.04] last:border-0">
-                      <td className="py-2.5 pr-3 font-mono text-slate-300">{ex.field}</td>
-                      <td className="py-2.5 pr-3 font-mono font-semibold text-white">{ex.value}</td>
-                      <td className="max-w-[220px] py-2.5 pr-3">
+                    <tr key={i} className="border-b border-white/[0.04] transition-colors hover:bg-white/[0.02]">
+                      <td className="px-4 py-3 font-mono text-[11px] text-slate-300">{ex.field}</td>
+                      <td className="py-3 font-mono text-[13px] font-bold text-white">{ex.value}</td>
+                      <td className="max-w-[220px] py-3">
                         <div className="flex items-center gap-1.5">
                           <span className="truncate font-mono text-[11px] text-slate-400">{src?.title ?? ex.sourceId}</span>
                           <ExternalLink className="h-3 w-3 flex-none text-slate-600" />
                         </div>
                         {kind && <StatusPill label={kind.label} tone={kind.tone} className="mt-1" />}
                       </td>
-                      <td className="py-2.5 pr-3 font-mono text-[11px] text-slate-500">{ex.page}</td>
-                      <td className="py-2.5 pr-3 font-mono text-[10px] text-slate-600">{ex.bbox}</td>
-                      <td className="py-2.5 pr-3 font-mono text-[11px] text-slate-400">{ex.extractor}</td>
-                      <td className="py-2.5 text-right font-mono font-num text-slate-300">{ex.confidence}</td>
+                      <td className="py-3 font-mono text-[11px] text-slate-500">{ex.page}</td>
+                      <td className="py-3 font-mono text-[10px] text-slate-600">{ex.bbox}</td>
+                      <td className="py-3 font-mono text-[11px] text-slate-400">{ex.extractor}</td>
+                      <td className="py-3 pr-4 text-right font-mono font-num font-semibold text-cyan-300">{ex.confidence}</td>
                     </tr>
                   )
                 })}
               </tbody>
             </table>
           </div>
-          <p className="mt-4 text-[11px] text-slate-500">
+          <div className="border-t border-white/[0.06] px-4 py-3 text-[11px] text-slate-500">
             deterministic-first: regex → 60-70% of fields at zero marginal cost; the local Gemma 4 12B fills only the gaps.
-          </p>
-        </Panel>
+          </div>
+        </GlassCard>
       </motion.div>
     </div>
   )

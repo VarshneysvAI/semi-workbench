@@ -1,7 +1,8 @@
 import { Route, Routes } from 'react-router-dom'
+import Aurora from './components/Aurora'
 import Sidebar from './components/Sidebar'
-import Topbar from './components/TopBar'
-import OverviewView from './views/View0_Overview'
+import TopBar from './components/TopBar'
+import CommandCenterView from './views/View0_CommandCenter'
 import DiscoveryView from './views/View1_Discovery'
 import AuditView from './views/View2_Audit'
 import ConsensusView from './views/View3_Consensus'
@@ -10,13 +11,14 @@ import EvidenceView from './views/View5_Evidence'
 
 export default function App() {
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-ink text-slate-200">
+      <Aurora />
       <Sidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar />
-        <main className="min-h-0 flex-1 overflow-y-auto">
+      <div className="relative flex min-w-0 flex-1 flex-col">
+        <TopBar />
+        <main className="min-h-0 flex-1 overflow-y-auto scroll-smooth">
           <Routes>
-            <Route path="/" element={<OverviewView />} />
+            <Route path="/" element={<CommandCenterView />} />
             <Route path="/discovery" element={<DiscoveryView />} />
             <Route path="/audit" element={<AuditView />} />
             <Route path="/consensus" element={<ConsensusView />} />
