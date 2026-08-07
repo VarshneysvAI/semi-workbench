@@ -1,0 +1,1 @@
+"""Autonomous source discovery (search -> rank -> validated candidates)."""

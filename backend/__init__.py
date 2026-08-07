@@ -1,0 +1,1 @@
+"""SEMI (Self-Evolving Manufacturer Intelligence) backend package."""
