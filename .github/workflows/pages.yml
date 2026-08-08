@@ -31,8 +31,7 @@ jobs:
       - name: Build (SPA base for Pages)
         run: npm run build -- --base=./  # BrowserRouter fallback via 404.html
       - name: SPA fallback for client-side routes
-        run: copy-item dist\index.html dist\404.html
-        shell: powershell
+        run: cp dist/index.html dist/404.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dashboard/dist
