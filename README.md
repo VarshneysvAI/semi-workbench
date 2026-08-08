@@ -6,8 +6,10 @@
 
 Given a minimal Excel input `(manufacturer, part_number)`, SEMI autonomously **discovers** manufacturer sources, **extracts** multi-format evidence, **adversarially audits** every value, and emits schema-bound output — or refuses with `INSUFFICIENT_EVIDENCE` rather than guessing.
 
+📖 Docs: [PROJECT](docs/PROJECT.md) · [TECHNICAL](docs/TECHNICAL.md) · [DIFFERENTIATION](docs/DIFFERENTIATION.md) · [COMPETITIVE LANDSCAPE](docs/COMPETITIVE_LANDSCAPE.md) · [API CONTRACT](docs/api_contract.md) · [EXTRAS](docs/EXTRAS.md)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Frontend Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/VarshneysvAI/semi-workbench/actions)
+[![CI](https://github.com/VarshneysvAI/semi-workbench/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/VarshneysvAI/semi-workbench/actions/workflows/ci.yml)
 [![Python 3.13](https://img.shields.io/badge/Python-3.13-blue.svg)](#)
 [![React 19](https://img.shields.io/badge/React-19-61dafb.svg)](#)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141-009688.svg)](#)
@@ -62,19 +64,26 @@ _Two-pass human-in-the-loop flywheel_
 ```
 .
 ├── backend/                 # FastAPI (Python 3.13)
-│   ├── schemas/state_graph.py  # state graph + conflict models (Day 2)
-│   ├── ingest/               # excel_input · source_validator · output_mapper
-│   ├── discover/             # source ranking & query builder (Day 1 skeleton)
+│   ├── schemas/state_graph.py  # state graph + conflict + ledger models (Day 2)
+│   ├── ingest/               # excel_input · source_validator · output_mapper (DAY3 markers)
+│   ├── discover/            # source ranking & query builder (Day 1 skeleton)
 │   └── tests/                # pytest suite (5 passing)
 ├── dashboard/                # React 19 + Vite + Tailwind SPA
 │   ├── src/engine/           # in-browser enrichment simulation engine
 │   ├── src/views/            # Overview · Sheet · Discovery · Audit ·
-│   │                         # Review queue · Evidence · Ledger
+│   │                         # Conflicts · Evidence · Ledger (+ Inspector)
 │   └── public/               # brand assets (logo, boot.mp4)
 ├── docs/
-│   └── api_contract.md       # FastAPI <-> dashboard contract
+│   ├── PROJECT.md           # brief + judging-rubric mapping (Innov/Acc/Qual/Scale × 25%)
+│   ├── TECHNICAL.md         # architecture · setup · API contract pointer
+│   ├── DIFFERENTIATION.md   # SEMI vs the published repos (build-complete view)
+│   ├── COMPETITIVE_LANDSCAPE.md
+│   ├── EXTRAS.md            # demo script + 3-min video checklist
+│   ├── api_contract.md      # FastAPI <-> dashboard contract
+│   └── notes/               # internal planning + research log
 ├── TODO.md                   # running day-by-day checklist
-└── UniHack_Final_Plan.md     # full feasibility plan
+├── .github/workflows/ci.yml  # tsc + oxlint + build + pytest
+└── README.md
 ```
 
 ## Tech Stack
