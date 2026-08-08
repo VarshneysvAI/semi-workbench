@@ -8,60 +8,207 @@
   }
 
   body {
-    @apply bg-ink text-slate-200 antialiased;
+    @apply text-slate-100 antialiased;
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-size: 13.5px;
     margin: 0;
+    background: var(--app-bg, #000000);
+    transition: background 0.3s var(--ease);
   }
 
   ::selection {
-    background: rgba(34, 211, 238, 0.25);
+    background: rgba(34, 211, 238, 0.28);
     color: #fff;
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+    scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.18);
+    border-radius: 999px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 
-@layer base {
-  @keyframes nodePulse {
-    0%, 100% { transform: scale(1); opacity: 0.9; }
-    50% { transform: scale(1.14); opacity: 1; }
-  }
-  @keyframes dashFlow {
-    to { strokeDashoffset: -32; }
-  }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-  }
-  @keyframes breathe {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-  }
+:root {
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur: 250ms;
+}
+
+/* ------------------------------------------------------------------ */
+/* Theme tokens — obsidian (environment default). Status colors        */
+/* (emerald/amber/rose) are always semantic and constant.              */
+/* ------------------------------------------------------------------ */
+
+:root {
+  --app-bg: #000000;
+  --accent: #22d3ee;
+  --accent-strong: #a5f3fc;
+  --orb-a: rgba(34, 211, 238, 0.07);
+  --orb-b: rgba(255, 255, 255, 0.05);
+  --orb-c: rgba(148, 163, 184, 0.05);
+  --grid-dot: rgba(255, 255, 255, 0.07);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.text-accent-strong {
+  color: var(--accent-strong);
+}
+
+.border-accent {
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.bg-accent-10 {
+  background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.bg-accent-05 {
+  background-color: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
+.bg-accent-strong {
+  background-color: var(--accent);
 }
 
 @layer components {
-  .edge-flow {
-    stroke-dasharray: 6 9;
-    animation: dashFlow 1.4s linear infinite;
+  .hairline {
+    @apply border border-white/[0.1];
   }
 
-  .node-pulse {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: nodePulse 3.4s ease-in-out infinite;
+  .panel {
+    @apply rounded-xl;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.07),
+        rgba(255, 255, 255, 0.02)
+      ),
+      rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(11px) saturate(1.05);
+    -webkit-backdrop-filter: blur(11px) saturate(1.05);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+      0 10px 30px -20px rgba(0, 0, 0, 0.9);
+    transition:
+      background-color 300ms var(--ease),
+      border-color 300ms var(--ease);
   }
 
-  .glass {
-    @apply rounded-2xl border border-white/[0.08] bg-white/[0.025] backdrop-blur-md;
-    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04), 0 1px 2px rgba(0, 0, 0, 0.4);
+  .panel-slim {
+    @apply border-b border-white/[0.09];
   }
 
-  .grain {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
-    background-size: 180px 180px;
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-md border border-white/[0.12] px-2 py-1 text-[11.5px] font-medium text-slate-300;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(8px);
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .label-caps {
+    @apply text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400;
+  }
+
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-lg border border-white/[0.13] px-3 py-1.5 text-[12.5px] font-medium text-slate-200 transition-all duration-150;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+  }
+
+  .btn:hover {
+    @apply border-white/[0.22] text-white;
+    background: rgba(255, 255, 255, 0.09);
+  }
+
+  .btn:active {
+    transform: translateY(1px) scale(0.99);
+  }
+
+  .btn-primary {
+    @apply border-white/30 text-white;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-primary:hover {
+    @apply border-white/50 text-white;
+    background: rgba(255, 255, 255, 0.16);
+  }
+
+  .focus-ring:focus-visible {
+    outline: 2px solid rgba(34, 211, 238, 0.6);
+    outline-offset: 1px;
+  }
+}
+
+@keyframes cellWrite {
+  0% {
+    background-color: rgba(34, 211, 238, 0.22);
+    transform: scale(1.02);
+  }
+  100% {
+    background-color: transparent;
+    transform: scale(1);
+  }
+}
+
+@keyframes caretBlink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes livePulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmerScan {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bootLine {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
   }
 }
 
@@ -70,17 +217,191 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .text-gradient {
-    background: linear-gradient(110deg, #f8fafc 0%, #22d3ee 50%, #a78bfa 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .cell-write {
+    animation: cellWrite 420ms ease-out;
   }
 
-  .text-gradient-warm {
-    background: linear-gradient(110deg, #fbbf24 0%, #fb7185 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .caret-live::after {
+    content: '▍';
+    margin-left: 1px;
+    color: var(--accent, #22d3ee);
+    animation: caretBlink 0.7s steps(1) infinite;
   }
+
+  .dot-live {
+    animation: livePulse 1.5s ease-in-out infinite;
+  }
+
+  .scan-line {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scan-line::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 45%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(34, 211, 238, 0.14),
+      transparent
+    );
+    animation: shimmerScan 1.6s linear infinite;
+    pointer-events: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Ambient canvas: aurora orbs + dot grid + grain                      */
+/* ------------------------------------------------------------------ */
+
+.canvas-orbs {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+  will-change: transform;
+}
+
+.orb-a {
+  width: 520px;
+  height: 520px;
+  top: -160px;
+  left: -160px;
+  background: radial-gradient(circle, var(--orb-a, rgba(34, 211, 238, 0.07)), transparent 65%);
+  animation: orbFloat 26s ease-in-out infinite;
+}
+
+.orb-b {
+  width: 560px;
+  height: 560px;
+  bottom: -200px;
+  right: -180px;
+  background: radial-gradient(circle, var(--orb-b, rgba(255, 255, 255, 0.05)), transparent 65%);
+  animation: orbFloat 32s ease-in-out infinite reverse;
+}
+
+.orb-c {
+  width: 380px;
+  height: 380px;
+  top: 42%;
+  left: 52%;
+  background: radial-gradient(circle, var(--orb-c, rgba(255, 255, 255, 0.05)), transparent 65%);
+  animation: orbFloat 21s ease-in-out 6s infinite;
+}
+
+@keyframes orbFloat {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(34px, -22px) scale(1.06);
+  }
+}
+
+.canvas-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(var(--grid-dot, rgba(255, 255, 255, 0.07)) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(ellipse 90% 72% at 50% 0%, black 30%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 72% at 50% 0%, black 30%, transparent 78%);
+}
+
+.canvas-noise {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------------ */
+/* Resize splitter (sidebar drag handle)                               */
+/* ------------------------------------------------------------------ */
+
+.splitter {
+  cursor: col-resize;
+  touch-action: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Orbit signal art (Overview)                                         */
+/* ------------------------------------------------------------------ */
+
+.orbit-sweep {
+  animation: orbitSweep 6s linear infinite;
+}
+
+@keyframes orbitSweep {
+  to {
+    stroke-dashoffset: -2000;
+  }
+}
+
+.orbit-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: orbitPulse 2.4s ease-out infinite;
+}
+
+@keyframes orbitPulse {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+  70% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Reduced motion & reduced transparency fallbacks                     */
+/* ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .caret-live::after,
+  .dot-live,
+  .scan-line::before,
+  .cell-write,
+  .orb,
+  .orbit-sweep,
+  .orbit-dot {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .panel,
+  .btn,
+  .chip {
+    background-color: rgba(10, 10, 12, 0.99);
+  }
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent, #22d3ee) 30%, transparent);
+  color: #fff;
 }

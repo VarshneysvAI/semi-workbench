@@ -1,101 +1,190 @@
-import { type LucideIcon, Activity, Cpu, FileOutput, Radar, Scale, ScrollText, ShieldCheck } from 'lucide-react'
-import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { cn } from '../lib/cn'
+import { motion, AnimatePresence, type Variants } from 'framer-motion'
+import {
+  LayoutDashboard,
+  Table2,
+  Radar,
+  ShieldCheck,
+  GitMerge,
+  FileSearch,
+  BookOpen,
+  ChevronsLeft,
+  ChevronsRight,
+  type LucideIcon,
+} from 'lucide-react'
 
 const NAV: Array<{ to: string; label: string; icon: LucideIcon }> = [
-  { to: '/', label: 'Command Center', icon: Cpu },
+  { to: '/', label: 'Overview', icon: LayoutDashboard },
+  { to: '/sheet', label: 'Enrichment Sheet', icon: Table2 },
   { to: '/discovery', label: 'Discovery', icon: Radar },
-  { to: '/audit', label: 'Adversarial Audit', icon: ShieldCheck },
-  { to: '/consensus', label: 'Consensus', icon: Scale },
-  { to: '/output', label: 'Schema Output', icon: FileOutput },
-  { to: '/evidence', label: 'Evidence', icon: ScrollText },
+  { to: '/audit', label: 'Audit Engine', icon: ShieldCheck },
+  { to: '/conflicts', label: 'Review Queue', icon: GitMerge },
+  { to: '/evidence', label: 'Evidence', icon: FileSearch },
+  { to: '/ledger', label: 'Ledger', icon: BookOpen },
 ]
 
-function useClock() {
-  const [now, setNow] = useState(() => new Date())
-  useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000)
-    return () => clearInterval(id)
-  }, [])
-  return {
-    time: now.toLocaleTimeString('en-GB', { hour12: false }),
-    date: now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-  }
+const listVariants: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.04, delayChildren: 0.08 } },
 }
 
-export default function Sidebar() {
-  const { time, date } = useClock()
+const itemVariants: Variants = {
+  hidden: { opacity: 0, x: -12 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.3, ease: [0.23, 1, 0.32, 1] } },
+}
 
-  return (
-    <aside className="flex w-[232px] flex-none flex-col border-r border-white/[0.06]">
-      <div className="flex items-center gap-3 px-4 py-5">
-        <div className="relative">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 shadow-glow">
-            <span className="font-mono text-sm font-extrabold text-ink">S</span>
-          </div>
-          <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-ink bg-emerald-400" />
-        </div>
-        <div className="min-w-0">
-          <div className="truncate text-[15px] font-bold tracking-tight text-white">SEMI</div>
-          <div className="truncate text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500">Manufacturer Intelligence</div>
-        </div>
-      </div>
+export default function Sidebar({
+  conflicts,
+  live,
+  width,
+  collapsed,
+  overlayOpen,
+  dragging,
+  onClose,
+  onStartResize,
+  onToggleCollapse,
+}: {
+  conflicts: number
+  live: boolean
+  width: number
+  collapsed: boolean
+  overlayOpen: boolean
+  dragging: boolean
+  onClose: () => void
+  onStartResize: (e: React.PointerEvent) => void
+  onToggleCollapse: () => void
+}) {
+  const sideVisible = !collapsed
 
-      <div className="px-4 pb-2 pt-2">
-        <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-600">Workspace</div>
-      </div>
-
-      <nav className="flex flex-1 flex-col gap-0.5 px-3">
-        {NAV.map((item) => (
+  const NavItems = (
+    <motion.nav
+      variants={listVariants}
+      initial="hidden"
+      animate="show"
+      className="mt-2 flex-1 space-y-0.5 overflow-y-auto px-2"
+    >
+      {NAV.map((item) => (
+        <motion.div key={item.to} variants={itemVariants}>
           <NavLink
-            key={item.to}
             to={item.to}
-            end={item.to === '/'}
+            onClick={onClose}
+            title={collapsed ? item.label : undefined}
             className={({ isActive }) =>
-              cn(
-                'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-all duration-200',
+              `group flex items-center rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors ${
+                collapsed ? 'justify-center px-2' : 'gap-2.5'
+              } ${
                 isActive
-                  ? 'bg-gradient-to-r from-cyan-400/10 via-cyan-400/5 to-transparent text-white shadow-panel'
-                  : 'text-slate-400 hover:bg-white/[0.03] hover:text-slate-200',
-              )
+                  ? 'bg-white/[0.09] text-accent-strong'
+                  : 'text-slate-400 hover:bg-white/[0.06] hover:text-slate-100'
+              }`
             }
           >
-            {({ isActive }) => (
+            <item.icon
+              size={15}
+              strokeWidth={1.75}
+              className="shrink-0 transition-transform duration-200 group-hover:translate-x-[2px]"
+            />
+            {sideVisible && (
               <>
-                {isActive && (
-                  <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-cyan-400 shadow-glow" />
+                <span className="flex-1 truncate">{item.label}</span>
+                {item.to === '/conflicts' && conflicts > 0 && (
+                  <span className="mono rounded bg-amber-400/15 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300">
+                    {conflicts}
+                  </span>
                 )}
-                <item.icon
-                  className={cn(
-                    'h-4 w-4 shrink-0 transition-colors',
-                    isActive ? 'text-cyan-300' : 'text-slate-500 group-hover:text-slate-300',
-                  )}
-                  strokeWidth={1.8}
-                />
-                <span className="truncate">{item.label}</span>
               </>
             )}
           </NavLink>
-        ))}
-      </nav>
+        </motion.div>
+      ))}
+    </motion.nav>
+  )
 
-      <div className="border-t border-white/[0.06] px-4 py-4">
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-          </span>
-          <span className="text-[11px] font-medium text-emerald-300/90">All systems operational</span>
+  const ShowMain = (
+    <>
+      <header className="flex h-14 shrink-0 items-center justify-center gap-2.5 px-4 md:justify-start">
+        {sideVisible ? (
+          <img src="/logo.png" alt="SEMI workbench" className="h-8 w-auto max-w-[200px] object-contain" />
+        ) : (
+          <img src="/logo.png" alt="SEMI workbench" className="h-7 w-7 object-contain" />
+        )}
+      </header>
+
+      {NavItems}
+
+      <footer className="flex items-center justify-between border-t border-white/[0.07] px-2">
+        <div className={`mono min-w-0 px-2 py-3 text-[10.5px] leading-relaxed text-slate-400 ${sideVisible ? '' : 'hidden'}`}>
+          <span
+            className={`mr-1.5 inline-block h-1.5 w-1.5 rounded-full ${
+              live ? 'bg-cyan-400 dot-live' : 'bg-slate-600'
+            }`}
+          />
+          {live ? 'SIM ENGINE · streaming' : 'engine paused'}
         </div>
-        <div className="mt-3 flex items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2">
-          <Activity className="h-3.5 w-3.5 text-cyan-300" />
-          <div className="text-right">
-            <div className="font-mono font-num text-[11px] font-bold text-slate-100">{time}</div>
-            <div className="text-[9px] uppercase tracking-wider text-slate-500">{date}</div>
-          </div>
-        </div>
-      </div>
-    </aside>
+        <button
+          onClick={onToggleCollapse}
+          className="focus-ring hidden rounded-md p-1.5 text-slate-500 transition-colors hover:bg-white/[0.05] hover:text-slate-200 md:block"
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {collapsed ? <ChevronsRight size={14} /> : <ChevronsLeft size={14} />}
+        </button>
+      </footer>
+    </>
+  )
+
+  return (
+    <div className="relative z-10 flex-none">
+      {/* Desktop rail — resizable split */}
+      <motion.aside
+        initial={{ x: -24, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 30 }}
+        className="hidden h-screen shrink-0 flex-col border-r border-white/[0.1] bg-white/[0.05] backdrop-blur-2xl md:flex"
+        style={{
+          width: collapsed ? 72 : width,
+          transition: dragging ? 'none' : 'width 280ms var(--ease)',
+        }}
+      >
+        {ShowMain}
+
+        {!collapsed && (
+          <button
+            onPointerDown={onStartResize}
+            title="Drag to resize"
+            className="splitter group absolute inset-y-0 -right-[4px] z-20 w-[8px]"
+            aria-label="Resize sidebar"
+          >
+            <span className="absolute inset-y-4 left-1/2 w-px -translate-x-1/2 bg-white/[0.08] transition-opacity duration-150 group-hover:opacity-0 group-hover:bg-accent-strong group-active:opacity-0 group-active:bg-accent-strong" />
+          </button>
+        )}
+      </motion.aside>
+
+      {/* Mobile overlay drawer */}
+      <AnimatePresence>
+        {overlayOpen && (
+          <>
+            <motion.div
+              key="scrim"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={onClose}
+              className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm md:hidden"
+            />
+            <motion.aside
+              key="drawer"
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+              className="fixed inset-y-0 left-0 z-40 flex w-[288px] flex-col border-r border-white/[0.1] bg-black/85 backdrop-blur-md md:hidden"
+            >
+              {ShowMain}
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
   )
 }

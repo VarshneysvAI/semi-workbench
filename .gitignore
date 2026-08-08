@@ -23,6 +23,10 @@ unilog_sample/
 .mypy_cache/
 .ruff_cache/
 
+# Local logs & uploads
+dashboard/dev-server.log
+incoming_uploads/
+
 # OS / editor
 .DS_Store
 Thumbs.db

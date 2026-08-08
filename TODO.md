@@ -396,6 +396,34 @@
 
 ---
 
+## 🗂️ WORK LOG
+
+### Aug 8 (Day 0 + early rollout)
+- **Frontend (Stream B) — COMPLETE & verified** (`dashboard/`): all 7 views
+  (Overview, Sheet, Discovery, Audit, Review, Evidence, Ledger) + Inspector,
+  resizable mobile-sidebar, boot screen (logo + updated final mp4), Obsidian
+  theme locked, 60fps at 8× speed (copy-on-write rows + memoized sheet).
+  Checks: `tsc --noEmit` clean, `oxlint` 0 errors, `vite build` passes.
+  Bug fixes: Inspector transcript pid-filtering, cell-write animation replay.
+- **Backend (Stream A) — Day 2 mostly done** (`backend/`):
+  - `schemas/state_graph.py` — StateGraph / Source / Candidate / Conflict /
+    LedgerRow models (matches `docs/api_contract.md`).
+  - `server.py` v0.2.0 — `/api/health`, `/api/ingest` (real Excel parse),
+    `/api/state_graph/{sku}`, `/api/conflicts/{sku}`, `/api/resolve`
+    (ledger row + changed_outcome + WS broadcast), `/ws/ledger_events`,
+    deferred stubs for `ab_compare` / `ontology`. In-memory Store.
+  - `ingest/output_mapper.py` — Day-3 prep: canonical attributes, unit
+    splitting, required-field validation, `DAY3` re-scope markers.
+  - `tests/` — 5 pytest smoke tests passing (ingest→graph→resolve→flips→
+    forbidden URLs). Server boots: `health 200`.
+  - venv at `backend/.venv` (slim Day-2 subset; **requirements.txt pins
+    torch==2.4.0 which does NOT support Python 3.13 — re-pin ≥2.6.x when
+    heavy deps land Day 4/5**).
+- **Pending:** Day 1 GATE (corpus downloads + cross-manufacturer notebook —
+  Stream A manual step), Day 3 scoping against official input.xlsx (~Aug 11).
+
+---
+
 ## 🏁 PHASE 2 PREVIEW (If Shortlisted — Sep 4 Finale)
 
 **Aug 24 → Sep 4 (11 days):**
