@@ -25,6 +25,7 @@ from backend.schemas.state_graph import Conflict, ExtractedCandidate, LedgerRow,
 from backend.schema_inference.infer import infer_from_workbook, is_meaningful
 from backend.discover.search import build_search_queries, rank_candidates, search_web
 from backend.extract.fetchers import fetch_content
+from backend.audit import run_audit
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 logger = logging.getLogger("semi.server")
@@ -257,7 +258,7 @@ def discover_sources(sku: str, top_k: int = 5, fetch: bool = True, extract: bool
     """Run the autonomous discovery stage for one SKU's (manufacturer, sku).
 
     1. Build spec-first queries from the SKU + manufacturer.
-    2. Live web search (ddgs — real, free, non-static).
+    2. Live web search (hybrid chain: agent-reach -> Firecrawl -> Exa -> ddgs).
     3. Rank candidates (validation + authority + dedupe).
     4. Attach the top-K candidates as ``Source`` rows on the StateGraph.
     5. (When LLM configured) Fetch each via the hybrid router and run a Gemma
@@ -338,7 +339,30 @@ def discover_sources(sku: str, top_k: int = 5, fetch: bool = True, extract: bool
         "sources_attached": len(new_sources),
         "extracted": extracted,
         "llm_configured": gemma.is_configured(),
+        "audit": run_audit(graph).to_dict(),
     }
+
+
+# ---------------------------------------------------------------------------
+# Audit — deterministic checks + refusal gate + conformal intervals
+# ---------------------------------------------------------------------------
+
+@app.get("/api/audit/{sku}")
+def audit_sku(sku: str) -> dict:
+    """Run the adversarial audit over one SKU's extracted candidates.
+
+    Physics/constraint rules -> cross-source contradiction -> weighted
+    consensus -> refusal gate -> split-conformal intervals. Returns a
+    per-attribute ``ACCEPT`` or ``REFUSE_*`` verdict with provenance.
+    Until ^=30 labelled calibration rows exist, intervals are reported as
+    uncalibrated rather than faked.
+    """
+    key = _single_lookup_key(sku, "audit")
+    with store._lock:
+        graph = store.graphs.get(key)
+    if not graph:
+        raise HTTPException(status_code=404, detail=f"no state graph for {sku}")
+    return run_audit(graph).to_dict()
 
 
 # ---------------------------------------------------------------------------

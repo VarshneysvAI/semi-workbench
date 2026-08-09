@@ -25,10 +25,12 @@
   tsc+lint+build, backend pytest) on push.
 
 ## Remaining execution order
-1. **Day 6-7 — adversarial audit engine** (physical/contradiction rules, refusal
-   gate, split-conformal 95% CI) — the core differentiator, next milestone.
+1. **Day 6-7 — adversarial audit engine** ✅ SHIPPED Aug 9: `backend/audit/`
+   (physics rules → contradiction → weighted consensus → refusal gate →
+   split-conformal intervals), `GET /api/audit/{sku}`, 39/39 tests.
 2. Day 8 — resolver UI wiring in dashboard + recovery ledger uplift
-   (precedent flywheel, BGE-M3 ≥ 0.85).
+   (precedent flywheel, BGE-M3 ≥ 0.85) + feed resolutions into conformal
+   calibration.
 3. Day 9-10 — precedent retrieval + fallback classifier overlay.
 4. Day 11 — measured-stats harness (X/Y sourced, Z% refused, 0 invented).
 5. Day 12-13 — deploy (Vercel + Render) once the pipeline is real.

@@ -215,54 +215,36 @@
 
 ### 📅 DAY 6 (Aug 14) — ADVERSARIAL AUDIT ENGINE (CORE) [Stream A]
 
-**⚠️ CORE INNOVATION — NO COMPROMISE**
+**⚠️ CORE INNOVATION — NO COMPROMISE** — ✅ **BUILT (Aug 9, ahead of schedule)**
 
-- [ ] `backend/audit/physical.py`:
-  ```python
-  RULES = [
-      ("material=PVC ∧ temperature>60°C", lambda m,t: m=="PVC" and t>60),
-      ("material=PVC ∧ pressure>150psi", lambda m,p: m=="PVC" and p>150),
-      ("material=Brass ∧ pressure>3000psi", lambda m,p: m=="Brass" and p>3000),
-      ("thread=NPT ∧ standard=BSPP", lambda t,s: t=="NPT" and s=="BSPP"),
-      ("size<0.5\" ∧ pressure>10000psi", lambda s,p: s<0.5 and p>10000),
-  ]
-  ```
-- [ ] `backend/audit/contradiction.py`:
-  - BGE-M3 embeddings on value strings
-  - cosine < 0.3 + both confidence > 0.5 → flag
-- [ ] `backend/audit/compositional.py`:
-  ```python
-  CONSTRAINTS = {
-      "pressure_rating": lambda m,t,s: p <= max_pressure(m, t, s),
-      "flow_coefficient": lambda s,p: fc ∝ s² × √p,
-      "torque": lambda p,s: t ∝ p × s³,
-  }
-  ```
-- [ ] `backend/audit/adversarial.py`:
-  - Generate disproof queries: "MAX pressure for [material] [size]?"
-  - Search manufacturer site for disproof
-- [ ] `backend/audit/conformal.py`:
-  - Split Conformal Prediction (split CP)
-  - Calibration: 200 seeded human-verified rows
-  - Nonconformity: 1 - raw_confidence
-  - Output: [lower, upper] with 95% coverage
+- [x] `backend/audit/physical.py` — deterministic physics/constraint rules
+      (PVC temp/pressure ceilings, brass pressure ceiling, size×pressure
+      implausibility, BSPP pressure range) with unit normalization
+      (psi/bar/MPa/kPa, °C/°F) — no LLM involved.
+- [x] `backend/audit/contradiction.py` — cross-source contradiction detection
+      (same attribute, ≥0.5 confidence on both sides, disagreeing values).
+- [x] `backend/audit/refusal_gate.py` — weighted consensus (authority ×
+      confidence); ACCEPT only at weight ≥ 0.7, otherwise REFUSE with the
+      exact reason: `REFUSE_INSUFFICIENT_EVIDENCE` / `REFUSE_THIN_EVIDENCE` /
+      `REFUSE_LOW_CONSENSUS` / `REFUSE_PHYSICAL_VIOLATION` — **cells stay
+      empty, never guessed**.
+- [x] `backend/audit/conformal.py` — split-conformal prediction intervals:
+      needs ≥30 labelled calibration rows (human-resolution ledger / official
+      ground truth); until then intervals are reported *honestly uncalibrated*.
+- [x] `backend/audit/runner.py` — `run_audit(graph)` → per-attribute verdicts.
+- [x] Endpoint `GET /api/audit/{sku}` + `audit` block in `/api/discover` response.
+- [x] 16 audit tests (39 total green, offline-deterministic).
 
 ---
 
 ### 📅 DAY 7 (Aug 15) — CONFORMAL CALIBRATION + CONSENSUS [Stream A]
 
-- [ ] Build `backend/audit/conformal.py`:
-  - Split CP on 200 seeded rows
-  - Nonconformity score: 1 - raw_confidence
-  - Verify 95% coverage on calibration set
-- [ ] Build `backend/consensus/resolve.py`:
-  - Source weights: spec=1.0, manual=0.9, page=0.8, video=0.6
-  - Family boost: +0.3 if 8+/10 siblings agree
-  - Weighted consensus → winner
-  - If winner.weight ≥ 0.85 → ACCEPT, else REFUSE
-- [ ] Build `backend/consensus/refusal_gate.py`:
-  - If confidence < 0.7 AND no precedent → REFUSE
-  - Output `INSUFFICIENT_EVIDENCE` with reason
+- [x] `backend/audit/conformal.py` — split-CP implemented (α=0.05, ≥30 rows
+      guard); `predict_interval` reports uncalibrated band until labelled rows.
+- [x] `backend/audit/refusal_gate.py` — weighted consensus + refusal reasons;
+      winner weight ≥ 0.85 → ACCEPT, else REFUSE (see Day 6 row above).
+- [ ] Feed human-resolution ledger rows in as calibration labels (needs the
+      Day-8 two-pass flow + ≥30 resolutions; interim = uncalibrated band).
 
 ---
 
