@@ -26,6 +26,8 @@ from backend.schema_inference.infer import infer_from_workbook, is_meaningful
 from backend.discover.search import build_search_queries, rank_candidates, search_web
 from backend.extract.fetchers import fetch_content
 from backend.audit import run_audit
+from backend.ledger import (build_calibration, canonical_signature,  # noqa: F401
+                            find_precedents, sync_conflicts)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 logger = logging.getLogger("semi.server")
@@ -219,7 +221,7 @@ def resolve_conflict(req: ResolveRequest) -> dict:
     if req.human_resolution not in (conflict.a.value, conflict.b.value):
         raise HTTPException(status_code=422, detail="resolution must be one of the rival values")
 
-    signature = f"{conflict.a.value} vs {conflict.b.value}"
+    signature = canonical_signature(conflict.a.value, conflict.b.value)
     changed_outcome = req.human_resolution == conflict.b.value  # non-default side wins -> flip
     row = LedgerRow(
         sku=conflict.sku,
@@ -330,6 +332,13 @@ def discover_sources(sku: str, top_k: int = 5, fetch: bool = True, extract: bool
                                   "source_url": src.source_url,
                                   "fetched_via": doc.fetched_via})
 
+    with store._lock:
+        report = run_audit(graph, calibration=build_calibration(
+            store.conflicts, store.graphs, store.ledger))
+        sync_conflicts(graph, report, store.conflicts)
+        audit_body = report.to_dict()
+        conflict = store.conflicts.get(key)
+
     return {
         "sku": graph.sku,
         "manufacturer": graph.manufacturer,
@@ -339,7 +348,15 @@ def discover_sources(sku: str, top_k: int = 5, fetch: bool = True, extract: bool
         "sources_attached": len(new_sources),
         "extracted": extracted,
         "llm_configured": gemma.is_configured(),
-        "audit": run_audit(graph).to_dict(),
+        "audit": audit_body,
+        "conflict": None if conflict is None else {
+            "sku": conflict.sku, "manufacturer": conflict.manufacturer,
+            "attribute": conflict.attribute, "status": conflict.status,
+            "a": {"value": conflict.a.value, "source_url": conflict.a.source_url,
+                  "authority": conflict.a.authority},
+            "b": {"value": conflict.b.value, "source_url": conflict.b.source_url,
+                  "authority": conflict.b.authority},
+        },
     }
 
 
@@ -362,7 +379,66 @@ def audit_sku(sku: str) -> dict:
         graph = store.graphs.get(key)
     if not graph:
         raise HTTPException(status_code=404, detail=f"no state graph for {sku}")
-    return run_audit(graph).to_dict()
+    with store._lock:
+        report = run_audit(graph, calibration=build_calibration(
+            store.conflicts, store.graphs, store.ledger))
+        sync_conflicts(graph, report, store.conflicts)
+    body = report.to_dict()
+    body["conflict"] = None
+    with store._lock:
+        conflict = store.conflicts.get(key)
+    if conflict:
+        body["conflict"] = {
+            "sku": conflict.sku, "manufacturer": conflict.manufacturer,
+            "attribute": conflict.attribute, "status": conflict.status,
+            "a": {"value": conflict.a.value, "source_url": conflict.a.source_url,
+                  "authority": conflict.a.authority},
+            "b": {"value": conflict.b.value, "source_url": conflict.b.source_url,
+                  "authority": conflict.b.authority},
+        }
+    return body
+
+
+# ---------------------------------------------------------------------------
+# Ledger — resolutions, precedents, conformal calibration feed
+# ---------------------------------------------------------------------------
+
+@app.get("/api/ledger")
+def get_ledger() -> dict:
+    with store._lock:
+        rows = [r.model_dump() for r in store.ledger]
+    return {"count": len(rows), "rows": rows}
+
+
+@app.get("/api/precedents/{sku}")
+def precedent_lookup(sku: str) -> dict:
+    """Ledger signatures matching this SKU's current conflicts (>= 0.85 cosine)."""
+    key = _single_lookup_key(sku, "precedent")
+    with store._lock:
+        conflict = store.conflicts.get(key)
+        ledger = list(store.ledger)
+    signatures = {canonical_signature(r.a.value, r.b.value) for r in store.conflicts.values()}
+    candidates = [r.signature for r in ledger]
+    query = (canonical_signature(conflict.a.value, conflict.b.value)
+             if conflict else "")
+    exact: list[str] = []
+    fuzzy: list[tuple[str, float]] = []
+    if query:
+        for sig in candidates:
+            if sig == query:
+                exact.append(sig)
+        fuzzy = find_precedents([s for s in candidates if s != query], query)
+    rows = [r for r in ledger if r.signature in {query, *[s for s, _ in fuzzy]}]
+    return {
+        "sku": sku,
+        "query": query,
+        "exact": exact,
+        "fuzzy": fuzzy,
+        "hits": [{"signature": r.signature, "resolution": r.resolution,
+                  "note": r.note, "changed_outcome": r.changed_outcome,
+                  "source_url": r.source_url, "at": r.at}
+                 for r in rows],
+    }
 
 
 # ---------------------------------------------------------------------------
