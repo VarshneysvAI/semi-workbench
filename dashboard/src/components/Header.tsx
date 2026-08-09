@@ -7,7 +7,7 @@ import type { Speed } from '../engine/engine'
 const SPEEDS: Speed[] = [0.5, 1, 2, 4, 8]
 
 export default function Header({ onToggleNav }: { onToggleNav: () => void }) {
-  const { engine, summary, running, speed, setRunning, setSpeedBy, resetEngine } = useSemi()
+  const { engine, summary, running, speed, live, setRunning, setSpeedBy, resetEngine } = useSemi()
   const [now, setNow] = useState(new Date())
 
   useEffect(() => {
@@ -59,6 +59,16 @@ export default function Header({ onToggleNav }: { onToggleNav: () => void }) {
       <div className="flex-1" />
 
       <div className="mono hidden items-center gap-3 text-[11px] text-slate-500 sm:flex">
+        {live !== 'sim' ? (
+          <span
+            className={`flex items-center gap-1.5 ${
+              live === 'live' ? 'text-emerald-300' : 'text-slate-400'
+            }`}
+          >
+            <StatusDot tone={live === 'live' ? 'ok' : 'idle'} />
+            backend {live === 'live' ? 'live' : 'probe…'}
+          </span>
+        ) : null}
         <span className="flex items-center gap-1.5 text-emerald-300">
           <StatusDot tone={running ? 'live' : 'ok'} />
           {worked}/{summary.rowsTotal} rows

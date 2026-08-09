@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useSemi } from '../engine/SemiContext'
 import { Badge, SectionTitle, StatusDot } from '../components/ui'
+import { LiveDiscovery } from '../components/live'
 import { MANUFACTURERS } from '../data/seed'
 
 const AUTHORITY_BARS = [
@@ -11,7 +12,7 @@ const AUTHORITY_BARS = [
 ]
 
 export default function DiscoveryView() {
-  const { engine } = useSemi()
+  const { engine, live } = useSemi()
 
   const discoverEvents = useMemo(
     () => engine.state.events.filter((e) => e.origin === 'discover').slice(0, 30),
@@ -32,7 +33,11 @@ export default function DiscoveryView() {
         </p>
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      {live === 'live' ? (
+        <LiveDiscovery />
+      ) : (
+        <>
+          <div className="grid gap-5 lg:grid-cols-2">
         <div className="panel p-4">
           <SectionTitle right={null}>Source funnel by manufacturer</SectionTitle>
           <div className="space-y-3">
@@ -121,6 +126,8 @@ export default function DiscoveryView() {
           )}
         </div>
       </div>
+      </>
+      )}
     </div>
   )
 }

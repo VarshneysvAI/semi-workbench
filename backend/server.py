@@ -193,6 +193,29 @@ def get_conflicts(sku: str) -> list[Conflict]:
     return [conflict]
 
 
+@app.get("/api/conflicts")
+def list_conflicts() -> dict:
+    with store._lock:
+        rows = [{"sku": c.sku, "manufacturer": c.manufacturer,
+                 "attribute": c.attribute, "status": c.status,
+                 "a": {"value": c.a.value, "source_url": c.a.source_url,
+                       "authority": c.a.authority},
+                 "b": {"value": c.b.value, "source_url": c.b.source_url,
+                       "authority": c.b.authority}}
+                for c in store.conflicts.values()]
+    return {"count": len(rows), "conflicts": rows}
+
+
+@app.get("/api/graphs")
+def list_graphs() -> dict:
+    with store._lock:
+        rows = [{"sku": g.sku, "manufacturer": g.manufacturer,
+                 "sources": len(g.sources),
+                 "candidates": len(g.extracted_candidates)}
+                for g in store.graphs.values()]
+    return {"count": len(rows), "graphs": rows}
+
+
 def _single_lookup_key(sku: str, label: str) -> tuple[str, str]:
     """Resolve a bare SKU to one (mfr, sku) key; bail on ambiguity."""
     sku = sku.strip().lower()

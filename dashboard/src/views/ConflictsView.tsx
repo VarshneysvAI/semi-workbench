@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
 import { useSemi } from '../engine/SemiContext'
 import { Badge, StatusDot } from '../components/ui'
+import { LiveConflicts } from '../components/live'
 import type { Sku } from '../data/seed'
 
 export default function ConflictsView() {
-  const { engine, resolveRow, select, selectedId, summary } = useSemi()
+  const { engine, resolveRow, select, selectedId, summary, live } = useSemi()
 
   const conflicts = useMemo(
     () => engine.state.rows.filter((r) => r.stage === 'conflict'),
@@ -20,35 +21,41 @@ export default function ConflictsView() {
         </p>
       </div>
 
-      <div className="flex items-center gap-3">
-        <Badge tone="amber">
-          <StatusDot tone="warn" /> {summary.rowsConflict} open
-        </Badge>
-        <Badge tone="emerald">{engine.state.conflictsResolved} resolved</Badge>
-        <Badge tone="violet">{engine.state.ledger.length} ledger rows</Badge>
-        <Badge tone="slate">retrained × {engine.state.retrains}</Badge>
-      </div>
-
-      {conflicts.length ? (
-        <div className="grid gap-4 xl:grid-cols-2">
-          {conflicts.map((sku) => (
-            <ConflictCard
-              key={sku.id}
-              sku={sku}
-              selected={selectedId === sku.id}
-              onSelect={select}
-              onResolve={resolveRow}
-            />
-          ))}
-        </div>
+      {live === 'live' ? (
+        <LiveConflicts />
       ) : (
-        <div className="panel flex flex-col items-center py-14 text-center">
-          <StatusDot tone="ok" />
-          <p className="mt-3 text-[14px] text-slate-300">Queue clear</p>
-          <p className="mono mt-1 text-[11.5px] text-slate-500">
-            incoming conflicts stream here from the sheet
-          </p>
-        </div>
+        <>
+          <div className="flex items-center gap-3">
+            <Badge tone="amber">
+              <StatusDot tone="warn" /> {summary.rowsConflict} open
+            </Badge>
+            <Badge tone="emerald">{engine.state.conflictsResolved} resolved</Badge>
+            <Badge tone="violet">{engine.state.ledger.length} ledger rows</Badge>
+            <Badge tone="slate">retrained × {engine.state.retrains}</Badge>
+          </div>
+
+          {conflicts.length ? (
+            <div className="grid gap-4 xl:grid-cols-2">
+              {conflicts.map((sku) => (
+                <ConflictCard
+                  key={sku.id}
+                  sku={sku}
+                  selected={selectedId === sku.id}
+                  onSelect={select}
+                  onResolve={resolveRow}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="panel flex flex-col items-center py-14 text-center">
+              <StatusDot tone="ok" />
+              <p className="mt-3 text-[14px] text-slate-300">Queue clear</p>
+              <p className="mono mt-1 text-[11.5px] text-slate-500">
+                incoming conflicts stream here from the sheet
+              </p>
+            </div>
+          )}
+        </>
       )}
     </div>
   )

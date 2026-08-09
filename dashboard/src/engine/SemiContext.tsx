@@ -29,6 +29,7 @@ interface SemiApi {
   summary: Summary
   running: boolean
   speed: Speed
+  live: 'probe' | 'live' | 'sim'
   setRunning: (v: boolean) => void
   setSpeedBy: (s: Speed) => void
   resolveRow: (skuId: string, choice: 'A' | 'B', note: string) => void
@@ -85,6 +86,22 @@ export function SemiProvider({ children }: { children: ReactNode }) {
   const [running, setRunningLocal] = useState(true)
   const [speed, setSpeedLocal] = useState<Speed>(1)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [live, setLive] = useState<'probe' | 'live' | 'sim'>('probe')
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/health')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (!cancelled) setLive(j?.status === 'ok' ? 'live' : 'sim')
+      })
+      .catch(() => {
+        if (!cancelled) setLive('sim')
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     if (!running) return
@@ -105,6 +122,7 @@ export function SemiProvider({ children }: { children: ReactNode }) {
       summary: summarize(engine.state.rows),
       running,
       speed,
+      live,
       setRunning,
       setSpeedBy: (s) => {
         engine.setSpeed(s)
@@ -127,7 +145,7 @@ export function SemiProvider({ children }: { children: ReactNode }) {
       selectedId,
       selectedSku: selectedId ? (engine.state.rows.find((r) => r.id === selectedId) ?? null) : null,
     }
-  }, [engine, running, speed, selectedId, version])
+  }, [engine, running, speed, selectedId, live, version])
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>
 }
