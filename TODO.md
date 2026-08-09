@@ -174,50 +174,42 @@
 
 ---
 
-### 📅 DAY 4 (Aug 12) — AUTONOMOUS DISCOVERY + SCRAPER [Stream A]
+### 📅 DAY 4 (Aug 12) — AUTONOMOUS DISCOVERY: HYBRID BACKEND CHAIN [Stream A]
 
-#### Stream A
-- [ ] Build `backend/discover/search.py`:
-  - Playwright stealth browser launch
-  - `site:mfr.com "part_number"` search
-  - Follow links: product page → spec sheet PDF → manual PDF → video
-  - Rank by authority (spec=1.0, manual=0.9, page=0.7, video=0.5)
-  - Filter forbidden domains (Amazon/eBay/Target)
-- [ ] Build `backend/discover/scrape.py`:
-  - Playwright renders JS, downloads PDFs, saves rendered HTML
-  - Captures video URLs
-- [ ] Build `backend/discover/extract.py`:
-  - PDF → Marker + Nougat → tables/text
-  - Web → BeautifulSoup structured parse
-  - Video → yt-dlp + whisper.cpp + keyframe OCR
-- [ ] Smoke test on 5 test PNs end-to-end
+✅ **BUILT AHEAD (Aug 9) — live search verified with zero keys (ddgs served real hits).**
+
+- [x] `backend/discover/agent_reach_agent.py` — **agent-reach CLI adapter**
+  (runtime probe: `doctor --json` / `--help`; search + `transcribe`; honest
+  degradation when the CLI is absent — no guessing).
+- [x] `backend/discover/search.py` — **priority chain** (first backend with hits wins):
+  1. **agent-reach** (CLI, when installed)
+  2. **Firecrawl `/search`** (FIRECRAWL_API_KEY; web + pdf categories)
+  3. **Exa** (EXA_API_KEY, `POST api.exa.ai/search`)
+  4. **ddgs** (DuckDuckGo, no key) — always-on last resort
+- [x] Authority ranking (spec=1.0, manual=0.9, page=0.7, video=0.5) +
+  forbidden-domain filter (SourceValidator) — carried over.
+- [x] Provenance: `last_search_backend()` records which backend served (audit trail).
+- [x] Deterministic routing tests (network monkeypatched) — order + fallback verified.
+- [ ] (dropped) Playwright stealth browser — replaced by the cheaper multi-backend
+      API chain; browser rendering only if/when a page needs JS (Firecrawl covers it).
 
 ---
 
-### 📅 DAY 5 (Aug 13) — MULTI-FORMAT EXTRACTION [Stream A]
+### 📅 DAY 5 (Aug 13) — MULTI-FORMAT EXTRACTION ROUTER [Stream A]
 
-#### Stream A
-- [ ] Build `backend/extract/regex_lib.py`:
-  ```python
-  PATTERNS = {
-      "pressure": r"\d+\s*(psi|bar|MPa|kPa)",
-      "thread": r"\b(NPT|BSPT|BSPP|Metric|UNF|UNC)\b",
-      "material": r"\b(316SS|304SS|Brass|PVC|Ductile Iron|Carbon Steel)\b",
-      "size": r"\d+(\.\d+)?\s*("|in|mm)\b",
-      "temp": r"(-?\d+)\s*°?(C|F)\s*(to|[-—])\s*(-?\d+)\s*°?(C|F)",
-      "voltage": r"\d+\s*(V|kV|mV)",
-      "power": r"\d+\s*(W|kW|HP)",
-      "flow": r"\d+\s*(GPM|LPM|CFM)",
-  }
-  ```
-- [ ] Build `backend/extract/unit_normalizer.py`:
-  - `"2\"" → "2 in" → "50.8 mm"`
-  - `"150 psi" → "10.34 bar"`
-- [ ] Build `backend/extract/llm_fallback.py`:
-  - Gemma 4 12B wrapper (local, 4-bit QAT)
-  - Per-field prompt: `"Extract '{field}' from this text. Output: value, unit, confidence."`
-  - Temperature 0.0, max_tokens: 50
-- [ ] Wire full pipeline: `excel_input → source_validator → scrape → extract → state_graph.json`
+✅ **BUILT AHEAD (Aug 9) — content-type router with provenance.**
+
+- [x] `backend/extract/fetchers.py` — routes each source by kind, records `fetched_via`:
+  - **PDF** → Firecrawl `parsePDF` (key) → Jina Reader (free)
+  - **WEB** → Firecrawl → Jina Reader → httpx + BeautifulSoup
+  - **VIDEO** → **yt-dlp subtitles** (auto-subs, en) → **agent-reach transcribe**
+    → Jina Reader
+- [x] `backend/llm/gemma.py` — **Gemma single-field extraction via Gemini free tier**
+  (google.genai, strict-JSON schema, temperature 0.0, ~3s; verified live on
+  `gemma-4-31b-it`; raises `LLMNotConfigured` when key absent — no silent fake).
+- [x] Deterministic tests: routing order + provenance verified; 23 tests green.
+- [ ] deferred (not blocking): Marker/OCR for scanned PDFs, `unit_normalizer`
+      (unit conversions land with the Day-3 output_mapper/schema pass).
 
 ---
 
@@ -398,6 +390,22 @@
 
 ## 🗂️ WORK LOG
 
+### Aug 9 — Day 4/5 built ahead of schedule + CI restored
+- **Discovery is now a hybrid backend chain, strict priority:**
+  1. **agent-reach** (CLI adapter — runtime probe, search + transcribe)
+  2. **Firecrawl `/search`** (key) → 3. **Exa** (key) → 4. **ddgs** (no key, always-on)
+- Live smoke (zero keys): real DuckDuckGo hits for `NIBCO BV-1001 spec sheet pdf`;
+  provenance via `last_search_backend()` → "ddgs".
+- **Fetch router** (`fetchers.py`): PDF → Firecrawl/Jina; WEB → Firecrawl/Jina/bs4;
+  **VIDEO → yt-dlp subtitles → agent-reach transcribe → Jina** (transcript extraction
+  per directive: "if we find a YT link we use search to extract what the YT says").
+- **LLM channel decided: Gemini free tier serves the Gemma model** (`gemma-4-31b-it`,
+  google.genai, strict-JSON, temp 0.0) — NVIDIA NIM dropped (too slow).
+- Tests: `test_search_hybrid.py` added (routing order + fallback + provenance);
+  **23/23 pytest green**, offline-deterministic; deps unified via `backend/requirements.txt`
+  (fixes the pandas cp313 CI break) — **CI green on both jobs**.
+- Docs: `.env.example` now documents the full priority chain.
+
 ### Aug 8 (Day 0 + early rollout)
 - **Frontend (Stream B) — COMPLETE & verified** (`dashboard/`): all 7 views
   (Overview, Sheet, Discovery, Audit, Review, Evidence, Ledger) + Inspector,
@@ -416,9 +424,6 @@
     splitting, required-field validation, `DAY3` re-scope markers.
   - `tests/` — 5 pytest smoke tests passing (ingest→graph→resolve→flips→
     forbidden URLs). Server boots: `health 200`.
-  - venv at `backend/.venv` (slim Day-2 subset; **requirements.txt pins
-    torch==2.4.0 which does NOT support Python 3.13 — re-pin ≥2.6.x when
-    heavy deps land Day 4/5**).
 - **Pending:** Day 1 GATE (corpus downloads + cross-manufacturer notebook —
   Stream A manual step), Day 3 scoping against official input.xlsx (~Aug 11).
 
@@ -491,7 +496,7 @@
 
 1. **Submit by 12:00 PM Aug 21** — not midnight, not Aug 23. Buffer = life.
 2. **Dataset arrives ~Aug 11** — Days 1-3 are prep; real work starts Aug 11.
-3. **Gemma 4 12B is the model** — local, 256K ctx, native audio+vision+video, Apache 2.0.
+3. **Gemma via Gemini free tier (`gemma-4-31b-it`)** — free, fast, no GPU; NIM dropped.
 3. **G-Ledger gate (Day 1) is non-negotiable** — if cross-mfr transfer fails, architecture changes.
 4. **Adversarial Audit is the headline** — 5 audits + conformal CI = formal verification.
 5. **Cost story = downward curve** — not "cheap", but "gets cheaper over time".
@@ -502,4 +507,4 @@
 
 ---
 
-*Last updated: 2026-08-08 | Plan version: SEMI v1.0 | Next review: Daily standup*
+*Last updated: 2026-08-09 | Plan version: SEMI v1.0 | Next review: Daily standup*

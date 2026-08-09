@@ -38,9 +38,13 @@ Judging rubric (UniHack 2026, equal 25% each): **Innovation · Accuracy · Quali
 ## Status legend (no faking)
 
 - ✅ shipped today: FastAPI state-graph + Excel ingest + conflict resolver + WS ledger +
-  `changed_outcome` ledger rows + 5/5 pytest + the 7-view console + `output_mapper` prep.
-- ⛳ committed build (roadmap until the official schema + Gemma API land ~Aug 11): discovery,
-  5-check audit + conformal CI, refusal-gate enforcement, Gemma client, measured-stats harness.
+  `changed_outcome` ledger rows + **hybrid discovery chain (agent-reach → Firecrawl →
+  Exa → ddgs, live-verified)** + **content-type fetch router (PDF/web/YouTube)** +
+  **Gemma single-field extraction via Gemini free tier (`gemma-4-31b-it`, live-verified)** +
+  **23/23 pytest + green CI** + the 7-view console + `output_mapper` prep.
+- ⛳ committed build (roadmap until the official schema + audit land ~Aug 11): adversarial
+  5-check audit + conformal CI, refusal-gate enforcement, measured-stats harness, precedent
+  flywheel (BGE-M3), deployment, pitch video.
 - See [`../TODO.md`](../TODO.md) for the day-by-day schedule and [`PROJECT.md`](PROJECT.md) for
   the rubric mapping.
 

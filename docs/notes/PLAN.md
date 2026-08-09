@@ -1,3 +1,46 @@
+# SEMI Workbench — Execution Plan (latest)
+
+> **One-page standing for report/PPT (2026-08-09, SEMI v1.0, UniHack 2026).**
+> Full day-by-day: [`../../TODO.md`](../../TODO.md).
+
+## What runs today (verified)
+- **Frontend (React 19, Vite)** — 7-view Obsidian console + Inspector:
+  Overview, Sheet, Discovery, Audit, Review Queue, Evidence, Ledger; boot video,
+  resizable sidebar, live-engine simulation (copy-on-write, 60fps @ 8×).
+- **Backend (FastAPI)** — Excel ingest → state graph → conflict resolver →
+  websocket ledger (`changed_outcome` rows); `POST /api/discover/{sku}` runs the
+  live hybrid chain and attaches sources + Gemma-extracted candidates.
+- **Discovery chain (strict priority, first with hits wins):**
+  1. **agent-reach** (CLI, when installed — probe via `doctor --json`/`--help`)
+  2. **Firecrawl `/search`** (key; web+pdf categories)
+  3. **Exa** (key)
+  4. **ddgs** (DuckDuckGo, no key) — always-on last resort; live-verified Aug 9
+- **Fetch router (content-type aware, with provenance `fetched_via`):**
+  PDF → Firecrawl parsePDF → Jina; WEB → Firecrawl → Jina → bs4;
+  VIDEO → yt-dlp subtitles → agent-reach transcribe → Jina.
+- **Extraction:** deterministic regex primary; **Gemma single-field via Gemini
+  free tier** (`gemma-4-31b-it`, strict-JSON, temp 0.0, live-verified) fills gaps;
+  refuses (`LLMNotConfigured` / empty value) rather than fake.
+- **Tests:** 23 pytest green, offline-deterministic; CI green (frontend
+  tsc+lint+build, backend pytest) on push.
+
+## Remaining execution order
+1. **Day 6-7 — adversarial audit engine** (physical/contradiction rules, refusal
+   gate, split-conformal 95% CI) — the core differentiator, next milestone.
+2. Day 8 — resolver UI wiring in dashboard + recovery ledger uplift
+   (precedent flywheel, BGE-M3 ≥ 0.85).
+3. Day 9-10 — precedent retrieval + fallback classifier overlay.
+4. Day 11 — measured-stats harness (X/Y sourced, Z% refused, 0 invented).
+5. Day 12-13 — deploy (Vercel + Render) once the pipeline is real.
+6. Day 14 — pitch video, deck, workflow diagram, submission checklist.
+
+## Decisions locked this sprint
+- **LLM channel:** Gemini free tier serves `gemma-4-31b-it` (NIM dropped — slow).
+- **Discovery:** never ddgs-only — agent-reach → Firecrawl → Exa → ddgs.
+- **No faking:** every value ships `source_url` + provenance; empty beats guessed.
+
+---
+
 # SEMI Workbench — Day 0 Plan
 
 ## Goal

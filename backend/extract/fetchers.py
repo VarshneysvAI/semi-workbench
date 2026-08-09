@@ -21,8 +21,12 @@ import httpx
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 
+from backend.discover.agent_reach_agent import AgentReachAgent
+
 load_dotenv()
 logger = logging.getLogger(__name__)
+
+_AGENT = AgentReachAgent()
 
 
 @dataclass(slots=True)
@@ -56,6 +60,14 @@ def fetch_content(url: str, *, kind: str | None = None, timeout: float = 30.0) -
         if d.ok and d.text.strip():
             return d
         logger.info("firecrawl miss for %s (%s) -> falling back: %s", url, k, d.error or "empty")
+
+    if k == "video":
+        d = _yt_subtitles(url, timeout)
+        if d.ok and d.text.strip():
+            return d
+        d = _agentreach_transcript(url, timeout)
+        if d.ok and d.text.strip():
+            return d
 
     d = _jina_reader(url, timeout)
     if d.ok and d.text.strip():
@@ -131,3 +143,49 @@ def _httpx_html(url: str, timeout: float) -> FetchedDoc:
     except Exception as exc:
         return FetchedDoc(url=url, kind="web", fetched_via="httpx", ok=False,
                           error=f"{type(exc).__name__}: {str(exc)[:120]}")
+
+
+def _yt_subtitles(url: str, timeout: float) -> FetchedDoc:
+    """YouTube transcript via yt-dlp subtitles (documented agent-reach tool)."""
+    exe = os.environ.get("YTDLP_CMD")
+    if not exe:
+        import shutil as _sh
+        exe = _sh.which("yt-dlp")
+    if not exe:
+        return FetchedDoc(url=url, kind="video", fetched_via="yt-dlp", ok=False,
+                          error="yt-dlp not found")
+    import subprocess
+    import tempfile
+    tmp = tempfile.mkdtemp(prefix="semi_yt_")
+    try:
+        cmd = [exe, "--write-sub", "--write-auto-sub", "--sub-lang", "en",
+               "--skip-download", "-o", f"{tmp}/%(id)s", url]
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout + 60)
+        if proc.returncode != 0:
+            return FetchedDoc(url=url, kind="video", fetched_via="yt-dlp", ok=False,
+                              error=(proc.stderr or proc.stdout or "yt-dlp failed")[:120])
+        lines: list[str] = []
+        for name in sorted(__import__("os").listdir(tmp)):
+            if name.endswith((".vtt", ".srt")):
+                with open(f"{tmp}/{name}", encoding="utf-8", errors="ignore") as fh:
+                    text = fh.read()
+                if text.strip():
+                    lines.append(text)
+        joined = "\n".join(lines).strip()
+        return FetchedDoc(url=url, kind="video", text=joined, fetched_via="yt-dlp",
+                          ok=bool(joined),
+                          error="" if joined else "no subtitle files produced")
+    except Exception as exc:
+        return FetchedDoc(url=url, kind="video", fetched_via="yt-dlp", ok=False,
+                          error=f"{type(exc).__name__}: {str(exc)[:120]}")
+    finally:
+        import shutil as _sh
+        _sh.rmtree(tmp, ignore_errors=True)
+
+
+def _agentreach_transcript(url: str, timeout: float) -> FetchedDoc:
+    text = _AGENT.transcribe(url, timeout=timeout + 60)
+    if not text:
+        return FetchedDoc(url=url, kind="video", fetched_via="agent-reach", ok=False,
+                          error="agent-reach transcribe unavailable/empty")
+    return FetchedDoc(url=url, kind="video", text=text, fetched_via="agent-reach", ok=True)
