@@ -88,7 +88,8 @@ cd dashboard && npx tsc --noEmit && npm run lint && npm run build
 | Method | Endpoint | Purpose | Status |
 |---|---|---|---|
 | `GET`  | `/api/health` | liveness + version | ✅ |
-| `POST` | `/api/ingest` | upload Unilog workbook → parse → state graphs | ✅ |
+| `POST` | `/api/ingest` | upload any workbook → LLM schema inference → state graphs (alias fallback) | ✅ |
+| `POST` | `/api/discover/{sku}` | live web search → ranked sources → fetch → Gemma single-field extraction | ✅ |
 | `GET`  | `/api/state_graph/{sku}` | provenance chain + candidates | ✅ |
 | `GET`  | `/api/conflicts/{sku}` | open conflict (NPT vs BSPT …) | ✅ |
 | `POST` | `/api/resolve` | human resolution → ledger row + `changed_outcome` | ✅ |

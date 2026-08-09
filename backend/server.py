@@ -20,7 +20,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from backend.ingest import excel_input
-from backend.schemas.state_graph import Conflict, LedgerRow, StateGraph
+from backend.llm import gemma
+from backend.schemas.state_graph import Conflict, ExtractedCandidate, LedgerRow, Source, StateGraph
+from backend.schema_inference.infer import infer_from_workbook, is_meaningful
+from backend.discover.search import build_search_queries, rank_candidates, search_web
+from backend.extract.fetchers import fetch_content
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 logger = logging.getLogger("semi.server")
@@ -104,8 +108,18 @@ async def ingest_workbook(file: UploadFile = File(...)) -> IngestResponse:
         raise HTTPException(status_code=400, detail="Empty file")
 
     staged = _stage_workbook(file.filename, payload)
+    inferred, used_schema = (None, False)
     try:
-        result = excel_input.parse_input_workbook(staged)
+        inferred = infer_from_workbook(staged)
+        used_schema = is_meaningful(inferred)
+    except Exception as exc:  # inference is best-effort; alias fallback must still work
+        logger.warning("schema inference failed for %s: %s", file.filename, exc)
+
+    try:
+        if used_schema:
+            result = excel_input.parse_workbook_with_schema(staged, inferred)
+        else:
+            result = excel_input.parse_input_workbook(staged)
     except (ValueError, OSError) as exc:
         staged.unlink(missing_ok=True)
         raise HTTPException(status_code=422, detail=str(exc)) from exc
@@ -113,7 +127,7 @@ async def ingest_workbook(file: UploadFile = File(...)) -> IngestResponse:
     with store._lock:
         for rec in result.records:
             key = store.key(rec.manufacturer, rec.part_number)
-            store.graphs.setdefault(
+            graph = store.graphs.setdefault(
                 key,
                 StateGraph(
                     sku=rec.part_number,
@@ -123,10 +137,19 @@ async def ingest_workbook(file: UploadFile = File(...)) -> IngestResponse:
                     extracted_candidates=[],
                 ),
             )
+            for col, val in rec.extras.items():
+                if not any(ec.attribute == col and ec.value == val for ec in graph.extracted_candidates):
+                    graph.extracted_candidates.append(
+                        ExtractedCandidate(attribute=col, value=val,
+                                           source_path="<input.xlsx>",
+                                           extractor="input", confidence=1.0)
+                    )
     staged.unlink(missing_ok=True)
 
     ingest_id = uuid.uuid4().hex[:12]
-    logger.info("Ingest %s: %d products from %s", ingest_id, len(result.records), file.filename)
+    logger.info("Ingest %s: %d products from %s (schema_llm=%s, inferred_attrs=%d)",
+                ingest_id, len(result.records), file.filename, used_schema,
+                len(inferred.attribute_cols) if inferred else 0)
     return IngestResponse(
         ingest_id=ingest_id,
         filename=file.filename or "upload.xlsx",
@@ -223,6 +246,99 @@ def resolve_conflict(req: ResolveRequest) -> dict:
     logger.info("Resolved %s %s -> %s (flip=%s)", conflict.manufacturer, conflict.sku,
                 req.human_resolution, changed_outcome)
     return {"ok": True, **event}
+
+
+# ---------------------------------------------------------------------------
+# Discover — live web search -> ranked sources -> (optional) fetch + Gemma
+# ---------------------------------------------------------------------------
+
+@app.post("/api/discover/{sku}")
+def discover_sources(sku: str, top_k: int = 5, fetch: bool = True, extract: bool = True) -> dict:
+    """Run the autonomous discovery stage for one SKU's (manufacturer, sku).
+
+    1. Build spec-first queries from the SKU + manufacturer.
+    2. Live web search (ddgs — real, free, non-static).
+    3. Rank candidates (validation + authority + dedupe).
+    4. Attach the top-K candidates as ``Source`` rows on the StateGraph.
+    5. (When LLM configured) Fetch each via the hybrid router and run a Gemma
+       single-field extraction over the canonical attributes.
+
+    Provenance is preserved at every step: each ``Source`` carries
+    ``source_url`` + ``type``; each produced ``ExtractedCandidate`` carries
+    ``source_path`` + ``extractor='llm'`` + confidence. SEMI never invents
+    values — when the evidence is thin, the model returns ``value=''`` and
+    the cell stays empty.
+    """
+    key = _single_lookup_key(sku, "discover")
+    with store._lock:
+        graph = store.graphs.get(key)
+    if not graph:
+        raise HTTPException(status_code=404, detail=f"no state graph for {sku}")
+
+    queries = build_search_queries(graph.manufacturer, graph.sku)
+    raw_seen: set[str] = set()
+    raw_hits: list[tuple[str, str]] = []
+    for q in queries:
+        for url, title in search_web(q, max_results=8):
+            if url in raw_seen:
+                continue
+            raw_seen.add(url)
+            raw_hits.append((url, title))
+
+    candidates = rank_candidates([u for u, _ in raw_hits], [t for _, t in raw_hits])
+    top = candidates[:top_k]
+
+    new_sources: list[Source] = []
+    with store._lock:
+        for c in top:
+            if not any(s.source_url == c.url for s in graph.sources):
+                src = Source(type=c.content_type, path=c.url, source_url=c.url)
+                graph.sources.append(src)
+                new_sources.append(src)
+
+    extracted: list[dict] = []
+    if extract:
+        from backend.ingest.output_mapper import CANONICAL_ATTRIBUTES
+        targets = new_sources if new_sources else list(graph.sources)[:top_k]
+        for src in targets:
+            doc = fetch_content(src.source_url, kind=src.type) if fetch else None
+            if not doc or not doc.ok or not doc.text.strip():
+                continue
+            context = doc.text[:8000]
+            for attr in CANONICAL_ATTRIBUTES:
+                if not gemma.is_configured():
+                    break
+                if any(ec.attribute == attr and ec.source_path == src.path
+                       for ec in graph.extracted_candidates):
+                    continue
+                try:
+                    fx = gemma.extract_field(graph.manufacturer, graph.sku, attr, context)
+                except Exception as exc:
+                    logger.warning("gemma extract %s/%s on %s failed: %s", sku, attr, src.path, exc)
+                    continue
+                if not fx.value or fx.confidence < 0.4:
+                    continue
+                with store._lock:
+                    graph.extracted_candidates.append(ExtractedCandidate(
+                        attribute=attr, value=fx.value, source_path=src.path,
+                        page=None, raw_extract=fx.evidence_snippet,
+                        extractor="llm", confidence=fx.confidence,
+                    ))
+                extracted.append({"attribute": attr, "value": fx.value,
+                                  "unit": fx.unit, "confidence": fx.confidence,
+                                  "source_url": src.source_url,
+                                  "fetched_via": doc.fetched_via})
+
+    return {
+        "sku": graph.sku,
+        "manufacturer": graph.manufacturer,
+        "queries": queries,
+        "candidates": [{"url": c.url, "title": c.title, "kind": c.kind,
+                         "authority": c.authority} for c in candidates],
+        "sources_attached": len(new_sources),
+        "extracted": extracted,
+        "llm_configured": gemma.is_configured(),
+    }
 
 
 # ---------------------------------------------------------------------------

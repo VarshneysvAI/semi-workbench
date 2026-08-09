@@ -1,17 +1,28 @@
+# ---- SEMI backend — base (installed in backend/.venv) ----
 fastapi==0.115.0
 uvicorn[standard]==0.30.6
-playwright==1.46.0
-marker-pdf==0.1.0
-easyocr==1.7.2
-beautifulsoup4==4.12.3
-lxml==5.3.0
-duckduckgo-search==6.3.0
-sentence-transformers==3.0.1
-torch==2.4.0
-numpy==1.26.4
 pandas==2.2.2
 openpyxl==3.1.5
 python-multipart==0.0.9
 websockets==12.0
-scipy==1.13.1
-scikit-learn==1.5.0
+beautifulsoup4==4.12.3
+lxml==5.3.0
+httpx==0.28.1
+pytest==9.1.1
+python-dotenv==1.0.1
+google-genai==2.17.0
+
+# ---- discovery: live web search (no key, always real) ----
+ddgs>=9.0.0
+
+# ---- optional extraction backends (set the matching env to enable) ----
+# firecrawl-py        # FIRECRAWL_API_KEY -> PDF/web/YouTube via api.firecrawl.dev
+# yt-dlp>=2025.0.0    # YouTube transcripts when no platform subs (free)
+# faster-whisper      # local audio transcription (optional, GPU helpful)
+
+# ---- optional model clients (any OpenAI-compatible endpoint) ----
+# openai>=1.40.0      # convenience; SEMI uses raw httpx so this is optional
+
+# ---- deferred to robustness sprints (not required for UniHack demo) ----
+# playwright==1.46.0 marker-pdf==0.1.0 easyocr==1.7.2
+# sentence-transformers==3.0.1 torch==2.4.0 scipy==1.13.1 scikit-learn==1.5.0

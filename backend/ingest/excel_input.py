@@ -72,7 +72,9 @@ def parse_input_workbook(path: str | Path, sheet_name: str | int = 0) -> ParseRe
         extras = {
             str(col): str(value).strip()
             for col in frame.columns
-            if col not in header_map.values() and value is not None and str(value).strip()
+            if col not in header_map.values()
+            for value in [row.get(col)]
+            if value is not None and str(value).strip()
         }
         records.append(ProductRecord(manufacturer=manufacturer, part_number=part_number, extras=extras))
 
@@ -99,6 +101,57 @@ def _match_columns(headers) -> dict[str, str]:
                 mapping[canonical] = header
                 break
     return mapping
+
+
+def parse_workbook_with_schema(path: str | Path, schema) -> ParseResult:
+    """Parse a workbook using an ``InferredSchema`` (no hardcoded column names).
+
+    ``schema`` is ``backend.schema_inference.infer.InferredSchema``. When it is
+    missing manufacturer/part_number, we raise so the caller can fall back to
+    the alias table.
+    """
+    from backend.schema_inference.infer import InferredSchema  # local to avoid cycles
+    if not isinstance(schema, InferredSchema) or not (schema.manufacturer_col and schema.part_number_col):
+        raise ValueError("inferred schema is missing manufacturer/part_number columns")
+
+    source = Path(path)
+    if source.suffix.lower() not in (".xlsx", ".xls"):
+        raise ValueError(f"Expected an .xlsx/.xls workbook, got {source.suffix!r}")
+    frame = pd.read_excel(source, sheet_name=0, dtype=str)
+
+    mfr_col, pn_col = schema.manufacturer_col, schema.part_number_col
+    attr_cols = [c for c in schema.attribute_cols if c in frame.columns]
+    other_cols = [c for c in frame.columns if c not in (mfr_col, pn_col)]
+
+    records: list[ProductRecord] = []
+    skipped = 0
+    seen: set[tuple[str, str]] = set()
+    for _, row in frame.iterrows():
+        manufacturer = str(row.get(mfr_col) or "").strip()
+        part_number = str(row.get(pn_col) or "").strip()
+        if not manufacturer or not part_number:
+            skipped += 1
+            continue
+        key = (manufacturer.lower(), part_number.lower())
+        if key in seen:
+            continue
+        seen.add(key)
+        extras: dict[str, str] = {}
+        for col in other_cols:
+            value = row.get(col)
+            if value is None:
+                continue
+            sval = str(value).strip()
+            if sval:
+                extras[str(col)] = sval
+        records.append(ProductRecord(
+            manufacturer=manufacturer, part_number=part_number, extras=extras,
+        ))
+
+    logger.info("Parsed %d unique products from %s via inferred schema (skip %d, attrs=%d)",
+                len(records), source, skipped, sum(1 for _ in attr_cols) * 0 + len(attr_cols))
+    return ParseResult(records=records, columns=list(frame.columns),
+                       skipped_rows=skipped, source=source)
 
 
 def example_workbook(path: str | Path, rows: int = 5) -> Path:

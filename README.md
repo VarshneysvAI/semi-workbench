@@ -126,8 +126,9 @@ backend\.venv\Scripts\python -m pytest backend\tests -q
 | Method | Endpoint | Purpose |
 |---|---|---|
 | `GET` | `/api/health` | liveness + version |
-| `POST` | `/api/ingest` | upload Unilog workbook → parse → state graphs |
-| `GET` | `/api/state_graph/{sku}` | provenance source chain + candidates |
+| `POST` | `/api/ingest` | upload any workbook → LLM-derived schema → state graphs (alias fallback) | ✅ |
+| `GET` | `/api/state_graph/{sku}` | provenance source chain + candidates | ✅ |
+| `POST` | `/api/discover/{sku}` | autonomous discovery: live ddgs search → rank → fetch (Firecrawl/Jina/httpx) → Gemma single-field extraction | ✅ |
 | `GET` | `/api/conflicts/{sku}` | open conflict (NPT vs BSPT …) |
 | `POST` | `/api/resolve` | human resolution → ledger row + `changed_outcome` |
 | `WS` | `/ws/ledger_events` | live counterstream |

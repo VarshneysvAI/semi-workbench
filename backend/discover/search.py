@@ -119,16 +119,40 @@ def _guess_domain(manufacturer: str) -> str:
 
 def _run_search(query: str, max_results: int = 8) -> list[tuple[str, str]]:
     """Wrapper around duckduckgo-search; safe no-network fallback to []."""
+    return search_web(query, max_results=max_results)
+
+
+def search_web(query: str, max_results: int = 8) -> list[tuple[str, str]]:
+    """Live, non-static web search via DuckDuckGo (free, no key).
+
+    Priority: ``ddgs`` (current package) -> ``duckduckgo_search`` (legacy).
+    Returns ``[(url, title)]``. Degrades to ``[]`` if no backend is importable
+    or the network/rate-limit fails (the caller keeps running; SEMI must never
+    invent results).
+    """
+    ddgs_cls = None
     try:
-        from duckduckgo_search import DDGS
-        hits: list[tuple[str, str]] = []
-        with DDGS() as ddgs:
+        from ddgs import DDGS as _D
+        ddgs_cls = _D
+    except ImportError:
+        try:
+            from duckduckgo_search import DDGS as _D
+            ddgs_cls = _D
+        except ImportError:
+            ddgs_cls = None
+    if ddgs_cls is None:
+        logger.warning("No ddgs backend installed — search stays empty")
+        return []
+
+    hits: list[tuple[str, str]] = []
+    try:
+        with ddgs_cls() as ddgs:
             for result in ddgs.text(query, max_results=max_results, region="wt-wt"):
-                url = (result.get("href") or "").strip()
+                url = (result.get("href") or result.get("url") or "").strip()
                 title = (result.get("title") or "").strip()
                 if url:
                     hits.append((url, title))
-        return hits
-    except Exception as exc:  # network/rate-limit failures degrade gracefully
+    except Exception as exc:  # network / rate-limit failures degrade gracefully
         logger.warning("Web search failed for %r: %s", query, exc)
         return []
+    return hits
