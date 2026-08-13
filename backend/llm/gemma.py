@@ -16,9 +16,9 @@ import logging
 import os
 from dataclasses import dataclass
 
-from dotenv import load_dotenv
+from backend.env import ensure_env
 
-load_dotenv()
+ensure_env()
 
 logger = logging.getLogger(__name__)
 

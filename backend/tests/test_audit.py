@@ -147,10 +147,9 @@ def test_run_audit_empty_graph_refuses(tmp_path):
 def test_audit_endpoint(tmp_path):
     from fastapi.testclient import TestClient
     from backend.ingest import excel_input
-    from backend.server import app, store
+    from backend.server import app
+    from backend.sqlite_store import SQLiteStore
 
-    for slot in (store.graphs, store.conflicts, store.ledger):
-        slot.clear()
     p = tmp_path / "in.xlsx"
     excel_input.example_workbook(p, rows=1)
     client = TestClient(app)
@@ -159,8 +158,12 @@ def test_audit_endpoint(tmp_path):
                            files={"file": ("in.xlsx", fh,
                                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")})
     assert resp.status_code == 200
-    with store._lock:
-        sku = next(iter(store.graphs.values())).sku
+    # Get the SKU from the ingested graph
+    resp2 = client.get("/api/graphs")
+    assert resp2.status_code == 200
+    graphs = resp2.json()["graphs"]
+    assert len(graphs) >= 1
+    sku = graphs[0]["sku"]
     resp2 = client.get(f"/api/audit/{sku}")
     assert resp2.status_code == 200
     body = resp2.json()

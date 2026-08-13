@@ -13,23 +13,8 @@ from fastapi.testclient import TestClient
 
 from backend.ingest import excel_input
 from backend.llm import gemma
-from backend.server import app, store
-
-
-@pytest.fixture(autouse=True)
-def fresh_store():
-    store.graphs.clear()
-    store.conflicts.clear()
-    store.ledger.clear()
-    yield
-    store.graphs.clear()
-    store.conflicts.clear()
-    store.ledger.clear()
-
-
-@pytest.fixture(autouse=True)
-def _no_llm(monkeypatch):
-    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+from backend.server import app
+from backend.sqlite_store import SQLiteStore
 
 
 def _seed_workbook(tmp_path) -> str:

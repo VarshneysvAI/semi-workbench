@@ -18,12 +18,12 @@ from dataclasses import dataclass
 from urllib.parse import urlparse
 
 import httpx
-from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 
 from backend.discover.agent_reach_agent import AgentReachAgent
+from backend.env import ensure_env
 
-load_dotenv()
+ensure_env()
 logger = logging.getLogger(__name__)
 
 _AGENT = AgentReachAgent()

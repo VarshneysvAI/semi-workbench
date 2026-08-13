@@ -8,20 +8,10 @@ from fastapi.testclient import TestClient
 from backend.ingest import excel_input
 from backend.ingest.source_validator import validate_source_url
 from backend.schemas.state_graph import Conflict, ConflictSide, StateGraph
-from backend.server import app, store
+from backend.server import app
+from backend.sqlite_store import SQLiteStore
 
 client = TestClient(app)
-
-
-@pytest.fixture(autouse=True)
-def fresh_store():
-    store.graphs.clear()
-    store.conflicts.clear()
-    store.ledger.clear()
-    yield
-    store.graphs.clear()
-    store.conflicts.clear()
-    store.ledger.clear()
 
 
 def test_health() -> None:
@@ -50,8 +40,10 @@ def test_ingest_and_state_graph_lookup(tmp_path) -> None:
 
 
 def test_resolve_writes_ledger_and_flips() -> None:
-    store.graphs[("nibco", "bv-1001")] = StateGraph(sku="BV-1001", manufacturer="NIBCO")
-    store.conflicts[("nibco", "bv-1001")] = Conflict(
+    # Use the server's store directly
+    from backend.server import store
+    store.set_graph(StateGraph(sku="BV-1001", manufacturer="NIBCO"))
+    store.set_conflict(Conflict(
         sku="BV-1001",
         manufacturer="NIBCO",
         attribute="thread",
@@ -59,7 +51,7 @@ def test_resolve_writes_ledger_and_flips() -> None:
                        source_url="https://www.nibco.com/spec"),
         b=ConflictSide(value="BSPT", source_path="nameplate.jpg", authority=0.6,
                        source_url="https://www.nibco.com/img/plate"),
-    )
+    ))
 
     resp = client.post(
         "/api/resolve",
@@ -70,9 +62,11 @@ def test_resolve_writes_ledger_and_flips() -> None:
     assert resp.json()["changed_outcome"] is True
     assert resp.json()["ledger_count"] == 1
 
-    with store._lock:
-        assert store.ledger[0].source_url == "https://www.nibco.com/img/plate"
-        assert store.conflicts[("nibco", "bv-1001")].status == "resolved"
+    ledger = store.get_ledger()
+    assert len(ledger) == 1
+    assert ledger[0].source_url == "https://www.nibco.com/img/plate"
+    conflict = store.get_conflict("nibco", "bv-1001")
+    assert conflict.status == "resolved"
 
     second = client.post(
         "/api/resolve",
@@ -82,14 +76,16 @@ def test_resolve_writes_ledger_and_flips() -> None:
 
 
 def test_resolve_rejects_unlisted_value() -> None:
-    store.graphs[("nibco", "bv-1001")] = StateGraph(sku="BV-1001", manufacturer="NIBCO")
-    store.conflicts[("nibco", "bv-1001")] = Conflict(
+    from backend.server import store
+    from backend.schemas.state_graph import ConflictSide
+    store.set_graph(StateGraph(sku="BV-1001", manufacturer="NIBCO"))
+    store.set_conflict(Conflict(
         sku="BV-1001",
         manufacturer="NIBCO",
         attribute="thread",
         a=ConflictSide(value="NPT", source_path="spec.pdf", authority=1.0),
         b=ConflictSide(value="BSPT", source_path="plate.jpg", authority=0.6),
-    )
+    ))
     resp = client.post(
         "/api/resolve",
         json={"sku": "BV-1001", "attribute": "thread", "human_resolution": "METRIC"},
