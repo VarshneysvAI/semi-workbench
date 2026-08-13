@@ -39,62 +39,59 @@ Industrial manufacturers manage vast product information across websites, catalo
 **SEMI = Self-Evolving Manufacturer Intelligence**
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  INPUT:  Messy Excel (any columns, any count, any domain)      │
-│         ~1000 rows × 6-20 columns, placeholder brands, garbage  │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │
-                           ▼
-        ┌────────────────────────────────────────────┐
-        │  AUTONOMOUS EXTRACTION LOOP (per SKU)      │
-        │  ┌──────────────────────────────────────┐  │
-        │  │ 1. DETERMINISTIC PARSE               │  │  $0, 100% confidence
-        │  │    Regex/number parse from desc      │  │  qty, uom, dimensions
-        │  ├──────────────────────────────────────┤  │
-        │  │ 2. PRECEDENT CHECK (KB)              │  │  Exact-string → cosine 0.85
-        │  │    Ledger lookup: same mfr+specs     │  │  Skip re-scraping
-        │  ├──────────────────────────────────────┤  │
-        │  │ 3. PARALLEL WEB EXTRACTION           │  │  Source authority ranked
-        │  │    🌐 HTML  → Crawl4AI deep crawl    │  │  1.0 spec sheet
-        │  │    📄 PDF   → pdf-reader-mcp (Citra) │  │  0.9 manual
-        │  │    🎬 YT    → agent-reach transcript │  │  0.7 page
-        │  │    🚫 Marketplace blocked            │  │  0.5 video
-        │  ├──────────────────────────────────────┤  │
-        │  │ 4. TWO-PASS NORMALIZATION            │  │  LLM separates extract↔norm
-        │  │    Pass A: label → canonical key     │  │  Synonym dict per domain
-        │  │    Pass B: unit → canonical unit     │  │  Precedence resolution
-        │  ├──────────────────────────────────────┤  │
-        │  │ 5. ADVERSARIAL AUDIT (5 checks)      │  │  Consensus ≥ 0.85 or REJECT
-        │  │    Physical rules, contradictions,   │  │  Split-conformal 95% CI
-        │  │    compositional curves, disproof,   │  │
-        │  │    conformal CI                      │  │
-        │  └──────────────────────────────────────┘  │
-        └──────────────────────────┬─────────────────┘
-                                   │
-                    ┌──────────────┴──────────────┐
-                    ▼                             ▼
-            CONSENSUS ≥ 0.85              CONSENSUS < 0.85
-                    │                             │
-                    ▼                             ▼
-         ┌─────────────────────┐       ┌─────────────────────┐
-         │ ASSEMBLE 252-COL    │       │ HUMAN GATE 2        │
-         │ ROW:                │       │ Shows: attribute,   │
-         │ • 47 attr triplets  │       │ value, source_url,  │
-         │ • 5 descriptions    │       │ evidence, WHY low,  │
-         │ • taxonomy, images  │       │ WHERE found         │
-         │ • MFR URL + 5 refs  │       │ Human corrects/     │
-         │ • provenance chain  │       │ approves → ledger   │
-         └─────────────────────┘       └─────────────────────┘
-                    │                             │
-                    └──────────────┬──────────────┘
-                                   ▼
-                    ┌─────────────────────────────┐
-                    │ LEDGER / FLYWHEEL           │
-                    │ Source-level truth +        │
-                    │ Canonical truth +           │
-                    │ Identity resolution +       │
-                    │ changed_outcome counter     │
-                    └─────────────────────────────┘
+ ┌─────────────────────────────────────────────────────────────────┐
+ │  INPUT:  Messy Excel (any columns, any count, any domain)      │
+ │         ~1000 rows × 6-20 columns, placeholder brands, garbage  │
+ └──────────────────────────┬──────────────────────────────────────┘
+                            │
+                            ▼
+         ┌────────────────────────────────────────────┐
+         │  AUTONOMOUS EXTRACTION LOOP (per SKU)      │
+         │  ┌──────────────────────────────────────┐  │
+         │  │ 1. PRECEDENT CHECK (KB)              │  │  Fuzzy match → cosine ≥ 0.85
+         │  │    Ledger lookup: same mfr+specs     │  │  Skip re-scraping
+         │  ├──────────────────────────────────────┤  │
+         │  │ 2. PARALLEL WEB EXTRACTION           │  │  Source authority ranked
+         │  │    🌐 HTML  → Crawl4AI deep crawl    │  │  1.0 spec sheet
+         │  │    📄 PDF   → pdf-reader-mcp (Citra) │  │  0.9 manual
+         │  │    🎬 YT    → agent-reach transcript │  │  0.7 page
+         │  │    🚫 Marketplace blocked            │  │  0.5 video
+         │  ├──────────────────────────────────────┤  │
+         │  │ 3. TWO-PASS NORMALIZATION            │  │  LLM separates extract↔norm
+         │  │    Pass A: label → canonical key     │  │  Synonym dict per domain
+         │  │    Pass B: unit → canonical unit     │  │  Precedence resolution
+         │  ├──────────────────────────────────────┤  │
+         │  │ 4. ADVERSARIAL AUDIT (5 checks)      │  │  Consensus ≥ 0.85 or REJECT
+         │  │    Physical rules, contradictions,   │  │  Split-conformal 95% CI
+         │  │    compositional curves, disproof,   │  │
+         │  │    conformal CI                      │  │
+         │  └──────────────────────────────────────┘  │
+         └──────────────────────────┬─────────────────┘
+                                    │
+                     ┌──────────────┴──────────────┐
+                     ▼                             ▼
+             CONSENSUS ≥ 0.85              CONSENSUS < 0.85
+                     │                             │
+                     ▼                             ▼
+          ┌─────────────────────┐       ┌─────────────────────┐
+          │ ASSEMBLE 252-COL    │       │ HUMAN GATE 2        │
+          │ ROW:                │       │ Shows: attribute,   │
+          │ • 47 attr triplets  │       │ value, source_url,  │
+          │ • 5 descriptions    │       │ evidence, WHY low,  │
+          │ • taxonomy, images  │       │ WHERE found         │
+          │ • MFR URL + 5 refs  │       │ Human corrects/     │
+          │ • provenance chain  │       │ approves → ledger   │
+          └─────────────────────┘       └─────────────────────┘
+                     │                             │
+                     └──────────────┴──────────────┘
+                                    ▼
+                     ┌─────────────────────────────┐
+                     │ LEDGER / FLYWHEEL           │
+                     │ Source-level truth +        │
+                     │ Canonical truth +           │
+                     │ Identity resolution +       │
+                     │ changed_outcome counter     │
+                     └─────────────────────────────┘
 ```
 
 ---
@@ -112,22 +109,21 @@ flowchart TD
     C -- no --> D[Per-SKU Autonomous Loop]
     
     subgraph LOOP [Per-SKU Extraction Loop]
-        D1[Deterministic Parse<br/>qty, uom, dims from desc]
-        D2[Precedent KB Check<br/>exact-string → cosine 0.85]
-        D3[Parallel Web Extraction]
-        D4[Two-Pass Normalization<br/>label→key, unit→canonical]
-        D5[Adversarial Audit<br/>5 checks + conformal CI]
-        D6{Gate 2:<br/>consensus ≥ 0.85?}
-        D7[Assemble 252-Col Row]
-        D8[Human Review<br/>low confidence items]
+        D1[Precedent KB Check<br/>fuzzy match → cosine ≥ 0.85]
+        D2[Parallel Web Extraction<br/>HTML + PDF + YouTube]
+        D3[Two-Pass Normalization<br/>label→key, unit→canonical]
+        D4[Adversarial Audit<br/>5 checks + conformal CI]
+        D5{Gate 2:<br/>consensus ≥ 0.85?}
+        D6[Assemble 252-Col Row]
+        D7[Human Review<br/>low confidence items]
     end
     
-    D --> D1 --> D2 --> D3 --> D4 --> D5 --> D6
-    D6 -- pass --> D7
-    D6 -- fail --> D8
-    D8 --> D7
-    D7 --> L[Ledger / Flywheel<br/>source_truth + canonical_truth<br/>identity_resolution]
-    L --> D2
+    D --> D1 --> D2 --> D3 --> D4 --> D5
+    D5 -- pass --> D6
+    D5 -- fail --> D7
+    D7 --> D6
+    D6 --> L[Ledger / Flywheel<br/>source_truth + canonical_truth<br/>identity_resolution]
+    L --> D1
 ```
 
 ### Extraction Sources — Nothing Left Behind
@@ -154,7 +150,7 @@ Output: SchemaPlan
   • domain: "power_tool_accessories"
   • product_kind: "sanding_belts"
   • column_roles: {sku, description, manufacturer, brand_candidate, ignore}
-  • attribute_blueprint: [{name: "grit", type: "enum", source_hint: "desc regex"},
+  • attribute_blueprint: [{name: "grit", type: "enum", source_hint: "description"},
                           {name: "width", type: "quantity_uom", uom_candidates: ["in", "mm"]},
                           ...]
   • needs_human: true/false
@@ -162,16 +158,11 @@ Output: SchemaPlan
 ```
 **Gate 1**: If `needs_human` → pause, show ambiguous columns to human → human answers → re-run.
 
-### Phase 1: Deterministic Parse (Per SKU, $0)
-- Regex patterns for: quantities (`6pc`, `pack of 10`), dimensions (`1/2"x18"`, `12.7mm`), voltages (`120V`), simple enums
-- Output: `CitedValue` objects with `confidence=1.0`, `extractor="deterministic"`
-
-### Phase 2: Precedent Check (KB Hit)
-- Exact-string match on `(manufacturer, normalized_specs)` → if hit, reuse cached `CitedValue`
-- Later: cosine ≥ 0.85 with BGE-M3 embeddings for fuzzy match
+### Phase 1: Precedent Check (KB Hit)
+- Fuzzy match on `(manufacturer, normalized_specs)` → cosine ≥ 0.85 → if hit, reuse cached `CitedValue`
 - Output: `CitedValue` with `extractor="kb_hit"`
 
-### Phase 3: Parallel Web Extraction (KB Miss)
+### Phase 2: Parallel Web Extraction (KB Miss)
 **All three fire simultaneously:**
 
 | Extractor | Input | Output |
@@ -182,7 +173,7 @@ Output: SchemaPlan
 
 Each returns: `[{attribute, value, unit, confidence, source_url, evidence_snippet, extractor}]`
 
-### Phase 4: Two-Pass Normalization (The Key Innovation)
+### Phase 3: Two-Pass Normalization (The Key Innovation)
 **Pass A — Label → Canonical Key**
 ```
 Input: [{"label": "Overall Width", "value": "23.5", "unit": "in"},
@@ -211,10 +202,10 @@ LLM Prompt: "Convert all values to canonical storage unit (width→in, weight→
              Output: [{canonical_key, canonical_value, canonical_unit, confidence, source_url}]"
 ```
 
-### Phase 5: Adversarial Audit (5 Checks + Conformal CI)
+### Phase 4: Adversarial Audit (5 Checks + Conformal CI)
 | Check | Method | Output |
 |-------|--------|--------|
-| Physical Rules | Deterministic rules (width>0, PVC→pressure≤150psi) | pass/fail + details |
+| Physical Rules | LLM-validated rules (width>0, PVC→pressure≤150psi) | pass/fail + details |
 | Cross-Source Contradiction | Compare normalized values across sources | pass/fail + conflicting sources |
 | Compositional Curve | Physics-based curve fit (e.g., belt tension vs width) | pass/fail + deviation |
 | Disproof Search | Active query: "find evidence this value is wrong" | pass/fail + disproof URL |
@@ -222,12 +213,12 @@ LLM Prompt: "Convert all values to canonical storage unit (width→in, weight→
 
 **Consensus Score** = weighted aggregate → `decision: "pass" | "insufficient_evidence"`
 
-### Phase 6: Gate 2 — Human Review
+### Phase 5: Gate 2 — Human Review
 If `consensus < 0.85` OR any attribute `confidence < threshold`:
 - Show human: attribute, value, source_url, evidence snippet, **WHY score low**, **WHERE found**
 - Human corrects or approves → ledger row with `changed_outcome=true`
 
-### Phase 7: Assemble 252-Column Delivery Row
+### Phase 6: Assemble 252-Column Delivery Row
 Maps canonical attributes → **exact Unilog format**:
 - 47 `ATTRIBUTE_LABEL/VALUE/UOM` triplets (dynamic — whatever we found)
 - 5 descriptions: `INVOICE_DESC` (≤40 UPPER), `MOBILE_DESC` (60-80 Title), `SHORT_DESC`, `LONG_DESC1`, `MARKETING_DESCRIPTION`
@@ -235,7 +226,7 @@ Maps canonical attributes → **exact Unilog format**:
 - `MFR_URL` = highest-authority source; `Ref URL 1-5` = next best
 - Images (5), SDS, manuals, spec sheets, drawings, videos, Country Of Origin
 
-### Phase 8: Ledger / Flywheel (Self-Evolving)
+### Phase 7: Ledger / Flywheel (Self-Evolving)
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ SOURCE-LEVEL TRUTH                                          │
