@@ -23,6 +23,7 @@ from pydantic import BaseModel
 
 from backend.ingest import excel_input
 from backend.llm import gemma
+from backend.llm import nvidia
 from backend.schemas.state_graph import Conflict, ExtractedCandidate, LedgerRow, Source, StateGraph
 from backend.schema_inference.infer import infer_from_workbook, is_meaningful
 from backend.discover.search import build_search_queries, rank_candidates, search_web
@@ -354,42 +355,66 @@ def discover_sources(sku: str, top_k: int = 5, fetch: bool = True, extract: bool
 
     extracted: list[dict] = []
     if extract:
-        targets = new_sources if new_sources else list(graph.sources)[:top_k]
-        for src in targets:
-            doc = fetch_content(src.source_url, kind=src.type) if fetch else None
-            if not doc or not doc.ok or not doc.text.strip():
-                continue
-            context = doc.text[:8000]
-            if not gemma.is_configured():
-                break
-                
-            known_attrs = {
-                ec.attribute: ec.value 
-                for ec in graph.extracted_candidates 
-                if ec.extractor == "input"
-            }
-                
-            try:
-                fields = gemma.extract_all_fields(graph.manufacturer, graph.sku, context, known_attributes=known_attrs)
-            except Exception as exc:
-                logger.warning("gemma extract_all_fields on %s failed: %s", src.path, exc)
-                continue
-                
-            for fx in fields:
-                if not fx.value or fx.confidence < 0.4:
+        has_gemma = gemma.is_configured()
+        has_nvidia = nvidia.is_configured()
+        if not has_gemma and not has_nvidia:
+            logger.warning("No LLM configured (neither Gemma nor NVIDIA NIM) — skipping extraction")
+        else:
+            targets = new_sources if new_sources else list(graph.sources)[:top_k]
+            for src in targets:
+                doc = fetch_content(src.source_url, kind=src.type) if fetch else None
+                if not doc or not doc.ok or not doc.text.strip():
                     continue
-                if any(ec.attribute.lower() == fx.attribute.lower() and ec.source_path == src.path
-                       for ec in graph.extracted_candidates):
-                    continue
-                graph.extracted_candidates.append(ExtractedCandidate(
-                    attribute=fx.attribute, value=fx.value, source_path=src.path,
-                    page=None, raw_extract=fx.evidence_snippet,
-                    extractor="llm", confidence=fx.confidence,
-                ))
-                extracted.append({"attribute": fx.attribute, "value": fx.value,
-                                  "unit": fx.unit, "confidence": fx.confidence,
-                                  "source_url": src.source_url,
-                                  "fetched_via": doc.fetched_via})
+                context = doc.text[:8000]
+
+                known_attrs = {
+                    ec.attribute: ec.value
+                    for ec in graph.extracted_candidates
+                    if ec.extractor == "input"
+                }
+
+                # Dual LLM chain: Gemma (primary) → NVIDIA NIM (fallback)
+                fields = []
+                extractor_used = "llm"
+                if has_gemma:
+                    try:
+                        fields = gemma.extract_all_fields(
+                            graph.manufacturer, graph.sku, context, known_attributes=known_attrs)
+                        extractor_used = "gemma"
+                    except Exception as exc:
+                        logger.warning("Gemma extract on %s failed: %s — trying NVIDIA", src.path, exc)
+                        fields = []
+
+                if not fields and has_nvidia:
+                    try:
+                        nv_fields = nvidia.extract_all_fields(
+                            graph.manufacturer, graph.sku, context, known_attributes=known_attrs)
+                        # Adapt NVIDIA results to the same interface
+                        for nf in nv_fields:
+                            fields.append(type('F', (), {
+                                'attribute': nf.attribute, 'value': nf.value,
+                                'unit': nf.unit, 'evidence_snippet': nf.evidence_snippet,
+                                'confidence': nf.confidence})())
+                        extractor_used = "nvidia_nim"
+                    except Exception as exc:
+                        logger.warning("NVIDIA NIM extract on %s failed: %s", src.path, exc)
+
+                for fx in fields:
+                    if not fx.value or fx.confidence < 0.4:
+                        continue
+                    if any(ec.attribute.lower() == fx.attribute.lower() and ec.source_path == src.path
+                           for ec in graph.extracted_candidates):
+                        continue
+                    graph.extracted_candidates.append(ExtractedCandidate(
+                        attribute=fx.attribute, value=fx.value, source_path=src.path,
+                        page=None, raw_extract=fx.evidence_snippet,
+                        extractor=extractor_used, confidence=fx.confidence,
+                    ))
+                    extracted.append({"attribute": fx.attribute, "value": fx.value,
+                                      "unit": fx.unit, "confidence": fx.confidence,
+                                      "source_url": src.source_url,
+                                      "fetched_via": doc.fetched_via,
+                                      "extractor": extractor_used})
 
     store.set_graph(graph)
     report = run_audit(graph, calibration=build_calibration(

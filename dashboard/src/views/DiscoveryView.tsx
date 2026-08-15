@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useSemi } from '../engine/SemiContext'
 import { Badge, SectionTitle, StatusDot } from '../components/ui'
 import { LiveDiscovery } from '../components/live'
-import { MANUFACTURERS } from '../data/seed'
+import type { Sku } from '../data/seed'
 
 const AUTHORITY_BARS = [
   { kind: 'spec', label: 'spec', auth: '1.00' },
@@ -22,6 +22,12 @@ export default function DiscoveryView() {
     () => engine.state.events.filter((e) => e.origin === 'validator').slice(0, 20),
     [engine.state.events],
   )
+  const mfrList = useMemo(() => {
+    const set = new Set<string>()
+    engine.state.rows.forEach((r: Sku) => set.add(r.mfr))
+    return Array.from(set).sort()
+  }, [engine.state.rows])
+
   void AUTHORITY_BARS
 
   return (
@@ -41,8 +47,8 @@ export default function DiscoveryView() {
         <div className="panel p-4">
           <SectionTitle right={null}>Source funnel by manufacturer</SectionTitle>
           <div className="space-y-3">
-            {MANUFACTURERS.map((m) => {
-              const rows = engine.state.rows.filter((r) => r.mfr === m)
+            {mfrList.map((m) => {
+              const rows = engine.state.rows.filter((r: Sku) => r.mfr === m)
               const kinds = rows.reduce(
                 (acc, r) => {
                   r.sources.forEach((s) => (acc[s.kind] = (acc[s.kind] ?? 0) + 1))

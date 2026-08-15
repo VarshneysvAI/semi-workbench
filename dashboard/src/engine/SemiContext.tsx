@@ -6,8 +6,20 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { type Speed } from './engine'
-import { COL_KEYS, type Sku, type Stage } from '../data/seed'
+export type Speed = 0.5 | 1 | 2 | 4 | 8
+import { type Sku, type Stage } from '../data/seed'
+
+export interface EngineState {
+  rows: Sku[]
+  logs: any[]
+  events: any[]
+  ledger: any[]
+  changedOutcomes: number
+  bytes: number
+  tickCount: number
+  idle: boolean
+  retrains: number
+}
 
 export interface Summary {
   rowsTotal: number
@@ -68,7 +80,7 @@ function summarize(rows: Sku[]): Summary {
     rowsRefused: stageCounts.refused ?? 0,
     stageCounts,
     cellsWritten,
-    cellsTotal: rows.length * COL_KEYS.length,
+    cellsTotal: rows.reduce((acc, r) => acc + Object.keys(r.cells).length, 0),
     declinedCells,
     donePct: rows.length ? ((stageCounts.done ?? 0) / rows.length) * 100 : 0,
   }
@@ -79,7 +91,7 @@ export function SemiProvider({ children }: { children: ReactNode }) {
   const [speed, setSpeedLocal] = useState<Speed>(1)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const live = 'live'
-  const [backendState, setBackendState] = useState<any>({ 
+  const [backendState, setBackendState] = useState<EngineState>({ 
     rows: [], logs: [], events: [], ledger: [], changedOutcomes: 0, bytes: 0, tickCount: 0, idle: true, retrains: 0 
   })
   const [isProcessing, setIsProcessing] = useState(false)
@@ -105,7 +117,7 @@ export function SemiProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!running || isProcessing || backendState.rows.length === 0) return
 
-    const nextQueued = backendState.rows.find((r) => r.stage === 'queued')
+    const nextQueued = backendState.rows.find((r: Sku) => r.stage === 'queued')
     if (nextQueued) {
       setIsProcessing(true)
       fetch(`http://127.0.0.1:8000/api/discover/${nextQueued.id.split('-').slice(1).join('-')}`, {
@@ -123,7 +135,7 @@ export function SemiProvider({ children }: { children: ReactNode }) {
       setPaused: () => {},
       setSpeed: () => {},
       resolve: async (skuId: string, choice: 'A' | 'B', note: string) => {
-        const row = backendState.rows.find((r) => r.id === skuId)
+        const row = backendState.rows.find((r: Sku) => r.id === skuId)
         if (!row || !row.conflict) return
         await fetch('http://127.0.0.1:8000/api/resolve', {
           method: 'POST',

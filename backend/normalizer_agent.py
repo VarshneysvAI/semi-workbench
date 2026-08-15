@@ -4,8 +4,7 @@ from typing import Dict, List
 from backend.contracts import (
     NormalizeInput, NormalizeOutput, CanonicalAttribute, RawExtraction, SchemaPlan, AgentError
 )
-from backend.llm.gemma import classify_json
-from google.genai import types
+from backend.llm.gemma import classify_json, is_configured as gemma_configured
 
 logger = logging.getLogger(__name__)
 
@@ -84,6 +83,17 @@ def map_labels_to_keys(extractions: List[RawExtraction], schema: SchemaPlan) -> 
         return {}
         
     target_keys = [attr.name for attr in schema.attributes]
+    
+    # If LLM not configured, use identity mapping (raw_label → raw_label if it matches)
+    if not gemma_configured():
+        logger.info("LLM not configured — using identity label mapping")
+        return {ext.raw_label: ext.raw_label for ext in extractions if ext.raw_label in target_keys}
+    
+    try:
+        from google.genai import types
+    except ImportError:
+        logger.warning("google-genai not installed — using identity label mapping")
+        return {ext.raw_label: ext.raw_label for ext in extractions if ext.raw_label in target_keys}
     
     mapping_schema = types.Schema(
         type="OBJECT",

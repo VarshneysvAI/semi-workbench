@@ -3,7 +3,7 @@ import { Search } from 'lucide-react'
 import { useSemi } from '../engine/SemiContext'
 import Inspector from '../components/Inspector'
 import { Badge, ProgressBar } from '../components/ui'
-import { COLUMNS, COL_KEYS, STAGE_LABELS, MANUFACTURERS, type Sku, type Stage } from '../data/seed'
+import { STAGE_LABELS, type Sku, type Stage } from '../data/seed'
 
 type StageFilter = 'all' | Stage
 
@@ -15,7 +15,7 @@ export default function SheetView() {
 
   const rows = useMemo(() => {
     const term = q.trim().toLowerCase()
-    return engine.state.rows.filter((r) => {
+    return engine.state.rows.filter((r: Sku) => {
       if (mfr !== 'all' && r.mfr !== mfr) return false
       if (stageFilter !== 'all' && r.stage !== stageFilter) return false
       if (term && !r.pn.toLowerCase().includes(term) && !r.id.toLowerCase().includes(term)) return false
@@ -23,7 +23,21 @@ export default function SheetView() {
     })
   }, [engine.state.rows, q, mfr, stageFilter])
 
-  const active = engine.state.rows.find((r) => ['discover', 'extract', 'audit'].includes(r.stage))
+  const mfrList = useMemo(() => {
+    const set = new Set<string>()
+    engine.state.rows.forEach((r: Sku) => set.add(r.mfr))
+    return Array.from(set).sort()
+  }, [engine.state.rows])
+
+  const colKeys = useMemo(() => {
+    const set = new Set<string>()
+    engine.state.rows.forEach((r: Sku) => {
+      Object.keys(r.cells).forEach(k => set.add(k))
+    })
+    return Array.from(set)
+  }, [engine.state.rows])
+
+  const active = engine.state.rows.find((r: Sku) => ['discover', 'extract', 'audit'].includes(r.stage))
 
   return (
     <div className="flex h-full min-h-0">
@@ -52,7 +66,7 @@ export default function SheetView() {
             className="mono focus-ring rounded-md border border-white/[0.12] bg-white/[0.04] px-2 py-1.5 text-[12px] text-slate-200"
           >
             <option value="all">all manufacturers</option>
-            {MANUFACTURERS.map((m) => (
+            {mfrList.map((m) => (
               <option key={m} value={m}>{m}</option>
             ))}
           </select>
@@ -75,9 +89,9 @@ export default function SheetView() {
         </div>
 
         <div className="min-h-0 flex-1 overflow-auto overscroll-contain">
-          <div className="grid min-w-[1300px]" style={{ gridTemplateColumns: `44px 118px 92px repeat(${COLUMNS.length}, minmax(88px, 1fr)) 120px` }}>
-            <HeaderRow />
-            {rows.map((r, i) => (
+          <div className="grid min-w-[1300px]" style={{ gridTemplateColumns: `44px 118px 92px repeat(${colKeys.length}, minmax(88px, 1fr)) 120px` }}>
+            <HeaderRow colKeys={colKeys} />
+            {rows.map((r: Sku, i: number) => (
               <RowMemo
                 key={r.id}
                 sku={r}
@@ -85,6 +99,7 @@ export default function SheetView() {
                 active={active?.id === r.id}
                 selected={selectedId === r.id}
                 onSelect={select}
+                colKeys={colKeys}
               />
             ))}
           </div>
@@ -133,7 +148,7 @@ const RowMemo = memo(
     prev.selected === next.selected,
 )
 
-function HeaderRow() {
+function HeaderRow({ colKeys }: { colKeys: string[] }) {
   return (
     <>
       <div className="sticky top-0 z-10 border-b border-white/[0.09] bg-[#0a0a0d]/95 px-2 py-1.5 text-right font-mono text-[10px] text-slate-500">
@@ -145,12 +160,12 @@ function HeaderRow() {
       <div className="sticky top-0 z-10 border-b border-white/[0.09] bg-[#0a0a0d]/95 px-2 py-1.5 font-mono text-[10.5px] font-medium text-slate-300">
         {colLetter(1)} · MFR
       </div>
-      {COLUMNS.map((c, i) => (
-        <div key={c.key} className="sticky top-0 z-10 border-b border-white/[0.09] bg-[#0a0a0d]/95 px-2 py-1.5">
+      {colKeys.map((k, i) => (
+        <div key={k} className="sticky top-0 z-10 border-b border-white/[0.09] bg-[#0a0a0d]/95 px-2 py-1.5">
           <div className="font-mono text-[10.5px] font-semibold overflow-hidden whitespace-nowrap text-slate-200">
-            {colLetter(i + 2)} · {c.label}
+            {colLetter(i + 2)} · {k}
           </div>
-          <div className="font-mono text-[8.5px] text-slate-500">{c.unit || '—'}</div>
+          <div className="font-mono text-[8.5px] text-slate-500">—</div>
         </div>
       ))}
       <div className="sticky top-0 z-10 border-b border-white/[0.09] bg-[#0a0a0d]/95 px-2 py-1.5 font-mono text-[10.5px] font-medium text-slate-300">
@@ -170,12 +185,14 @@ function Row({
   active,
   selected,
   onSelect,
+  colKeys,
 }: {
   sku: Sku
   index: number
   active: boolean
   selected: boolean
   onSelect: (id: string) => void
+  colKeys: string[]
 }) {
   const bg = selected
     ? 'bg-accent-05'
@@ -194,7 +211,7 @@ function Row({
       <div className="px-2 text-right font-mono text-[10px] text-slate-500">{index + 1}</div>
       <SkuCell sku={sku} />
       <div className="mono truncate px-2 text-[11.5px] overflow-hidden whitespace-nowrap text-slate-300">{sku.mfr}</div>
-      {COL_KEYS.map((k) => (
+      {colKeys.map((k) => (
         <ValueCell key={k} sku={sku} col={k} />
       ))}
       <div className="px-2">
@@ -215,6 +232,14 @@ function SkuCell({ sku }: { sku: Sku }) {
 
 function ValueCell({ sku, col }: { sku: Sku; col: string }) {
   const cell = sku.cells[col]
+
+  if (!cell) {
+    return (
+      <div className={`flex h-full items-center justify-end gap-1.5 border-r border-white/[0.05] px-2 py-1 font-mono`}>
+        <span className="text-[11.5px] text-slate-600">—</span>
+      </div>
+    )
+  }
 
   return (
     <div className={`flex h-full items-center justify-end gap-1.5 border-r border-white/[0.05] px-2 py-1 font-mono`}>
