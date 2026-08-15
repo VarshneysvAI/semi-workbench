@@ -10,6 +10,12 @@ export default {
           3: '#0b0e15',
         },
         line: 'rgba(255,255,255,0.08)',
+        accent: {
+          DEFAULT: '#34d399',
+          strong: '#10b981',
+          10: 'rgba(52, 211, 153, 0.1)',
+          '05': 'rgba(52, 211, 153, 0.05)',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],

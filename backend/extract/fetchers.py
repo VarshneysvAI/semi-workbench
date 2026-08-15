@@ -21,9 +21,9 @@ import httpx
 from bs4 import BeautifulSoup
 
 from backend.discover.agent_reach_agent import AgentReachAgent
-from backend.env import ensure_env
+from dotenv import load_dotenv
 
-ensure_env()
+load_dotenv()
 logger = logging.getLogger(__name__)
 
 _AGENT = AgentReachAgent()
@@ -55,12 +55,6 @@ def classify_kind(url: str) -> str:
 def fetch_content(url: str, *, kind: str | None = None, timeout: float = 30.0) -> FetchedDoc:
     k = kind or classify_kind(url)
 
-    if os.environ.get("FIRECRAWL_API_KEY"):
-        d = _firecrawl(url, k, timeout)
-        if d.ok and d.text.strip():
-            return d
-        logger.info("firecrawl miss for %s (%s) -> falling back: %s", url, k, d.error or "empty")
-
     if k == "video":
         d = _yt_subtitles(url, timeout)
         if d.ok and d.text.strip():
@@ -69,14 +63,24 @@ def fetch_content(url: str, *, kind: str | None = None, timeout: float = 30.0) -
         if d.ok and d.text.strip():
             return d
 
-    d = _jina_reader(url, timeout)
-    if d.ok and d.text.strip():
-        return d
+    d_jina = _jina_reader(url, timeout)
+    if d_jina.ok and d_jina.text.strip():
+        return d_jina
 
     if k == "web":
-        d = _httpx_html(url, timeout)
-        if d.ok and d.text.strip():
-            return d
+        d_ar = _agentreach_web(url, timeout)
+        if d_ar.ok and d_ar.text.strip():
+            return d_ar
+        
+        d_httpx = _httpx_html(url, timeout)
+        if d_httpx.ok and d_httpx.text.strip():
+            return d_httpx
+
+    if os.environ.get("FIRECRAWL_API_KEY"):
+        logger.info("free methods failed for %s (%s) -> falling back to firecrawl", url, k)
+        d_firecrawl = _firecrawl(url, k, timeout)
+        if d_firecrawl.ok and d_firecrawl.text.strip():
+            return d_firecrawl
 
     return FetchedDoc(url=url, kind=k, fetched_via="none", ok=False,
                       error="no backend returned content")
@@ -189,3 +193,11 @@ def _agentreach_transcript(url: str, timeout: float) -> FetchedDoc:
         return FetchedDoc(url=url, kind="video", fetched_via="agent-reach", ok=False,
                           error="agent-reach transcribe unavailable/empty")
     return FetchedDoc(url=url, kind="video", text=text, fetched_via="agent-reach", ok=True)
+
+
+def _agentreach_web(url: str, timeout: float) -> FetchedDoc:
+    text = _AGENT.extract_web(url, timeout=timeout + 30)
+    if not text:
+        return FetchedDoc(url=url, kind="web", fetched_via="agent-reach", ok=False,
+                          error="agent-reach extract unavailable/empty")
+    return FetchedDoc(url=url, kind="web", text=text, fetched_via="agent-reach", ok=True)

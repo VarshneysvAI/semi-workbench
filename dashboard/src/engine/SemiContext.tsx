@@ -3,11 +3,10 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactNode,
 } from 'react'
-import { INTERVAL_MS, SemiEngine, type Speed } from './engine'
+import { type Speed } from './engine'
 import { COL_KEYS, type Sku, type Stage } from '../data/seed'
 
 export interface Summary {
@@ -25,7 +24,7 @@ export interface Summary {
 }
 
 interface SemiApi {
-  engine: SemiEngine
+  engine: any
   summary: Summary
   running: boolean
   speed: Speed
@@ -76,47 +75,74 @@ function summarize(rows: Sku[]): Summary {
 }
 
 export function SemiProvider({ children }: { children: ReactNode }) {
-  const engineRef = useRef<SemiEngine | null>(null)
-  if (!engineRef.current) engineRef.current = new SemiEngine()
-  const engine = engineRef.current
-
-  const [version, setVersion] = useState(0)
-  const bump = () => setVersion((v) => v + 1)
-
   const [running, setRunningLocal] = useState(true)
   const [speed, setSpeedLocal] = useState<Speed>(1)
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [live, setLive] = useState<'probe' | 'live' | 'sim'>('probe')
+  const live = 'live'
+  const [backendState, setBackendState] = useState<any>({ 
+    rows: [], logs: [], events: [], ledger: [], changedOutcomes: 0, bytes: 0, tickCount: 0, idle: true, retrains: 0 
+  })
+  const [isProcessing, setIsProcessing] = useState(false)
 
+  // 1. Fetch UI State continuously
   useEffect(() => {
     let cancelled = false
-    fetch('/api/health')
-      .then((r) => (r.ok ? r.json() : null))
-      .then((j) => {
-        if (!cancelled) setLive(j?.status === 'ok' ? 'live' : 'sim')
-      })
-      .catch(() => {
-        if (!cancelled) setLive('sim')
-      })
+    const iv = setInterval(() => {
+      fetch('http://127.0.0.1:8000/api/ui_state')
+        .then((r) => r.json())
+        .then((data) => {
+          if (!cancelled) setBackendState(data)
+        })
+        .catch(() => {})
+    }, 1000)
     return () => {
       cancelled = true
+      clearInterval(iv)
     }
   }, [])
 
+  // 2. Autonomous Processing Loop: Process one queued SKU at a time
   useEffect(() => {
-    if (!running) return
-    const iv = setInterval(() => {
-      engine.tick()
-      bump()
-    }, INTERVAL_MS[speed])
-    return () => clearInterval(iv)
-  }, [engine, running, speed])
+    if (!running || isProcessing || backendState.rows.length === 0) return
+
+    const nextQueued = backendState.rows.find((r) => r.stage === 'queued')
+    if (nextQueued) {
+      setIsProcessing(true)
+      fetch(`http://127.0.0.1:8000/api/discover/${nextQueued.id.split('-').slice(1).join('-')}`, {
+        method: 'POST'
+      })
+        .finally(() => {
+          setIsProcessing(false)
+        })
+    }
+  }, [backendState.rows, running, isProcessing])
+
+  const engine = useMemo<any>(() => {
+    return {
+      state: backendState,
+      setPaused: () => {},
+      setSpeed: () => {},
+      resolve: async (skuId: string, choice: 'A' | 'B', note: string) => {
+        const row = backendState.rows.find((r) => r.id === skuId)
+        if (!row || !row.conflict) return
+        await fetch('http://127.0.0.1:8000/api/resolve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sku: row.pn,
+            attribute: row.conflict.col,
+            human_resolution: choice === 'A' ? row.conflict.a.value : row.conflict.b.value,
+            reason_tags: [note]
+          })
+        })
+      },
+      refuse: () => {},
+      reset: () => {}
+    }
+  }, [backendState])
 
   const api = useMemo<SemiApi>(() => {
-    const setRunning = (v: boolean) => {
-      engine.setPaused(!v)
-      setRunningLocal(v)
-    }
+    const setRunning = (v: boolean) => setRunningLocal(v)
     return {
       engine,
       summary: summarize(engine.state.rows),
@@ -124,28 +150,15 @@ export function SemiProvider({ children }: { children: ReactNode }) {
       speed,
       live,
       setRunning,
-      setSpeedBy: (s) => {
-        engine.setSpeed(s)
-        setSpeedLocal(s)
-      },
-      resolveRow: (skuId, choice, note) => {
-        engine.resolve(skuId, choice, note)
-        bump()
-      },
-      refuseRow: (skuId) => {
-        engine.refuse(skuId)
-        bump()
-      },
-      resetEngine: () => {
-        engine.reset()
-        setSelectedId(null)
-        bump()
-      },
+      setSpeedBy: (s) => setSpeedLocal(s),
+      resolveRow: (skuId, choice, note) => engine.resolve(skuId, choice, note),
+      refuseRow: () => {},
+      resetEngine: () => { setSelectedId(null) },
       select: (skuId) => setSelectedId(skuId),
       selectedId,
-      selectedSku: selectedId ? (engine.state.rows.find((r) => r.id === selectedId) ?? null) : null,
+      selectedSku: selectedId ? (engine.state.rows.find((r: Sku) => r.id === selectedId) ?? null) : null,
     }
-  }, [engine, running, speed, selectedId, live, version])
+  }, [engine, running, speed, selectedId, live])
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>
 }

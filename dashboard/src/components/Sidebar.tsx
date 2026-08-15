@@ -10,6 +10,9 @@ import {
   BookOpen,
   ChevronsLeft,
   ChevronsRight,
+  Settings,
+  Info,
+  HelpCircle,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -21,6 +24,9 @@ const NAV: Array<{ to: string; label: string; icon: LucideIcon }> = [
   { to: '/conflicts', label: 'Review Queue', icon: GitMerge },
   { to: '/evidence', label: 'Evidence', icon: FileSearch },
   { to: '/ledger', label: 'Ledger', icon: BookOpen },
+  { to: '/settings', label: 'Settings', icon: Settings },
+  { to: '/about', label: 'About Us', icon: Info },
+  { to: '/help', label: 'Help', icon: HelpCircle },
 ]
 
 const listVariants: Variants = {

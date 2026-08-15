@@ -10,6 +10,7 @@ dist/
 *.local
 
 # Data & secrets
+History/
 corpus/
 unilog_sample/
 *.sqlite
@@ -32,3 +33,14 @@ incoming_uploads/
 Thumbs.db
 .idea/
 .vscode/
+
+# Scratch / temp files
+scratch.txt
+get_cols.py
+get_data.py
+test.xlsx
+test_single_row.py
+output.json
+*.db
+*.db-shm
+*.db-wal

@@ -133,9 +133,9 @@ def search_web(query: str, max_results: int = 8) -> list[tuple[str, str]]:
     global _search_backend_used
     for name, backend in (
         ("agent-reach", lambda: _agent_reach_search(query, max_results)),
-        ("firecrawl", lambda: _firecrawl_search(query, max_results)),
-        ("exa", lambda: _exa_search(query, max_results)),
         ("ddgs", lambda: _ddgs_search(query, max_results)),
+        ("exa", lambda: _exa_search(query, max_results)),
+        ("firecrawl", lambda: _firecrawl_search(query, max_results)),
     ):
         hits = backend()
         if hits:

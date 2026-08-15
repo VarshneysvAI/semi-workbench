@@ -75,7 +75,7 @@ export default function SheetView() {
         </div>
 
         <div className="min-h-0 flex-1 overflow-auto overscroll-contain">
-          <div className="grid min-w-[980px]" style={{ gridTemplateColumns: '44px 118px 92px repeat(6, minmax(88px, 1fr)) 120px' }}>
+          <div className="grid min-w-[1300px]" style={{ gridTemplateColumns: `44px 118px 92px repeat(${COLUMNS.length}, minmax(88px, 1fr)) 120px` }}>
             <HeaderRow />
             {rows.map((r, i) => (
               <RowMemo

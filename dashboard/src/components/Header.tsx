@@ -1,19 +1,30 @@
 import { useEffect, useState } from 'react'
-import { Pause, Play, RotateCw, Menu } from 'lucide-react'
+import { Upload, Download, Menu } from 'lucide-react'
 import { useSemi } from '../engine/SemiContext'
 import { StatusDot } from './ui'
-import type { Speed } from '../engine/engine'
-
-const SPEEDS: Speed[] = [0.5, 1, 2, 4, 8]
 
 export default function Header({ onToggleNav }: { onToggleNav: () => void }) {
-  const { engine, summary, running, speed, live, setRunning, setSpeedBy, resetEngine } = useSemi()
+  const { engine, summary, running, live } = useSemi()
   const [now, setNow] = useState(new Date())
 
   useEffect(() => {
     const iv = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(iv)
   }, [])
+
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const fd = new FormData()
+    fd.append('file', file)
+    fetch('http://127.0.0.1:8000/api/ingest', { method: 'POST', body: fd })
+      .then(res => res.json())
+      .then(console.log)
+  }
+
+  const handleExport = () => {
+    window.location.href = 'http://127.0.0.1:8000/api/export_unilog'
+  }
 
   const active =
     engine.state.rows.find((r) => ['discover', 'extract', 'audit'].includes(r.stage)) ?? null
@@ -81,26 +92,14 @@ export default function Header({ onToggleNav }: { onToggleNav: () => void }) {
       </div>
 
       <div className="flex items-center gap-1.5">
-        {SPEEDS.map((s) => (
-          <button
-            key={s}
-            onClick={() => setSpeedBy(s)}
-            className={`mono focus-ring rounded-md border px-2 py-1 text-[11.5px] transition-colors ${
-              speed === s
-                ? 'border-accent bg-accent-10 text-accent-strong'
-                : 'border-white/[0.12] text-slate-500 hover:text-slate-200'
-            }`}
-          >
-            {s}×
-          </button>
-        ))}
-        <button onClick={() => setRunning(!running)} className="btn ml-1">
-          {running ? <Pause size={12} /> : <Play size={12} />}
-          {running ? 'Pause' : 'Run'}
-        </button>
-        <button onClick={resetEngine} className="btn" title="Re-seed the sheet with a fresh drawing">
-          <RotateCw size={12} />
-          Reset
+        <label className="btn cursor-pointer">
+          <Upload size={12} />
+          Upload Catalog
+          <input type="file" accept=".xlsx,.xls,.csv" className="hidden" onChange={handleUpload} />
+        </label>
+        <button onClick={handleExport} className="btn ml-1" title="Download Results">
+          <Download size={12} />
+          Export CSV
         </button>
       </div>
     </header>

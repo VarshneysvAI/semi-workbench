@@ -50,10 +50,13 @@ def parse_input_workbook(path: str | Path, sheet_name: str | int = 0) -> ParseRe
     source = Path(path)
     if not source.exists():
         raise FileNotFoundError(f"Input workbook not found: {source}")
-    if source.suffix.lower() not in (".xlsx", ".xls"):
-        raise ValueError(f"Expected an .xlsx/.xls workbook, got {source.suffix!r}")
+    if source.suffix.lower() not in (".xlsx", ".xls", ".csv"):
+        raise ValueError(f"Expected an .xlsx/.xls/.csv workbook, got {source.suffix!r}")
 
-    frame = pd.read_excel(source, sheet_name=sheet_name, dtype=str)
+    if source.suffix.lower() == ".csv":
+        frame = pd.read_csv(source, dtype=str)
+    else:
+        frame = pd.read_excel(source, sheet_name=sheet_name, dtype=str)
     header_map = _match_columns(list(frame.columns))
     missing = {"manufacturer", "part_number"} - set(header_map)
     if missing:
@@ -115,9 +118,13 @@ def parse_workbook_with_schema(path: str | Path, schema) -> ParseResult:
         raise ValueError("inferred schema is missing manufacturer/part_number columns")
 
     source = Path(path)
-    if source.suffix.lower() not in (".xlsx", ".xls"):
-        raise ValueError(f"Expected an .xlsx/.xls workbook, got {source.suffix!r}")
-    frame = pd.read_excel(source, sheet_name=0, dtype=str)
+    if source.suffix.lower() not in (".xlsx", ".xls", ".csv"):
+        raise ValueError(f"Expected an .xlsx/.xls/.csv workbook, got {source.suffix!r}")
+        
+    if source.suffix.lower() == ".csv":
+        frame = pd.read_csv(source, dtype=str)
+    else:
+        frame = pd.read_excel(source, sheet_name=0, dtype=str)
 
     mfr_col, pn_col = schema.manufacturer_col, schema.part_number_col
     attr_cols = [c for c in schema.attribute_cols if c in frame.columns]

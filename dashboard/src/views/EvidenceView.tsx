@@ -19,7 +19,7 @@ export default function EvidenceView() {
           <div>
             <h1 className="text-[23px] font-semibold tracking-tight text-slate-100">Evidence &amp; provenance</h1>
             <p className="mt-1 text-[13.5px] text-slate-400">
-              every value traces to a source URL · page · quote · confidence
+              Select a row below to inspect its live evidence chain, citations, and bounding boxes.
             </p>
           </div>
 

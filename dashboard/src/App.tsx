@@ -11,6 +11,9 @@ import AuditView from './views/AuditView'
 import ConflictsView from './views/ConflictsView'
 import EvidenceView from './views/EvidenceView'
 import LedgerView from './views/LedgerView'
+import SettingsView from './views/SettingsView'
+import AboutView from './views/AboutView'
+import HelpView from './views/HelpView'
 
 const EASE = [0.23, 1, 0.32, 1] as const
 const MIN_W = 208
@@ -183,6 +186,9 @@ function Shell() {
                   <Route path="/conflicts" element={<ConflictsView />} />
                   <Route path="/evidence" element={<EvidenceView />} />
                   <Route path="/ledger" element={<LedgerView />} />
+                  <Route path="/settings" element={<SettingsView />} />
+                  <Route path="/about" element={<AboutView />} />
+                  <Route path="/help" element={<HelpView />} />
                 </Routes>
               </motion.div>
             </AnimatePresence>

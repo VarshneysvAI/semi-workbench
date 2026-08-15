@@ -110,6 +110,17 @@ class AgentReachAgent:
             logger.warning("agent-reach transcribe failed: %s", exc)
             return ""
 
+    def extract_web(self, url: str, timeout: float = 60.0) -> str:
+        """agent-reach extract <url> -> plain text ('' when unavailable/failed)."""
+        if not self.available():
+            return ""
+        try:
+            proc = self.run("extract", url, timeout=timeout)
+            return (proc.stdout or proc.stderr or "").strip()
+        except Exception as exc:
+            logger.warning("agent-reach extract failed: %s", exc)
+            return ""
+
 
 def _extract_hits(payload, max_results: int) -> list[tuple[str, str]]:
     """Tolerate the shapes agent-reach backends return: lists or result dicts."""

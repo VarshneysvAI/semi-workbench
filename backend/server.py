@@ -18,6 +18,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from backend.ingest import excel_input
@@ -31,15 +32,7 @@ from backend.ledger import (build_calibration, canonical_signature,  # noqa: F40
                             find_precedents, sync_conflicts)
 from backend.sqlite_store import SQLiteStore, init_store
 
-# New enrichment pipeline imports
-from backend.output.schema import DeliveryFormatRow, DELIVERY_FORMAT_COLUMNS
-from backend.output.parser import parse_part_desc, ParsedPartDesc
-from backend.output.taxonomy import classify_part_desc, ClassificationResult
-from backend.output.canonicaliser import canonicalise_manufacturer_brand, CanonicalMatch
-from backend.output.normaliser import LOVNormaliser
-from backend.output.uom import normalize_value_unit, normalize_uom
-from backend.output.description import build_all_descriptions
-from backend.output.quality import check_enrichment_quality, EnrichmentQualityReport
+
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 logger = logging.getLogger("semi.server")
@@ -136,9 +129,11 @@ def health() -> dict:
 @app.post("/api/ingest")
 async def ingest_workbook(file: UploadFile = File(...)) -> IngestResponse:
     """Parse an Unilog input workbook and register per-SKU state graphs."""
-    if not file.filename or not file.filename.lower().endswith((".xlsx", ".xls")):
-        raise HTTPException(status_code=400, detail="Expected an .xlsx/.xls workbook upload")
-    payload = await file.read()
+    if not file.filename or not file.filename.lower().endswith((".xlsx", ".xls", ".csv")):
+        raise HTTPException(status_code=400, detail="Expected an .xlsx/.xls/.csv workbook upload")
+    payload = await file.read(10 * 1024 * 1024 + 1)
+    if len(payload) > 10 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="File too large (max 10MB)")
     if not payload:
         raise HTTPException(status_code=400, detail="Empty file")
 
@@ -199,6 +194,17 @@ def _stage_workbook(filename: str, payload: bytes) -> Path:
     path.write_bytes(payload)
     return path
 
+
+@app.get("/api/export_unilog")
+async def export_unilog_csv():
+    from backend.ingest.unilog_export import generate_unilog_csv
+    import io
+    csv_str = generate_unilog_csv(store)
+    return StreamingResponse(
+        io.StringIO(csv_str),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=Unihack_Delivery_Export.csv"}
+    )
 
 # ---------------------------------------------------------------------------
 # Lookups
@@ -348,32 +354,39 @@ def discover_sources(sku: str, top_k: int = 5, fetch: bool = True, extract: bool
 
     extracted: list[dict] = []
     if extract:
-        from backend.ingest.output_mapper import CANONICAL_ATTRIBUTES
         targets = new_sources if new_sources else list(graph.sources)[:top_k]
         for src in targets:
             doc = fetch_content(src.source_url, kind=src.type) if fetch else None
             if not doc or not doc.ok or not doc.text.strip():
                 continue
             context = doc.text[:8000]
-            for attr in CANONICAL_ATTRIBUTES:
-                if not gemma.is_configured():
-                    break
-                if any(ec.attribute == attr and ec.source_path == src.path
-                       for ec in graph.extracted_candidates):
-                    continue
-                try:
-                    fx = gemma.extract_field(graph.manufacturer, graph.sku, attr, context)
-                except Exception as exc:
-                    logger.warning("gemma extract %s/%s on %s failed: %s", sku, attr, src.path, exc)
-                    continue
+            if not gemma.is_configured():
+                break
+                
+            known_attrs = {
+                ec.attribute: ec.value 
+                for ec in graph.extracted_candidates 
+                if ec.extractor == "input"
+            }
+                
+            try:
+                fields = gemma.extract_all_fields(graph.manufacturer, graph.sku, context, known_attributes=known_attrs)
+            except Exception as exc:
+                logger.warning("gemma extract_all_fields on %s failed: %s", src.path, exc)
+                continue
+                
+            for fx in fields:
                 if not fx.value or fx.confidence < 0.4:
                     continue
+                if any(ec.attribute.lower() == fx.attribute.lower() and ec.source_path == src.path
+                       for ec in graph.extracted_candidates):
+                    continue
                 graph.extracted_candidates.append(ExtractedCandidate(
-                    attribute=attr, value=fx.value, source_path=src.path,
+                    attribute=fx.attribute, value=fx.value, source_path=src.path,
                     page=None, raw_extract=fx.evidence_snippet,
                     extractor="llm", confidence=fx.confidence,
                 ))
-                extracted.append({"attribute": attr, "value": fx.value,
+                extracted.append({"attribute": fx.attribute, "value": fx.value,
                                   "unit": fx.unit, "confidence": fx.confidence,
                                   "source_url": src.source_url,
                                   "fetched_via": doc.fetched_via})
@@ -452,6 +465,105 @@ def get_ledger() -> dict:
     return {"count": len(rows), "rows": rows}
 
 
+@app.get("/api/ui_state")
+def get_ui_state() -> dict:
+    """Map real backend database directly to the frontend simulator's state shape."""
+    graphs = store.get_all_graphs()
+    conflicts = store.get_all_conflicts()
+    ledger_rows = store.get_ledger()
+    
+    rows = []
+    for key, g in graphs.items():
+        c = conflicts.get(key)
+        
+        cells = {}
+        for ec in g.extracted_candidates:
+            cells[ec.attribute] = {
+                "col": ec.attribute,
+                "state": "conflict" if c and c.status == "open" and c.attribute == ec.attribute else "written",
+                "value": ec.value,
+                "display": ec.value,
+                "conf": ec.confidence,
+                "ci": [0, 0]
+            }
+            
+        sources = []
+        for i, s in enumerate(g.sources):
+            sources.append({
+                "key": f"src-{i}",
+                "kind": "spec" if "pdf" in s.path.lower() else "page",
+                "ref": s.path.split("/")[-1] or s.path,
+                "authority": 1.0,
+                "verified": True,
+                "sourceUrl": s.source_url or s.path
+            })
+            
+        stage = "done"
+        if c and c.status == "open":
+            stage = "conflict"
+        elif not g.extracted_candidates:
+            stage = "queued"
+            
+        conflict_data = None
+        if c and c.status == "open":
+            conflict_data = {
+                "col": c.attribute,
+                "a": {
+                    "value": c.a.value, 
+                    "from": c.a.source_url or "Web", 
+                    "authority": c.a.authority, 
+                    "sourceUrl": c.a.source_url or ""
+                },
+                "b": {
+                    "value": c.b.value, 
+                    "from": c.b.source_url or "Web", 
+                    "authority": c.b.authority, 
+                    "sourceUrl": c.b.source_url or ""
+                }
+            }
+            
+        rows.append({
+            "id": f"{g.manufacturer.lower()}-{g.sku.lower()}",
+            "mfr": g.manufacturer,
+            "pn": g.sku,
+            "stage": stage,
+            "discStep": 100,
+            "sourceMax": len(sources),
+            "cells": cells,
+            "sources": sources,
+            "audits": [
+                {"label": "Physical constraints", "state": "pass", "note": "within limits"},
+                {"label": "Cross-source contradiction", "state": "fail" if conflict_data else "pass", "note": "conflict detected" if conflict_data else "agree"}
+            ],
+            "conflict": conflict_data,
+            "resolution": None
+        })
+        
+    mapped_ledger = []
+    for r in ledger_rows:
+        mapped_ledger.append({
+            "at": r.at * 1000,
+            "sig": r.signature,
+            "resolution": r.resolution,
+            "note": r.note,
+            "sku": r.sku,
+            "changedOutcome": r.changed_outcome,
+            "sourceUrl": r.source_url or ""
+        })
+        
+    return {
+        "rows": rows,
+        "logs": [],
+        "events": [],
+        "ledger": mapped_ledger,
+        "changedOutcomes": sum(1 for r in mapped_ledger if r["changedOutcome"]),
+        "bytes": 0,
+        "tickCount": 0,
+        "idle": True,
+        "retrains": 0
+    }
+
+
 @app.get("/api/precedents/{sku}")
 def precedent_lookup(sku: str) -> dict:
     """Ledger signatures matching this SKU's current conflicts (>= 0.85 cosine)."""
@@ -482,257 +594,7 @@ def precedent_lookup(sku: str) -> dict:
     }
 
 
-# ---------------------------------------------------------------------------
-# Enrichment Pipeline — parse -> classify -> extract -> enrich -> normalise -> describe -> evaluate
-# ---------------------------------------------------------------------------
 
-# Module-level singletons for the enrichment pipeline
-_lov_normaliser = LOVNormaliser()
-
-
-def _enrich_single_sku(sku: str, manufacturer: str, part_desc: str,
-                       run_discovery: bool = True,
-                       run_quality_check: bool = True) -> EnrichResponse:
-    """Run the full enrichment pipeline on a single SKU."""
-    key = _single_lookup_key(sku, "enrich")
-    graph = store.get_graph(key[0], key[1])
-    if not graph:
-        raise HTTPException(status_code=404, detail=f"no state graph for {sku}")
-
-    # 1. Parse Part_Desc into structured fields
-    parsed: ParsedPartDesc = parse_part_desc(part_desc or graph.sku)
-
-    # 2. Classify to Unilog classpath
-    classification: ClassificationResult = classify_part_desc(parsed, manufacturer)
-
-    # 3. Canonicalise manufacturer/brand (uses input row's brand fields)
-    # In a real pipeline, these come from the input workbook columns
-    mfr_brand: CanonicalMatch = canonicalise_manufacturer_brand(
-        manufacturer=manufacturer,
-        brand="",  # Would come from input columns E1_Brand, Unilog_Brand, DIB_Brand
-        e1_brand="",
-        unilog_brand="",
-        dib_brand="",
-    )
-
-    # 4. Run discovery to get manufacturer sources (optional, can be slow)
-    extracted_attrs: dict[str, str] = {}
-    if run_discovery:
-        try:
-            # Reuse discover logic but only for attribute extraction
-            queries = build_search_queries(manufacturer, sku)
-            raw_seen: set[str] = set()
-            raw_hits: list[tuple[str, str]] = []
-            for q in queries:
-                for url, title in search_web(q, max_results=5):
-                    if url in raw_seen:
-                        continue
-                    raw_seen.add(url)
-                    raw_hits.append((url, title))
-            candidates = rank_candidates([u for u, _ in raw_hits], [t for _, t in raw_hits])
-            top = candidates[:3]
-            for c in top:
-                if not any(s.source_url == c.url for s in graph.sources):
-                    src = Source(type=c.content_type, path=c.url, source_url=c.url)
-                    graph.sources.append(src)
-            # Extract from top sources
-            if gemma.is_configured():
-                from backend.ingest.output_mapper import CANONICAL_ATTRIBUTES
-                targets = list(graph.sources)[:3]
-                for src in targets:
-                    doc = fetch_content(src.source_url, kind=src.type)
-                    if not doc or not doc.ok or not doc.text.strip():
-                        continue
-                    context = doc.text[:8000]
-                    for attr in CANONICAL_ATTRIBUTES:
-                        try:
-                            fx = gemma.extract_field(manufacturer, sku, attr, context)
-                        except Exception as exc:
-                            logger.warning("gemma extract %s/%s on %s failed: %s", sku, attr, src.path, exc)
-                            continue
-                        if not fx.value or fx.confidence < 0.4:
-                            continue
-                        graph.extracted_candidates.append(ExtractedCandidate(
-                            attribute=attr, value=fx.value, source_path=src.path,
-                                page=None, raw_extract=fx.evidence_snippet,
-                                extractor="llm", confidence=fx.confidence,
-                            ))
-                        extracted_attrs[attr] = fx.value
-        except Exception as exc:
-            logger.warning("Discovery failed for %s: %s", sku, exc)
-
-    # 5. Merge parsed attributes + discovered attributes
-    merged_attrs = {**parsed.to_attributes_dict(), **extracted_attrs}
-
-    # 6. Normalise all attributes to LOV canonical values
-    norm_results = _lov_normaliser.normalise_batch(merged_attrs)
-    canonical_attrs = {attr: res.canonical_value for attr, res in norm_results.items()}
-
-    # 7. Normalise UOM for all values
-    for attr, value in canonical_attrs.items():
-        if value:
-            nv = normalize_value_unit(value)
-            if nv.unit:
-                canonical_attrs[f"{attr}_uom"] = nv.unit
-                canonical_attrs[attr] = nv.value
-
-    # 8. Build DeliveryFormatRow
-    row = DeliveryFormatRow(
-        sku=sku,
-        mfg_part_num=sku,
-        part_desc=part_desc,
-        classpath=classification.classpath,
-        unspSC=classification.unspSC,
-        manufacturer_name=mfr_brand.canonical_name or manufacturer,
-        manufacturer_code=mfr_brand.canonical_code,
-        brand_name=mfr_brand.brand_name,
-        brand_code=mfr_brand.brand_code,
-        **canonical_attrs,
-    )
-
-    # 9. Build all 5 descriptions
-    row = build_all_descriptions(row)
-
-    # 10. Quality check
-    quality_report = None
-    if run_quality_check:
-        report = check_enrichment_quality(row)
-        quality_report = {
-            "overall_confidence": report.overall_confidence,
-            "needs_review": report.needs_review,
-            "findings": [
-                {"attribute": f.attribute, "rule": f.rule, "detail": f.detail,
-                 "severity": f.severity, "suggestion": f.suggestion}
-                for f in report.findings
-            ],
-            "description_compliance": report.description_compliance,
-            "missing_filtering_attrs": report.missing_filtering_attrs,
-        }
-        # Add review flags to row
-        row.needs_review = report.needs_review
-        row.confidence = report.overall_confidence
-        for f in report.findings:
-            if f.severity in ("critical", "warning"):
-                row.review_reasons.append(f"{f.attribute}: {f.rule} - {f.detail}")
-
-    return EnrichResponse(
-        sku=sku,
-        manufacturer=manufacturer,
-        classpath=classification.classpath,
-        unspSC=classification.unspSC,
-        enriched=True,
-        delivery_format=row.to_dict(),
-        quality_report=quality_report,
-    )
-
-
-@app.post("/api/enrich/{sku}")
-def enrich_sku(sku: str, req: EnrichRequest) -> EnrichResponse:
-    """Run the full enrichment pipeline on a single SKU.
-
-    Steps:
-    1. Parse Part_Desc -> structured fields
-    2. Classify to Unilog classpath (via Unicat_LOV taxonomy)
-    3. Canonicalise manufacturer/brand (vs UniCat list)
-    4. Run discovery (optional) -> extract attributes from manufacturer sources
-    5. Merge parsed + discovered attributes
-    6. Normalise to LOV canonical values (many-to-one collapse via flywheel cosine)
-    7. Normalise UOM (approved abbreviations + decimal↔fraction)
-    8. Build 5 descriptions (Invoice, Mobile, Title, Short, Long)
-    9. Quality check (LOV compliance, UOM, char limits, canonical mfr/brand, filtering attrs)
-    """
-    key = _single_lookup_key(sku, "enrich")
-    graph = store.get_graph(key[0], key[1])
-    if not graph:
-        raise HTTPException(status_code=404, detail=f"no state graph for {sku}")
-
-    return _enrich_single_sku(sku, graph.manufacturer, graph.sku,
-                              run_discovery=req.run_discovery,
-                              run_quality_check=req.run_quality_check)
-
-
-@app.post("/api/enrich/batch")
-def enrich_batch(req: BatchEnrichRequest) -> BatchEnrichResponse:
-    """Enrich multiple SKUs in batch."""
-    results = []
-    succeeded = 0
-    failed = 0
-    for sku in req.skus:
-        try:
-            key = _single_lookup_key(sku, "enrich")
-            graph = store.get_graph(key[0], key[1])
-            if not graph:
-                raise HTTPException(status_code=404, detail=f"no state graph for {sku}")
-            result = _enrich_single_sku(sku, graph.manufacturer, graph.sku,
-                                        run_discovery=req.run_discovery,
-                                        run_quality_check=req.run_quality_check)
-            results.append(result)
-            succeeded += 1
-        except HTTPException:
-            raise
-        except Exception as exc:
-            logger.error("Batch enrich failed for %s: %s", sku, exc)
-            failed += 1
-            results.append(EnrichResponse(
-                sku=sku, manufacturer="", classpath="", unspSC="",
-                enriched=False, delivery_format={}, quality_report={"error": str(exc)}
-            ))
-    return BatchEnrichResponse(
-        total=len(req.skus), succeeded=succeeded, failed=failed, results=results
-    )
-
-
-@app.get("/api/enriched/{sku}")
-def get_enriched(sku: str) -> dict:
-    """Get the enriched DeliveryFormatRow for a SKU (re-runs if not cached)."""
-    key = _single_lookup_key(sku, "enriched")
-    graph = store.get_graph(key[0], key[1])
-    if not graph:
-        raise HTTPException(status_code=404, detail=f"no state graph for {sku}")
-
-    # Check if we have cached enrichment in the graph's extracted_candidates
-    # For now, always re-run (fast enough for demo)
-    return _enrich_single_sku(sku, graph.manufacturer, graph.sku,
-                              run_discovery=False, run_quality_check=True).delivery_format
-
-
-@app.get("/api/quality/{sku}")
-def get_quality_report(sku: str) -> dict:
-    """Get the quality report for an enriched SKU."""
-    key = _single_lookup_key(sku, "quality")
-    graph = store.get_graph(key[0], key[1])
-    if not graph:
-        raise HTTPException(status_code=404, detail=f"no state graph for {sku}")
-
-    # Build a minimal row for quality check
-    row = DeliveryFormatRow(
-        sku=sku,
-        manufacturer_name=graph.manufacturer,
-    )
-    report = check_enrichment_quality(row)
-    return {
-        "sku": sku,
-        "manufacturer": graph.manufacturer,
-        "classpath": graph.sku,
-        "overall_confidence": report.overall_confidence,
-        "needs_review": report.needs_review,
-        "findings": [
-            {"attribute": f.attribute, "rule": f.rule, "detail": f.detail,
-             "severity": f.severity, "suggestion": f.suggestion}
-            for f in report.findings
-        ],
-        "description_compliance": report.description_compliance,
-        "missing_filtering_attrs": report.missing_filtering_attrs,
-    }
-
-
-@app.get("/api/delivery_format_columns")
-def get_delivery_format_columns() -> dict:
-    """Return the 252-column Delivery Format schema for reference."""
-    return {
-        "columns": DELIVERY_FORMAT_COLUMNS,
-        "count": len(DELIVERY_FORMAT_COLUMNS),
-    }
 
 
 # ---------------------------------------------------------------------------

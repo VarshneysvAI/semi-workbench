@@ -1,425 +1,306 @@
-<div align="center">
+<p align="center">
+  <img src="https://img.shields.io/badge/UniHack-2026-blueviolet?style=for-the-badge" alt="UniHack 2026"/>
+  <img src="https://img.shields.io/badge/Python-3.13-blue?style=for-the-badge&logo=python" alt="Python"/>
+  <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react" alt="React"/>
+  <img src="https://img.shields.io/badge/Gemma_4--31B-Google_AI-4285F4?style=for-the-badge&logo=google" alt="Gemma"/>
+  <img src="https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi" alt="FastAPI"/>
+</p>
 
-# SEMI — Self-Evolving Manufacturer Intelligence
+# 🧠 SEMI — Self-Evolving Manufacturer Intelligence
 
-![SEMI Logo](dashboard/public/logo.png)
+> **AI-Powered Autonomous Product Data Extraction Engine for Industrial Commerce**
 
-**UniHack 2026 · AI-Powered Product Intelligence for Industrial Commerce**
-
-*Given only `(manufacturer, part_number)`, SEMI autonomously discovers manufacturer sources, extracts multi-format evidence, adversarially audits every value, and emits schema-bound output — or refuses with `INSUFFICIENT_EVIDENCE` rather than guessing.*
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python 3.13](https://img.shields.io/badge/Python-3.13-blue.svg)](https://www.python.org/downloads/release/python-3130/)
-[![React 19](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.141-009688.svg)](https://fastapi.tiangolo.com/)
-[![LangGraph](https://img.shields.io/badge/LangGraph-0.2-orange.svg)](https://langchain-ai.github.io/langgraph/)
-[![Crawl4AI](https://img.shields.io/badge/Crawl4AI-0.9-green.svg)](https://github.com/unclecode/crawl4ai)
-[![Tests: 48/48](https://img.shields.io/badge/tests-48%2F48-green.svg)](#tests)
-
-</div>
+SEMI is a production-grade, autonomous data extraction platform that transforms incomplete manufacturer catalogs into fully enriched, audit-traceable product datasets. Built for **UniHack 2026**, it targets the industrial commerce data gap — where 70%+ of product attributes are missing or scattered across PDFs, spec sheets, and manufacturer websites.
 
 ---
 
-## 🎯 The Problem
+## 🎯 What Does SEMI Do?
 
-Industrial manufacturers manage vast product information across websites, catalogs, technical documents, and digital assets. Transforming this fragmented data into accurate, structured, commerce-ready product intelligence is complex and time-consuming.
-
-**UniHack 2026 Challenge**: Build an AI-powered solution that automates creation, enrichment, and validation of product intelligence **from minimal input** — just `(manufacturer, part_number)` plus a short description.
-
-**Expected Outcomes** (official rubric):
-1. Structured product intelligence from limited inputs
-2. Improved product data quality & consistency
-3. **Validated & enriched information with traceable outputs**
-4. Scale efficiently across large product catalogs
-
----
-
-## 🧠 What SEMI Is
-
-**SEMI = Self-Evolving Manufacturer Intelligence**
+Given a raw input catalog (CSV/Excel) with partial product data:
 
 ```
- ┌─────────────────────────────────────────────────────────────────┐
- │  INPUT:  Messy Excel (any columns, any count, any domain)      │
- │         ~1000 rows × 6-20 columns, placeholder brands, garbage  │
- └──────────────────────────┬──────────────────────────────────────┘
-                            │
-                            ▼
-         ┌────────────────────────────────────────────┐
-         │  AUTONOMOUS EXTRACTION LOOP (per SKU)      │
-         │  ┌──────────────────────────────────────┐  │
-         │  │ 1. PRECEDENT CHECK (KB)              │  │  Fuzzy match → cosine ≥ 0.85
-         │  │    Ledger lookup: same mfr+specs     │  │  Skip re-scraping
-         │  ├──────────────────────────────────────┤  │
-         │  │ 2. PARALLEL WEB EXTRACTION           │  │  Source authority ranked
-         │  │    🌐 HTML  → Crawl4AI deep crawl    │  │  1.0 spec sheet
-         │  │    📄 PDF   → pdf-reader-mcp (Citra) │  │  0.9 manual
-         │  │    🎬 YT    → agent-reach transcript │  │  0.7 page
-         │  │    🚫 Marketplace blocked            │  │  0.5 video
-         │  ├──────────────────────────────────────┤  │
-         │  │ 3. TWO-PASS NORMALIZATION            │  │  LLM separates extract↔norm
-         │  │    Pass A: label → canonical key     │  │  Synonym dict per domain
-         │  │    Pass B: unit → canonical unit     │  │  Precedence resolution
-         │  ├──────────────────────────────────────┤  │
-         │  │ 4. ADVERSARIAL AUDIT (5 checks)      │  │  Consensus ≥ 0.85 or REJECT
-         │  │    Physical rules, contradictions,   │  │  Split-conformal 95% CI
-         │  │    compositional curves, disproof,   │  │
-         │  │    conformal CI                      │  │
-         │  └──────────────────────────────────────┘  │
-         └──────────────────────────┬─────────────────┘
-                                    │
-                     ┌──────────────┴──────────────┐
-                     ▼                             ▼
-             CONSENSUS ≥ 0.85              CONSENSUS < 0.85
-                     │                             │
-                     ▼                             ▼
-          ┌─────────────────────┐       ┌─────────────────────┐
-          │ ASSEMBLE 252-COL    │       │ HUMAN GATE 2        │
-          │ ROW:                │       │ Shows: attribute,   │
-          │ • 47 attr triplets  │       │ value, source_url,  │
-          │ • 5 descriptions    │       │ evidence, WHY low,  │
-          │ • taxonomy, images  │       │ WHERE found         │
-          │ • MFR URL + 5 refs  │       │ Human corrects/     │
-          │ • provenance chain  │       │ approves → ledger   │
-          └─────────────────────┘       └─────────────────────┘
-                     │                             │
-                     └──────────────┴──────────────┘
-                                    ▼
-                     ┌─────────────────────────────┐
-                     │ LEDGER / FLYWHEEL           │
-                     │ Source-level truth +        │
-                     │ Canonical truth +           │
-                     │ Identity resolution +       │
-                     │ changed_outcome counter     │
-                     └─────────────────────────────┘
+Manufacturer | Part Number | Description (maybe) | ... mostly empty columns ...
+NIBCO        | BV-100      | 1" Ball Valve       |
+WATTS        | WV-1011     |                     |
+```
+
+SEMI autonomously:
+
+1. **Discovers** authoritative sources across the web (manufacturer sites, spec sheets, PDFs)
+2. **Extracts** every available technical attribute using structured LLM calls (Gemma 4-31B)
+3. **Audits** every extraction against physics rules, cross-source contradictions, and confidence thresholds
+4. **Exports** a complete **252-column Unilog Delivery Format CSV** with full source provenance
+
+```
+PART_NUMBER | MANUFACTURER_NAME | Ref URL 1 | ... | ATTRIBUTE_LABEL 1 | ATTRIBUTE_VALUE 1 | ... | WEIGHT | WEIGHT_UOM
+BV-100      | NIBCO             | nibco.com | ... | PRESSURE_RATING   | 600               | ... | 1.2    | lb
 ```
 
 ---
 
-## 🏗️ Architecture — Complete Vision
+## 🏗️ Architecture
 
-### High-Level Data Flow
-
-```mermaid
-flowchart TD
-    A[Unilog Input.xlsx<br/>Any columns, any domain] --> B[Schema Inference Agent<br/>Gemma: column stats → domain,<br/>roles, attribute blueprint]
-    B --> C{Gate 1:<br/>needs_human?}
-    C -- yes --> H[Human clarifies<br/>column roles]
-    H --> B
-    C -- no --> D[Per-SKU Autonomous Loop]
-    
-    subgraph LOOP [Per-SKU Extraction Loop]
-        D1[Precedent KB Check<br/>fuzzy match → cosine ≥ 0.85]
-        D2[Parallel Web Extraction<br/>HTML + PDF + YouTube]
-        D3[Two-Pass Normalization<br/>label→key, unit→canonical]
-        D4[Adversarial Audit<br/>5 checks + conformal CI]
-        D5{Gate 2:<br/>consensus ≥ 0.85?}
-        D6[Assemble 252-Col Row]
-        D7[Human Review<br/>low confidence items]
-    end
-    
-    D --> D1 --> D2 --> D3 --> D4 --> D5
-    D5 -- pass --> D6
-    D5 -- fail --> D7
-    D7 --> D6
-    D6 --> L[Ledger / Flywheel<br/>source_truth + canonical_truth<br/>identity_resolution]
-    L --> D1
-```
-
-### Extraction Sources — Nothing Left Behind
-
-| Source | Tool | What It Finds | Authority |
-|--------|------|---------------|-----------|
-| **Manufacturer HTML** | Crawl4AI deep crawl | Spec pages, datasheets, variant tables, hidden directory pages | 1.0 (spec sheet) |
-| **PDF Catalogs** | pdf-reader-mcp (Citra) | Tables with geometry, OCR for scans, page-level citations, image crops | 0.9 (manual) |
-| **YouTube Videos** | agent-reach transcript | Narrated specs, installation dims, certifications shown on screen | 0.5 (video) |
-| **DOCX Manuals** | Firecrawl `/parse` | Structured extraction from Word specs | 0.7 (page) |
-| **Precedent KB** | SQLite + embeddings | Prior human resolutions, cached extractions | 1.0 (verified) |
-
-**Marketplaces (Amazon/eBay/Target) = HARD BLOCKED** — never used as sources.
-
----
-
-## ⚙️ How It Works — The Autonomous Loop
-
-### Phase 0: Schema Inference (Once per File)
-```
-Input: 1000 rows × N columns (messy)
-Action: Gemma reads column stats (types, nulls, uniques, placeholder %, samples)
-Output: SchemaPlan
-  • domain: "power_tool_accessories"
-  • product_kind: "sanding_belts"
-  • column_roles: {sku, description, manufacturer, brand_candidate, ignore}
-  • attribute_blueprint: [{name: "grit", type: "enum", source_hint: "description"},
-                          {name: "width", type: "quantity_uom", uom_candidates: ["in", "mm"]},
-                          ...]
-  • needs_human: true/false
-  • human_questions: ["Which column is the real MPN?"]
-```
-**Gate 1**: If `needs_human` → pause, show ambiguous columns to human → human answers → re-run.
-
-### Phase 1: Precedent Check (KB Hit)
-- Fuzzy match on `(manufacturer, normalized_specs)` → cosine ≥ 0.85 → if hit, reuse cached `CitedValue`
-- Output: `CitedValue` with `extractor="kb_hit"`
-
-### Phase 2: Parallel Web Extraction (KB Miss)
-**All three fire simultaneously:**
-
-| Extractor | Input | Output |
-|-----------|-------|--------|
-| `Crawl4AI` | `site:manufacturer.com "MPN"` + deep crawl | Raw attribute batches from HTML |
-| `pdf-reader-mcp` | Catalogue/spec sheet URLs | Tables + OCR + page citations |
-| `agent-reach youtube.transcript` | Manufacturer channel videos | Specs from narration |
-
-Each returns: `[{attribute, value, unit, confidence, source_url, evidence_snippet, extractor}]`
-
-### Phase 3: Two-Pass Normalization (The Key Innovation)
-**Pass A — Label → Canonical Key**
-```
-Input: [{"label": "Overall Width", "value": "23.5", "unit": "in"},
-        {"label": "Total Width", "value": "59.7", "unit": "cm"},
-        {"label": "Width (overall)", "value": "23 1/2", "unit": "in"}]
-
-LLM Prompt: "Map each label to canonical key using domain synonym dict.
-             Output: [{canonical_key, raw_label, value, unit, source_url}]"
-
-Output: [{"canonical_key": "overall_width_in", "raw_label": "Overall Width", ...},
-         {"canonical_key": "overall_width_in", "raw_label": "Total Width", ...},
-         {"canonical_key": "overall_width_in", "raw_label": "Width (overall)", ...}]
-```
-
-**Pass B — Unit → Canonical Unit + Conflict Resolution**
-```
-Input: Pass A output (multiple sources per canonical_key)
-
-LLM Prompt: "Convert all values to canonical storage unit (width→in, weight→lb, temp→C).
-             Resolve conflicts via precedence:
-             1. Manufacturer spec sheet
-             2. Manufacturer HTML page
-             3. Manual
-             4. Distributor sheet
-             5. Third-party (if verified)
-             Output: [{canonical_key, canonical_value, canonical_unit, confidence, source_url}]"
-```
-
-### Phase 4: Adversarial Audit (5 Checks + Conformal CI)
-| Check | Method | Output |
-|-------|--------|--------|
-| Physical Rules | LLM-validated rules (width>0, PVC→pressure≤150psi) | pass/fail + details |
-| Cross-Source Contradiction | Compare normalized values across sources | pass/fail + conflicting sources |
-| Compositional Curve | Physics-based curve fit (e.g., belt tension vs width) | pass/fail + deviation |
-| Disproof Search | Active query: "find evidence this value is wrong" | pass/fail + disproof URL |
-| Split-Conformal 95% CI | Calibrated on ledger history | `[lo, hi]` interval per numeric attr |
-
-**Consensus Score** = weighted aggregate → `decision: "pass" | "insufficient_evidence"`
-
-### Phase 5: Gate 2 — Human Review
-If `consensus < 0.85` OR any attribute `confidence < threshold`:
-- Show human: attribute, value, source_url, evidence snippet, **WHY score low**, **WHERE found**
-- Human corrects or approves → ledger row with `changed_outcome=true`
-
-### Phase 6: Assemble 252-Column Delivery Row
-Maps canonical attributes → **exact Unilog format**:
-- 47 `ATTRIBUTE_LABEL/VALUE/UOM` triplets (dynamic — whatever we found)
-- 5 descriptions: `INVOICE_DESC` (≤40 UPPER), `MOBILE_DESC` (60-80 Title), `SHORT_DESC`, `LONG_DESC1`, `MARKETING_DESCRIPTION`
-- Taxonomy: `Dept/Class/Fine/Classpath` from SchemaPlan + precedent
-- `MFR_URL` = highest-authority source; `Ref URL 1-5` = next best
-- Images (5), SDS, manuals, spec sheets, drawings, videos, Country Of Origin
-
-### Phase 7: Ledger / Flywheel (Self-Evolving)
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ SOURCE-LEVEL TRUTH                                          │
-│ Each extraction: sku, attribute, value, unit, source_url,  │
-│ snippet, confidence, extractor, run_id, timestamp          │
-├─────────────────────────────────────────────────────────────┤
-│ CANONICAL TRUTH                                             │
-│ Merged view per (sku, canonical_key) with evidence chain   │
-├─────────────────────────────────────────────────────────────┤
-│ IDENTITY RESOLUTION                                         │
-│ Same mfr + normalized specs + fuzzy MPN → same canonical   │
-├─────────────────────────────────────────────────────────────┤
-│ CHANGED_OUTCOME COUNTER                                     │
-│ Human resolution flips value → counter++ → precedent weight │
+│                     React Dashboard (Vite)                  │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌───────────────┐  │
+│  │ Upload   │ │ Live     │ │ Conflict │ │ CSV Export     │  │
+│  │ CSV/XLSX │ │ Sheet    │ │ Resolver │ │ (252-col)      │  │
+│  └────┬─────┘ └────┬─────┘ └────┬─────┘ └───────┬───────┘  │
+│       │ REST        │ Poll       │ POST          │ GET      │
+└───────┼─────────────┼────────────┼───────────────┼──────────┘
+        ▼             ▼            ▼               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  FastAPI Backend (server.py)                 │
+│                                                             │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────────┐  │
+│  │ Ingest   │  │ Discover │  │ Extract  │  │ Audit      │  │
+│  │ Parser   │──│ Search   │──│ LLM/RAG  │──│ Engine     │  │
+│  └──────────┘  └──────────┘  └──────────┘  └────────────┘  │
+│                                                             │
+│  Search Chain:  agent-reach → DuckDuckGo → Exa → Firecrawl │
+│  Fetch Chain:   Jina Reader → agent-reach → httpx+BS4      │
+│  LLM:          Gemma 4-31B-IT (structured JSON extraction)  │
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │              SQLite Persistent Store                  │   │
+│  │  StateGraphs │ Conflicts │ Ledger │ Enrichments      │   │
+│  └──────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
 ```
-
----
-
-## 🛠️ Technical Stack
-
-| Layer | Technology | Why |
-|-------|------------|-----|
-| **Orchestration** | LangGraph 0.2 | Explicit graph + state + checkpointing + human interrupts |
-| **Validation** | Pydantic v2 (`extra="forbid"`) | Strict contracts at every agent boundary |
-| **Schema Inference** | Gemma 4 31B (demo: Gemini API) | Temperature=0, structured output, free tier |
-| **Web Crawl** | Crawl4AI (unclecode/crawl4ai) | Deep crawl, JS execution, LLM extraction, table extraction, free/local |
-| **PDF/DOCX** | pdf-reader-mcp (Citra) + Firecrawl `/parse` | Agent Document Twin: tables+geometry+OCR+citations |
-| **YouTube** | agent-reach `get youtube.transcript` → yt-dlp | Free, no API key |
-| **Search** | agent-reach Exa (semantic) + ddgs (local) | Exa finds "left behind" sites; ddgs backup |
-| **Embeddings** | BGE-M3 (later) / exact-string (v1) | Cosine ≥ 0.85 for precedent matching |
-| **Storage** | SQLite | schema_plans, extracted_values, ledger, audit, identity |
-| **API** | FastAPI + uvicorn | Typed contract with dashboard, WS-native |
-| **Frontend** | React 19 + Vite + Tailwind 3 + Framer Motion | Real inspector, not a Streamlit grid |
-
----
-
-## 🔑 Key Innovations (Differentiation)
-
-| Innovation | SEMI | Typical Approach |
-|------------|------|------------------|
-| **Extraction schema** | Emerges from web — no fixed attribute list | Fixed schema, misses unknown specs |
-| **Normalization** | Two-pass LLM: label→key, then unit→canonical | Single-pass or regex, fails on synonyms/units |
-| **Conflict resolution** | Precedence rules (spec sheet > page > manual) | Last-write-wins or average |
-| **Audit** | 5 adversarial checks + conformal 95% CI | Single confidence score |
-| **Refusal** | `INSUFFICIENT_EVIDENCE` — never guesses | Hallucinates plausible values |
-| **Flywheel** | Human resolutions become precedents (cosine 0.85) | No learning across runs |
-| **Provenance** | Every value: source_url + evidence_snippet + extractor | Black-box output |
-| **Cost** | $0 target (local LLMs, free tiers, KB dedup) | API-dependent |
-
----
-
-## 📡 API Contract (Locked)
-
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| `GET` | `/api/health` | Liveness + version |
-| `POST` | `/api/ingest` | Upload workbook → schema inference → state graphs |
-| `POST` | `/api/discover/{sku}` | Run extraction+audit for one SKU |
-| `GET` | `/api/state_graph/{sku}` | Provenance chain (source_url → evidence → value) |
-| `GET` | `/api/conflicts/{sku}` | Open Gate 2 items awaiting human |
-| `POST` | `/api/resolve` | Human resolution → ledger row + `changed_outcome` |
-| `WS` | `/ws/ledger_events` | Live counter stream |
-| `GET` | `/api/ab_compare/{sku}` | Finale: A/B + screen-of-truth |
-| `GET` | `/api/ontology/{mfr}` | Finale: conflict-precedent overlay |
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- **Python 3.13** (backend)
-- **Node 22+** (dashboard)
-- **GPU** (optional, for local Gemma/LLaVA/BGE-M3)
+- Python 3.11+
+- Node.js 18+
+- Google AI Studio API key ([get one free](https://aistudio.google.com/apikey))
 
-### Backend
+### 1. Backend Setup
+
 ```bash
 cd backend
-python -m venv .venv && .venv\Scripts\activate      # Windows
-# source .venv/bin/activate                          # macOS/Linux
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+# source .venv/bin/activate   # Linux/Mac
+
 pip install -r requirements.txt
-cp .env.example .env                                  # Fill GEMINI_API_KEY for demo
-uvicorn backend.server:app --reload --port 8000       # Swagger at /docs
+
+# Configure environment
+cp .env.example .env
+# Edit .env → set GOOGLE_API_KEY=your_key_here
+
+# Start server
+uvicorn backend.server:app --reload --port 8000
 ```
 
-### Dashboard
+### 2. Dashboard Setup
+
 ```bash
 cd dashboard
 npm install
-npm run dev                   # http://localhost:5173 (proxies /api → :8000)
+npm run dev
+# → Opens at http://localhost:5173
 ```
 
-### Tests
-```bash
-# Backend (48 tests)
-backend\.venv\Scripts\python -m pytest backend\tests -q
+### 3. Run the Pipeline
 
-# Frontend
-cd dashboard && npx tsc --noEmit && npm run lint && npm run build
-```
+1. Open the dashboard at `http://localhost:5173`
+2. Click **Upload Catalog** → select your CSV/XLSX input file
+3. Watch the autonomous loop discover, extract, and audit each SKU
+4. Click **Export CSV** → downloads the full 252-column Unilog Delivery Format
 
 ---
 
-## 📁 Repository Structure
+## 📊 Unilog Delivery Format (252 Columns)
+
+SEMI produces output in the **exact** Unilog Delivery Format specification:
+
+| Column Group | Examples | Count |
+|---|---|---|
+| **Identification** | `PART_NUMBER`, `Mfg_Part_Num`, `SKU - MY_PART_NUMBER` | 12 |
+| **Manufacturer/Brand** | `MANUFACTURER_NAME`, `BRAND_NAME`, `E1_Brand` | 7 |
+| **Descriptions** | `SHORT_DESC`, `LONG_DESC1`, `MARKETING_DESCRIPTION` | 8 |
+| **Features** | `ITEM_FEATURES_1` through `ITEM_FEATURES_20` | 20 |
+| **Attributes** | `ATTRIBUTE_LABEL/VALUE/UOM 1–50` (dynamic triplets) | 150 |
+| **Dimensions** | `LENGTH`, `HEIGHT`, `WIDTH`, `WEIGHT`, `VOLUME` + UOMs | 10 |
+| **Identifiers** | `UPC`, `EAN`, `GTIN`, `UNSPSC` | 6 |
+| **Media/Docs** | `Product Image`, `Spec Sheet`, `Catalog`, `SDS` | 25 |
+| **Source URLs** | `MFR URL`, `Ref URL 1–5` | 6 |
+| **Misc** | `Country Of Origin`, `Discontinued`, `Warranty` | 8 |
+
+---
+
+## 🧬 Core Pipeline Stages
+
+### Stage 1 — Ingestion
+- Reads **CSV** or **Excel** (.xlsx/.xls) input files
+- Column-name matching via alias tables (`manufacturer`, `brand`, `make`, `company` → `manufacturer`)
+- LLM-assisted schema inference when column names are non-standard
+- Stores each `(manufacturer, part_number)` as a `StateGraph` with all provided columns as `input` candidates
+
+### Stage 2 — Discovery (Autonomous Web Search)
+- Priority-ordered search chain: **agent-reach CLI** → **DuckDuckGo** → **Exa** → **Firecrawl**
+- Generates spec-first search queries: `site:nibco.com "BV-100" spec`, `"BV-100" NIBCO spec sheet pdf`
+- Source validation rejects e-commerce (Amazon, eBay, AliExpress) — only authoritative manufacturer sources
+- Authority-ranked: spec sheets (1.0) > manuals (0.9) > product pages (0.7) > video (0.5)
+
+### Stage 3 — Extraction (Smart Empty-Field Discovery)
+- **One LLM call per source URL** — extracts ALL available attributes in a single structured JSON response
+- Tells the LLM which fields are already known (from input) → avoids redundant extraction
+- Fetches content via: **Jina Reader** → **agent-reach** → **httpx + BeautifulSoup** → **Firecrawl**
+- Confidence threshold: only attributes with `≥ 0.4` confidence are accepted
+
+### Stage 4 — Adversarial Audit
+- **Physics constraint rules** — catches impossible values (e.g., pressure > 10000 psi)
+- **Cross-source contradiction detection** — flags when two sources disagree
+- **Weighted consensus** — higher-authority sources win conflicts
+- **Refusal gate** — refuses to emit a value when evidence is insufficient
+- **Split-conformal prediction intervals** — calibrated confidence bands (when ≥30 labeled rows exist)
+
+### Stage 5 — Conflict Resolution
+- Human-in-the-loop resolution UI for contradictions
+- Resolution ledger with full provenance (`signature`, `changed_outcome`, `reason_tags`)
+- Precedent KB: future conflicts matching past patterns auto-resolve via cosine similarity
+
+### Stage 6 — Export
+- Dynamic mapping to the exact 252-column Unilog Delivery Format
+- Direct column routing: `weight` → `WEIGHT`/`WEIGHT_UOM`, `upc` → `UPC`, etc.
+- Overflow attributes → `ATTRIBUTE_LABEL N` / `ATTRIBUTE_VALUE N` / `ATTRIBUTE_UOM N` (up to 50)
+- Source URLs preserved as `Ref URL 1–5` for audit trail
+
+---
+
+## 🔒 Security & Data Integrity
+
+| Concern | Mitigation |
+|---|---|
+| **API Key Exposure** | `.env` excluded via `.gitignore`; no hardcoded secrets |
+| **DoS via Upload** | 10MB payload limit enforced server-side |
+| **SQL Injection** | All queries use parameterized statements |
+| **E-commerce Pollution** | `source_validator.py` blocks Amazon/eBay/AliExpress URLs |
+| **LLM Hallucination** | Structured JSON schema enforces output format; confidence gating |
+| **Data Provenance** | Every value carries `source_url`, `extractor`, `confidence` |
+
+---
+
+## 📁 Project Structure
 
 ```
-.
-├── backend/                    # FastAPI · Python 3.13
-│   ├── server.py               # App + WS ledger + /api/* routes
-│   ├── contracts.py            # Pydantic v2 strict schemas (ALL agent I/O)
-│   ├── schema_infer_agent.py   # Gemma: column stats → SchemaPlan
-│   ├── crawl4ai_extractor.py   # Deep crawl manufacturer sites
-│   ├── pdf_extractor.py        # pdf-reader-mcp MCP client
-│   ├── youtube_extractor.py    # agent-reach transcript → LLM extract
-│   ├── normalizer_agent.py     # Two-pass: label→key, unit→canonical
-│   ├── audit_agent.py          # 5 checks + conformal CI
-│   ├── assembler.py            # Canonical attrs → 252-col DeliveryRow
-│   ├── ledger.py               # SQLite: source_truth + canonical_truth + identity
-│   ├── graph.py                # LangGraph orchestration + Gates 1/2
-│   ├── ingest/                 # excel_input, source_validator, output_mapper
-│   ├── discover/               # Source ranking, query builder
-│   ├── extract/                # Fetchers (Jina, Firecrawl)
-│   ├── audit/                  # Physical, contradiction, conformal, refusal
-│   ├── ledger/                 # Sync, flywheel, calibration
-│   ├── output/                 # UOM, taxonomy, schema, normalizer, description
-│   ├── schemas/state_graph.py  # StateGraph, Conflict, LedgerRow
-│   ├── llm/                    # Gemma client (OpenAI-compatible)
-│   ├── tests/                  # 48 passing tests
-│   ├── requirements.txt
-│   └── .env.example
-├── dashboard/                  # React 19 · Vite · Tailwind 3 · Framer Motion
-│   ├── src/engine/             # In-browser enrichment simulation engine
-│   ├── src/views/              # Overview, Sheet, Discovery, Audit,
-│   │                           # Conflicts, Evidence, Ledger (+ Inspector)
-│   └── public/                 # logo.png, boot.mp4, favicon.svg, icons.svg
+hackproject new/
+├── backend/
+│   ├── server.py                 # FastAPI application (all REST + WebSocket endpoints)
+│   ├── sqlite_store.py           # SQLite persistent store (StateGraphs, Conflicts, Ledger)
+│   ├── contracts.py              # Pydantic v2 schemas (strict validation for all agents)
+│   ├── graph.py                  # Async pipeline orchestrator
+│   ├── extraction_orchestrator.py # Parallel web extraction coordinator
+│   ├── normalizer_agent.py       # Two-pass unit normalization (deterministic + LLM)
+│   ├── assembler.py              # Delivery row assembly
+│   ├── audit/
+│   │   ├── runner.py             # Audit engine (physics + contradiction + consensus)
+│   │   ├── physical.py           # Physics constraint rules
+│   │   ├── contradiction.py      # Cross-source contradiction detection
+│   │   ├── conformal.py          # Split-conformal prediction intervals
+│   │   └── refusal_gate.py       # Confidence refusal gate
+│   ├── discover/
+│   │   ├── search.py             # Hybrid web search (agent-reach → ddgs → exa → firecrawl)
+│   │   └── agent_reach_agent.py  # agent-reach CLI adapter
+│   ├── extract/
+│   │   └── fetchers.py           # Content fetch router (Jina → agent-reach → httpx → Firecrawl)
+│   ├── ingest/
+│   │   ├── excel_input.py        # CSV/Excel parser with alias tables
+│   │   ├── output_mapper.py      # Canonical attribute mapping + unit normalization
+│   │   ├── unilog_export.py      # 252-column Unilog Delivery Format CSV generator
+│   │   └── source_validator.py   # URL validation (blocks e-commerce)
+│   ├── ledger/
+│   │   ├── calibration.py        # Conformal calibration from ledger
+│   │   ├── flywheel.py           # Precedent KB (cosine similarity matching)
+│   │   └── sync.py               # Conflict synchronization
+│   ├── llm/
+│   │   └── gemma.py              # Google AI Studio client (Gemma 4-31B / Gemini)
+│   ├── schemas/
+│   │   └── state_graph.py        # StateGraph, Conflict, LedgerRow Pydantic models
+│   └── schema_inference/
+│       └── infer.py              # LLM-assisted column role inference
+├── dashboard/
+│   └── src/
+│       ├── engine/
+│       │   └── SemiContext.tsx    # React context (autonomous polling + discovery loop)
+│       ├── components/
+│       │   └── Header.tsx        # Upload/Export controls
+│       ├── views/
+│       │   ├── SheetView.tsx     # Live extraction spreadsheet (horizontal scroll)
+│       │   └── Overview.tsx      # Dashboard metrics
+│       └── data/
+│           └── seed.ts           # TypeScript type definitions
+├── unilog_sample/                # Reference input/output datasets
+│   ├── Unihack_ Sample Dataset - Input.csv
+│   └── Unihack_ Expected Output - Delivery Format.csv
 ├── docs/
-│   ├── api_contract.md         # Locked FastAPI ↔ dashboard contract
-│   ├── PROJECT.md              # Brief + judging rubric mapping
-│   ├── TECHNICAL.md            # Architecture, setup, run commands
-│   ├── ARCHITECTURE.md         # Eraser diagram source
-│   └── notes/                  # Internal planning + research log
-├── unilog_sample/              # Real UniHack input + expected output
-│   ├── Unihack_Sample_Dataset_-_Input.csv
-│   ├── Unihack_Expected_Output_-_Delivery_Format.csv
-│   ├── real_input.xlsx
-│   └── placeholder_input.xlsx
-├── LICENSE
-└── README.md                   # This file
+│   └── api_contract.md           # REST API contract specification
+└── deployment/                   # Production deployment configs
 ```
 
 ---
 
-## 🎨 Eraser Architecture Diagram
+## 🔌 API Reference
 
-The complete architecture diagram is defined in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) as Eraser DSL. Paste it into [eraser.io](https://eraser.io) inside a ```er fence to render.
-
-**Diagram includes:**
-- Two human gates (Gate 1: schema ambiguity, Gate 2: low consensus)
-- Autonomous per-SKU loop with parallel extraction branches
-- Source authority ranking (1.0 → 0.5)
-- Adversarial audit (5 checks + conformal CI)
-- Ledger/flywheel feedback loop
-- Cost ledger ($0 target)
-- Differentiation vs. visible 2026 UNIHACK teams
-
----
-
-## 📊 Judging Rubric Mapping
-
-| Axis (25%) | SEMI's Approach |
-|------------|-----------------|
-| **Innovation** | Autonomous discovery from minimal input + refusal gate + 2-pass ledger flywheel (no submitted team has these) |
-| **Accuracy** | Adversarial audit + conformal CI + **no value without source_url** + refusal on thin evidence |
-| **Quality** | Typed FastAPI + pytest suite + React 19 console with inspector + boot path (not Streamlit grid) |
-| **Scalability** | Batch ingest + WS streaming + measured coverage/refused-per-100 stats + $0 cost structure |
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/health` | Health check + version |
+| `POST` | `/api/ingest` | Upload CSV/XLSX catalog |
+| `POST` | `/api/discover/{sku}` | Trigger autonomous discovery + extraction |
+| `GET` | `/api/export_unilog` | Download 252-column Unilog CSV |
+| `GET` | `/api/ui_state` | Full dashboard state (polled at 1Hz) |
+| `GET` | `/api/state_graph/{sku}` | Single SKU's state graph |
+| `GET` | `/api/audit/{sku}` | Run adversarial audit on one SKU |
+| `POST` | `/api/resolve` | Human conflict resolution |
+| `GET` | `/api/conflicts` | List all open conflicts |
+| `GET` | `/api/graphs` | List all state graphs |
+| `GET` | `/api/ledger` | Full resolution ledger |
+| `GET` | `/api/precedents/{sku}` | Precedent KB lookup |
+| `WS` | `/ws/ledger_events` | Real-time ledger event stream |
 
 ---
 
-## 🤝 Contributing
+## ⚙️ Configuration
 
-This is a UniHack 2026 submission. The codebase represents a complete vision for autonomous product intelligence — from messy input to validated, traceable, schema-bound output.
+All configuration is via `.env` (see `.env.example`):
+
+```env
+# Required
+GOOGLE_API_KEY=your_google_ai_studio_key
+
+# Optional
+GOOGLE_GENAI_MODEL=gemma-4-31b-it    # or gemini-2.5-flash
+LLM_TEMPERATURE=0.0                   # Deterministic extraction
+LLM_DELAY_SECONDS=4.2                 # Rate limit throttle (free tier)
+FIRECRAWL_API_KEY=                     # Optional: premium web scraping
+EXA_API_KEY=                           # Optional: neural web search
+AGENTREACH_ENABLED=true                # Enable agent-reach CLI
+SEMI_DB_PATH=semi.db                   # SQLite database path
+```
+
+---
+
+## 🏆 UniHack 2026
+
+**Team:** VarshneysvAI  
+**Track:** AI-Powered Product Intelligence for Industrial Commerce  
+**Challenge:** Transform incomplete manufacturer catalogs into enriched, audit-traceable product datasets in the Unilog Delivery Format  
+
+### Key Differentiators
+
+1. **Zero-Hardcode Extraction** — No fixed attribute list. The LLM discovers ALL attributes in a single call per document.
+2. **Adversarial Audit** — Math-based physics checks + cross-source contradiction detection. SEMI refuses rather than guesses.
+3. **Full Provenance** — Every single value carries its `source_url`, `extractor`, and `confidence`. No black boxes.
+4. **Cost Efficiency** — One LLM call per document (not per attribute). Ready for self-hosted Gemma 31B via vLLM.
+5. **Production Security** — 10MB upload limits, parameterized SQL, e-commerce URL blocking, no hardcoded secrets.
 
 ---
 
 ## 📄 License
 
-MIT License — see [LICENSE](LICENSE) for details.
-
----
-
-<div align="center">
-
-**SEMI — Self-Evolving Manufacturer Intelligence**  
-*Built for UniHack 2026 · Organized by Unilog via Hack2skill*
-
-</div>
+MIT License — see [LICENSE](LICENSE)

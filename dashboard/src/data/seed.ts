@@ -93,6 +93,10 @@ export const COLUMNS = [
   { key: 'thread', label: 'THREAD', unit: '', w: 128 },
   { key: 'size', label: 'SIZE', unit: 'in', w: 102 },
   { key: 'flow', label: 'CV', unit: '', w: 92 },
+  { key: 'voltage', label: 'VOLTAGE', unit: 'V', w: 92 },
+  { key: 'power', label: 'POWER', unit: 'W', w: 92 },
+  { key: 'weight', label: 'WEIGHT', unit: 'lbs', w: 92 },
+  { key: 'certification', label: 'CERTIFICATION', unit: '', w: 140 },
 ] as const
 
 export type ColKey = (typeof COLUMNS)[number]['key']
@@ -127,6 +131,10 @@ const VALUE_POOL: Record<ColKey, string[]> = {
   thread: ['NPT', 'BSPT', 'NPT / BSPP', 'BSPP'],
   size: ['1/2', '3/4', '1', '1 1/2', '2'],
   flow: ['4.1', '9.8', '14.5', '23.3', '38.2', '46.0'],
+  voltage: ['120', '240', '24'],
+  power: ['50', '100', '200'],
+  weight: ['1.2', '2.5', '5.0'],
+  certification: ['UL Listed', 'CSA', 'NSF/ANSI 61'],
 }
 
 const CONFLICT_TABLE: PlanConflict[] = [
