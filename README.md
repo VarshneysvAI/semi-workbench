@@ -164,7 +164,7 @@ npm run dev
 
 ## 🏆 Team
 
-**Team VarshneysvAI**  
+**Team UNIT**  
 *Track: AI-Powered Product Intelligence for Industrial Commerce*  
 UniHack 2026
 
