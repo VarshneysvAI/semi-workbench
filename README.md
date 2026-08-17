@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="dashboard/public/logo.png" width="200" alt="SEMI Logo"/>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/UniHack-2026-blueviolet?style=for-the-badge" alt="UniHack 2026"/>
   <img src="https://img.shields.io/badge/Python-3.13-blue?style=for-the-badge&logo=python" alt="Python"/>
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react" alt="React"/>
