@@ -44,3 +44,6 @@ output.json
 *.db
 *.db-shm
 *.db-wal
+test_input.csv
+test_live.py
+get_graph.py
