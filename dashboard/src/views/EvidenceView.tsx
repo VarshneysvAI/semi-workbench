@@ -7,8 +7,8 @@ import { STAGE_LABELS } from '../data/seed'
 export default function EvidenceView() {
   const { engine, select, selectedId } = useSemi()
 
-  const doneRows = useMemo(
-    () => engine.state.rows.filter((r) => r.stage === 'done' || r.stage === 'conflict' || r.stage === 'refused'),
+  const workedRows = useMemo(
+    () => engine.state.rows,
     [engine.state.rows],
   )
 
@@ -25,13 +25,13 @@ export default function EvidenceView() {
 
           <div className="panel p-4">
             <SectionTitle
-              right={<span className="mono text-[10px] text-slate-600">{doneRows.length} rows</span>}
+              right={<span className="mono text-[10px] text-slate-600">{workedRows.length} rows</span>}
             >
-              Worked rows
+              Catalog rows
             </SectionTitle>
             <div className="space-y-1">
-              {doneRows.length ? (
-                doneRows.map((r) => (
+              {workedRows.length ? (
+                workedRows.map((r) => (
                   <button
                     key={r.id}
                     onClick={() => select(r.id)}
@@ -42,20 +42,21 @@ export default function EvidenceView() {
                     <div className="flex min-w-0 items-center gap-2.5">
                       <span className="mono text-[13px] font-medium text-slate-100">{r.pn}</span>
                       <Badge tone="cyan">{r.mfr}</Badge>
-                      <Badge tone={r.stage === 'done' ? 'emerald' : r.stage === 'conflict' ? 'amber' : 'rose'}>
+                      <Badge tone={r.stage === 'done' ? 'emerald' : r.stage === 'conflict' ? 'amber' : r.stage === 'refused' ? 'rose' : 'slate'}>
                         {STAGE_LABELS[r.stage]}
                       </Badge>
                     </div>
                     <span className="mono shrink-0 text-[11px] text-slate-500">
-                      {r.sources.length} sources · {r.audits.filter((a) => a.state === 'pass').length}/5 audits
+                      {(r.sources || []).length} sources · {(r.audits || []).filter((a) => a.state === 'pass').length}/5 audits
                     </span>
                   </button>
                 ))
               ) : (
-                <div className="py-8 text-center text-[13px] text-slate-500">no completed rows yet</div>
+                <div className="py-8 text-center text-[13px] text-slate-500">Upload a catalog file to inspect evidence</div>
               )}
             </div>
           </div>
+
 
           <div className="panel p-4">
             <SectionTitle right={null}>Retrieval &amp; precedent notes</SectionTitle>

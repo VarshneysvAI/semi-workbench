@@ -1,0 +1,39 @@
+{"type": "row_start", "index": 0, "pn": "PDSH4816AF", "mfr": "Appliance Dealers Cooperative (APPDE)"}
+{"type": "row_complete", "sku": {"id": "sku-PDSH4816AF", "pn": "PDSH4816AF", "mfr": "Electrolux Major Appliances, N.A.", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 1, "pn": "49-94-0013", "mfr": "Milwaukee Accessory (4031)"}
+{"type": "row_complete", "sku": {"id": "sku-49-94-0013", "pn": "49-94-0013", "mfr": "Milwaukee", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 2, "pn": "LNL65301", "mfr": "Plews/lubrimatic (5030)"}
+{"type": "row_complete", "sku": {"id": "sku-LNL65301", "pn": "LNL65301", "mfr": "Unknown", "stage": "refused", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 3, "pn": "FAKE-999-X", "mfr": "Fake Manufacturer Inc"}
+{"type": "row_start", "index": 4, "pn": "PDSH4816AF", "mfr": "Appliance Dealers Cooperative (APPDE)"}
+{"type": "row_complete", "sku": {"id": "sku-PDSH4816AF", "pn": "PDSH4816AF", "mfr": "Electrolux Major Appliances, N.A.", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 0, "pn": "PDSH4816AF", "mfr": "Appliance Dealers Cooperative (APPDE)"}
+{"type": "row_complete", "sku": {"id": "sku-PDSH4816AF", "pn": "PDSH4816AF", "mfr": "Electrolux Major Appliances, N.A.", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 1, "pn": "49-94-0013", "mfr": "Milwaukee Accessory (4031)"}
+{"type": "row_complete", "sku": {"id": "sku-49-94-0013", "pn": "49-94-0013", "mfr": "Milwaukee", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 2, "pn": "LNL65301", "mfr": "Plews/lubrimatic (5030)"}
+{"type": "row_complete", "sku": {"id": "sku-LNL65301", "pn": "LNL65301", "mfr": "Unknown", "stage": "refused", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 3, "pn": "FAKE-999-X", "mfr": "Fake Manufacturer Inc"}
+{"type": "row_complete", "sku": {"id": "sku-FAKE-999-X", "pn": "FAKE-999-X", "mfr": "Fake Manufacturer Inc", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 4, "pn": "PDSH4816AF", "mfr": "Appliance Dealers Cooperative (APPDE)"}
+{"type": "row_complete", "sku": {"id": "sku-PDSH4816AF", "pn": "PDSH4816AF", "mfr": "Electrolux Major Appliances, N.A.", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 0, "pn": "PDSH4816AF", "mfr": "Appliance Dealers Cooperative (APPDE)"}
+{"type": "row_complete", "sku": {"id": "sku-PDSH4816AF", "pn": "PDSH4816AF", "mfr": "Electrolux Major Appliances, N.A.", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 1, "pn": "49-94-0013", "mfr": "Milwaukee Accessory (4031)"}
+{"type": "row_complete", "sku": {"id": "sku-49-94-0013", "pn": "49-94-0013", "mfr": "Milwaukee", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 2, "pn": "LNL65301", "mfr": "Plews/lubrimatic (5030)"}
+{"type": "row_complete", "sku": {"id": "sku-LNL65301", "pn": "LNL65301", "mfr": "Unknown", "stage": "refused", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 3, "pn": "FAKE-999-X", "mfr": "Fake Manufacturer Inc"}
+{"type": "row_complete", "sku": {"id": "sku-FAKE-999-X", "pn": "FAKE-999-X", "mfr": "Fake Manufacturer Inc", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 4, "pn": "PDSH4816AF", "mfr": "Appliance Dealers Cooperative (APPDE)"}
+{"type": "row_complete", "sku": {"id": "sku-PDSH4816AF", "pn": "PDSH4816AF", "mfr": "Electrolux Major Appliances, N.A.", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 0, "pn": "PDSH4816AF", "mfr": "Appliance Dealers Cooperative (APPDE)"}
+{"type": "row_complete", "sku": {"id": "sku-PDSH4816AF", "pn": "PDSH4816AF", "mfr": "Electrolux Major Appliances, N.A.", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 1, "pn": "49-94-0013", "mfr": "Milwaukee Accessory (4031)"}
+{"type": "row_complete", "sku": {"id": "sku-49-94-0013", "pn": "49-94-0013", "mfr": "Milwaukee", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 2, "pn": "LNL65301", "mfr": "Plews/lubrimatic (5030)"}
+{"type": "row_complete", "sku": {"id": "sku-LNL65301", "pn": "LNL65301", "mfr": "Plews/lubrimatic", "stage": "conflict", "discStep": 1, "sourceMax": 1, "sources": [{"key": "search", "kind": "page", "ref": "web", "authority": 0.88, "verified": false, "sourceUrl": "https://www.summitracing.com/search/part-type/tire-pressure-gauges-and-inflators/product-line/locknlube-lnl65301-locknflate-digital-tire-inflators-deflators"}], "cells": {"PART_NUMBER": {"col": "PART_NUMBER", "state": "written", "value": "LNL65301", "display": "LNL65301", "conf": 0.89, "ci": [0.8, 1.0]}, "SKU - MY_PART_NUMBER": {"col": "SKU - MY_PART_NUMBER", "state": "written", "value": "LNL65301", "display": "LNL65301", "conf": 0.92, "ci": [0.8, 1.0]}, "MANUFACTURER_NAME": {"col": "MANUFACTURER_NAME", "state": "written", "value": "Plews/lubrimatic", "display": "Plews/lubrimatic", "conf": 0.87, "ci": [0.8, 1.0]}}, "audits": [{"label": "Physical constraints", "state": "pass", "note": "within material limits"}, {"label": "Cross-source contradiction", "state": "fail", "note": "N sources agree after normalisation"}], "conflict": {"col": "MANUFACTURER_NAME", "a": {"value": "Plews/lubrimatic (5030)", "from": "Catalog Input", "authority": 0.7, "sourceUrl": "input.csv"}, "b": {"value": "Plews/lubrimatic", "from": "Web Search", "authority": 0.88, "sourceUrl": "https://www.summitracing.com/search/part-type/tire-pressure-gauges-and-inflators/product-line/locknlube-lnl65301-locknflate-digital-tire-inflators-deflators"}}, "resolution": null}}
+{"type": "row_start", "index": 3, "pn": "FAKE-999-X", "mfr": "Fake Manufacturer Inc"}
+{"type": "row_complete", "sku": {"id": "sku-FAKE-999-X", "pn": "FAKE-999-X", "mfr": "Fake Manufacturer Inc", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}
+{"type": "row_start", "index": 4, "pn": "PDSH4816AF", "mfr": "Appliance Dealers Cooperative (APPDE)"}
+{"type": "row_complete", "sku": {"id": "sku-PDSH4816AF", "pn": "PDSH4816AF", "mfr": "Electrolux Major Appliances, N.A.", "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": null, "resolution": null}}

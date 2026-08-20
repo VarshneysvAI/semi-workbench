@@ -1,0 +1,11 @@
+{
+  "total_rows": 5,
+  "success": 0,
+  "needs_review": 1,
+  "parse_failed": 0,
+  "source_not_found": 0,
+  "missing_part_number": 0,
+  "cached": 4,
+  "duration_seconds": 13.98,
+  "concurrency": 3
+}

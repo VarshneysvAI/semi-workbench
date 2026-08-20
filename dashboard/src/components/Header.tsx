@@ -4,7 +4,7 @@ import { useSemi } from '../engine/SemiContext'
 import { StatusDot } from './ui'
 
 export default function Header({ onToggleNav }: { onToggleNav: () => void }) {
-  const { engine, summary, running, live } = useSemi()
+  const { engine, summary, running, live, startJob } = useSemi()
   const [now, setNow] = useState(new Date())
 
   useEffect(() => {
@@ -15,16 +15,15 @@ export default function Header({ onToggleNav }: { onToggleNav: () => void }) {
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const fd = new FormData()
-    fd.append('file', file)
-    fetch('http://127.0.0.1:8000/api/ingest', { method: 'POST', body: fd })
-      .then(res => res.json())
-      .then(console.log)
+    const maxRowsStr = prompt("Max rows to process (demo speed control):", "4")
+    const maxRows = parseInt(maxRowsStr || "4", 10) || 4
+    startJob(file, maxRows)
   }
 
   const handleExport = () => {
-    window.location.href = 'http://127.0.0.1:8000/api/export_unilog'
+    window.location.href = '/api/export_unilog'
   }
+
 
   const active =
     engine.state.rows.find((r) => ['discover', 'extract', 'audit'].includes(r.stage)) ?? null

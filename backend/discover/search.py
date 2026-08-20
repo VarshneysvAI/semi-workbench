@@ -1,7 +1,6 @@
 """Stage 1 — autonomous manufacturer source discovery (hybrid, priority-ordered).
 
 Per directive the discovery stage is a backend chain, strictly in priority:
-    1. agent-reach (CLI, when installed)
     2. Firecrawl /search (FIRECRAWL_API_KEY)
     3. Exa search (EXA_API_KEY)
     4. ddgs (DuckDuckGo, no key) — the always-on last resort
@@ -24,12 +23,10 @@ from urllib.parse import urlparse
 
 import httpx
 
-from backend.discover.agent_reach_agent import AgentReachAgent
 from backend.ingest.source_validator import validate_source_url
 
 logger = logging.getLogger(__name__)
 
-_AGENT = AgentReachAgent()
 
 CONTENT_TYPE_BY_KIND: dict[str, str] = {
     "spec_sheet": "pdf",
@@ -129,10 +126,8 @@ def _guess_domain(manufacturer: str) -> str:
 
 
 def search_web(query: str, max_results: int = 8) -> list[tuple[str, str]]:
-    """Hybrid discovery: agent-reach -> Firecrawl -> Exa -> ddgs (priority)."""
     global _search_backend_used
     for name, backend in (
-        ("agent-reach", lambda: _agent_reach_search(query, max_results)),
         ("ddgs", lambda: _ddgs_search(query, max_results)),
         ("exa", lambda: _exa_search(query, max_results)),
         ("firecrawl", lambda: _firecrawl_search(query, max_results)),
@@ -151,7 +146,6 @@ def last_search_backend() -> str:
     return _search_backend_used
 
 
-def _agent_reach_search(query: str, max_results: int) -> list[tuple[str, str]]:
     if os.environ.get("AGENTREACH_ENABLED", "true").strip().lower() == "false":
         return []
     return _AGENT.search_web(query, max_results)

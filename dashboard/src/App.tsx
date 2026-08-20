@@ -11,7 +11,9 @@ import AuditView from './views/AuditView'
 import ConflictsView from './views/ConflictsView'
 import EvidenceView from './views/EvidenceView'
 import LedgerView from './views/LedgerView'
+import HistoryView from './views/HistoryView'
 import SettingsView from './views/SettingsView'
+
 import AboutView from './views/AboutView'
 import HelpView from './views/HelpView'
 
@@ -34,11 +36,14 @@ function Boot() {
       return
     }
     const v = videoRef.current
-    if (v && !reduced) v.play().catch(() => {})
-    const cap = reduced ? 2400 : 9500
+    if (v && !reduced) {
+      v.play().catch(() => dismiss())
+    } else {
+      dismiss()
+    }
+    const cap = reduced ? 800 : 2000
     timer.current = window.setTimeout(() => {
-      setDone(true)
-      sessionStorage.setItem('semi-booted', '1')
+      dismiss()
     }, cap)
     return () => {
       if (timer.current) window.clearTimeout(timer.current)
@@ -59,7 +64,7 @@ function Boot() {
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.45, ease: EASE }}
+          transition={{ duration: 0.3 }}
           onClick={dismiss}
           className="fixed inset-0 z-[60] flex cursor-pointer items-center justify-center overflow-hidden bg-[var(--app-bg)]"
         >
@@ -73,9 +78,11 @@ function Boot() {
               muted
               playsInline
               onEnded={dismiss}
+              onError={dismiss}
               className="absolute inset-0 h-full w-full object-cover opacity-70"
             />
           )}
+
           <div className="pointer-events-none absolute inset-0 bg-black/30" />
 
 <motion.div
@@ -186,9 +193,12 @@ function Shell() {
                   <Route path="/conflicts" element={<ConflictsView />} />
                   <Route path="/evidence" element={<EvidenceView />} />
                   <Route path="/ledger" element={<LedgerView />} />
+                  <Route path="/history" element={<HistoryView />} />
                   <Route path="/settings" element={<SettingsView />} />
                   <Route path="/about" element={<AboutView />} />
                   <Route path="/help" element={<HelpView />} />
+
+
                 </Routes>
               </motion.div>
             </AnimatePresence>

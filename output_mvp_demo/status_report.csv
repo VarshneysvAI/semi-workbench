@@ -1,0 +1,6 @@
+row_index,cache_key,Mfg_Part_Num,status,provider_used,search_provider,scrape_method,error_reason
+0,PDSH4816AF|Appliance Dealers Cooperative (APPDE),PDSH4816AF,CACHED,cache,,,
+1,49-94-0013|Milwaukee Accessory (4031),49-94-0013,CACHED,cache,,,
+2,LNL65301|Plews/lubrimatic (5030),LNL65301,NEEDS_REVIEW,gemini,duckduckgo,crawl4ai,
+3,FAKE-999-X|Fake Manufacturer Inc,FAKE-999-X,CACHED,cache,,,
+4,PDSH4816AF|Appliance Dealers Cooperative (APPDE),PDSH4816AF,CACHED,cache,,,

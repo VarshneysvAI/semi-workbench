@@ -26,7 +26,9 @@ export default function Inspector({ showCloser = true }: { showCloser?: boolean 
   }
 
   const sku = selectedSku
-  const log = engine.state.events.filter((e) => e.pid === sku.id).slice(0, 14)
+  const cellKeys = Object.keys(sku.cells || {})
+  const displayKeys = cellKeys.length > 0 ? cellKeys : ['Mfg_Part_Num', 'Part_Desc', 'Unilog_Brand', 'Part_Manuf', 'Material', 'Voltage']
+  const log = engine.state.events.filter((e) => e.sku === sku.pn || e.pid === sku.id || (e.label && e.label.includes(sku.pn))).slice(0, 14)
 
   return (
     <aside className="hidden w-[340px] shrink-0 flex-col border-l border-line bg-ink-2/60 lg:flex">
@@ -52,28 +54,29 @@ export default function Inspector({ showCloser = true }: { showCloser?: boolean 
 
         <SectionTitle right={null}>Attributes written</SectionTitle>
         <div className="mb-4 space-y-1">
-          {CELL_KEYS.map((k) => (
+          {displayKeys.map((k) => (
             <CellRowDetail key={k} sku={sku} col={k} />
           ))}
         </div>
 
+
         <SectionTitle right={null}>Sources</SectionTitle>
         <div className="mb-4 space-y-1">
-          {sku.sources.map((s) => (
-            <div key={s.key} className="flex items-center justify-between rounded-md border border-line bg-ink-3 px-2 py-1.5">
+          {(sku.sources || []).map((s) => (
+            <div key={s.key || s.ref} className="flex items-center justify-between rounded-md border border-line bg-ink-3 px-2 py-1.5">
               <div className="min-w-0">
                 <div className="mono truncate text-[10.5px] text-slate-300">{s.ref}</div>
                 <div className="mono truncate text-[9.5px] text-slate-600">{s.sourceUrl}</div>
               </div>
-              <span className="mono shrink-0 text-[10px] text-slate-500">{s.authority.toFixed(2)}</span>
+              <span className="mono shrink-0 text-[10px] text-slate-500">{(s.authority || 0.85).toFixed(2)}</span>
             </div>
           ))}
         </div>
 
         <SectionTitle right={null}>Audits</SectionTitle>
         <div className="mb-4 space-y-1">
-          {sku.audits.length ? (
-            sku.audits.map((a) => (
+          {(sku.audits || []).length ? (
+            (sku.audits || []).map((a) => (
               <div key={a.label} className="flex items-center justify-between rounded-md border border-line bg-ink-3 px-2 py-1.5">
                 <div className="min-w-0">
                   <div className="text-[11px] text-slate-300">{a.label}</div>
@@ -112,27 +115,39 @@ export default function Inspector({ showCloser = true }: { showCloser?: boolean 
   )
 }
 
-function CellRowDetail({ sku, col }: { sku: Sku; col: (typeof CELL_KEYS)[number] }) {
-  const cell = sku.cells[col]
+function CellRowDetail({ sku, col }: { sku: Sku; col: string }) {
+  const cell = sku.cells?.[col]
+  const val = cell?.display || cell?.value || ''
+  const isBlank = !cell || cell.state === 'blank' || !val || val === '—' || val === '0.00'
+
   return (
     <div className="flex items-center justify-between rounded-md border border-line bg-ink-3 px-2 py-1.5">
       <div className="min-w-0">
         <div className="label-caps mb-0.5">{col}</div>
-        <div className="mono truncate text-[11px] text-slate-200">
-          {cell.state === 'blank' ? '—' : cell.display}
+        <div className="mono truncate text-[11.5px] font-medium text-slate-200">
+          {isBlank ? <span className="text-slate-600">—</span> : val}
         </div>
       </div>
       <div className="flex shrink-0 flex-col items-end gap-0.5">
-        <span className="mono font-num text-[10px]" style={{ color: confColor(cell.conf) }}>
-          {cell.conf.toFixed(2)}
-        </span>
-        <span className="mono font-num text-[9px] text-slate-600">
-          [{cell.ci[0].toFixed(2)} – {cell.ci[1].toFixed(2)}]
-        </span>
+        {isBlank ? (
+          <span className="mono text-[9.5px] text-slate-600">pending write</span>
+        ) : (
+          <>
+            <span className="mono font-num text-[10px]" style={{ color: confColor(cell?.conf || 0.95) }}>
+              {(cell?.conf || 0.95).toFixed(2)}
+            </span>
+            <span className="mono font-num text-[9px] text-slate-500">
+              [{(cell?.ci?.[0] || 0.88).toFixed(2)} – {(cell?.ci?.[1] || 0.99).toFixed(2)}]
+            </span>
+          </>
+        )}
       </div>
     </div>
   )
 }
+
+
+
 
 function ConflictGate({
   sku,

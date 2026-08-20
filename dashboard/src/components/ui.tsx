@@ -66,6 +66,7 @@ export function ProgressBar({
 }
 
 export function Ring({ pct, size = 32, color }: { pct: number; size?: number; color?: string }) {
+  const safePct = isNaN(pct) ? 0 : pct
   const r = (size - 6) / 2
   const c = 2 * Math.PI * r
   return (
@@ -80,7 +81,7 @@ export function Ring({ pct, size = 32, color }: { pct: number; size?: number; co
         strokeWidth={3.5}
         strokeLinecap="round"
         strokeDasharray={c}
-        strokeDashoffset={c * (1 - Math.min(1, Math.max(0, pct)))}
+        strokeDashoffset={c * (1 - Math.min(1, Math.max(0, safePct)))}
         style={{ transition: 'stroke-dashoffset 500ms ease' }}
       />
     </svg>

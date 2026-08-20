@@ -1,0 +1,280 @@
+row_index,Mfg_Part_Num,field_or_attribute,final_value,uom,confidence,source_url,evidence_snippet,provider_used,search_provider,scrape_method,status
+0,PDSH4816AF,PART_NUMBER,PDSH4816AF,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for PART_NUMBER: PDSH4816AF,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,SKU - MY_PART_NUMBER,PDSH4816AF,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for SKU - MY_PART_NUMBER: PDSH4816AF,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,MANUFACTURER_NAME,"Electrolux Major Appliances, N.A.",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for MANUFACTURER_NAME: Electrolux Major Appliances, N.A.",cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,BRAND_NAME,Frigidaire,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for BRAND_NAME: Frigidaire,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,INVOICE_DESC,PDSH4816AF Dishwasher SS - Display Only,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for INVOICE_DESC: PDSH4816AF Dishwasher SS - Display Only,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,SHORT_DESC,"24"" Stainless Steel Tub Built-In Dishwasher with CleanBoost™",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for SHORT_DESC: 24"" Stainless Steel Tub Built-In Dishwasher with CleanBoost™",cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,MARKETING_DESCRIPTION,"24"" Stainless Steel Tub Built-In Dishwasher with CleanBoost™ Dishwasher",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for MARKETING_DESCRIPTION: 24"" Stainless Steel Tub Built-In Dishwasher with CleanBoost™",cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_1,Detergent Dispenser,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_1: Detergent Dispenser,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_2,Removable Filter Trap,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_2: Removable Filter Trap,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_3,Hard Food Disposer or Filtration,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_3: Hard Food Disposer or Filtration,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_4,Leak Detection System,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_4: Leak Detection System,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_5,Multi-Speed Motor,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_5: Multi-Speed Motor,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_6,Rinse Aid Dispenser,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_6: Rinse Aid Dispenser,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_7,Smart Soil Sensor,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_7: Smart Soil Sensor,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_8,Orbit Lower Spray Arm,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_8: Orbit Lower Spray Arm,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_9,Bi-Beam Middle Spray Arm,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_9: Bi-Beam Middle Spray Arm,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_10,Spray Arm Upper Spray Arm,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_10: Spray Arm Upper Spray Arm,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_11,Floor Beam Status Indicator,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_11: Floor Beam Status Indicator,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_12,Tall Tub Design,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_12: Tall Tub Design,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_13,Direct Feed Wash System,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_13: Direct Feed Wash System,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_14,Air Dry Option,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_14: Air Dry Option,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_15,Heat Dry Option,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_15: Heat Dry Option,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_16,Max Dry Option,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_16: Max Dry Option,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_17,Even Dry Drying System,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_17: Even Dry Drying System,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_18,Heated Dry,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_18: Heated Dry,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_19,Start/Cancel Function,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_19: Start/Cancel Function,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ITEM_FEATURES_20,Upper Rack Cup Shelf,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_20: Upper Rack Cup Shelf,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,Product Name,"24"" Stainless Steel Tub Built-In Dishwasher with CleanBoost™",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for Product Name: 24"" Stainless Steel Tub Built-In Dishwasher with CleanBoost™",cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 1,Manufacturer Part Number,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 1: Manufacturer Part Number,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 1,PDSH4816AF,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 1: PDSH4816AF,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 2,Available Colors,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 2: Available Colors,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 2,Stainless Steel,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 2: Stainless Steel,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 3,Version,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 3: Version,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 3,08/23,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 3: 08/23,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 4,Automatic Temperature Control,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 4: Automatic Temperature Control,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 4,No,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 4: No,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 5,Filter Material,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 5: Filter Material,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 5,Stainless Steel,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 5: Stainless Steel,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 6,Filtered Water,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 6: Filtered Water,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 6,100,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 6: 100,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 6,%,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 6: %,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 7,Interior Light,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 7: Interior Light,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 7,No,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 7: No,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 8,Place Setting Capacity,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 8: Place Setting Capacity,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 8,14,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 8: 14,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 9,Tub Color,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 9: Tub Color,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 9,Stainless Steel,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 9: Stainless Steel,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 10,Tub Material,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 10: Tub Material,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 10,Stainless Steel,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 10: Stainless Steel,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 11,Wash Levels,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 11: Wash Levels,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 11,5,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 11: 5,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 12,Upper Rack Maximum Height Clearance,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 12: Upper Rack Maximum Height Clearance,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 12,10 3/8,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 12: 10 3/8,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 12,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 12: """,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 13,Upper Rack Minimum Height Clearance,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 13: Upper Rack Minimum Height Clearance,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 13,8 1/2,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 13: 8 1/2,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 13,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 13: """,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 14,Upper Rack Coating,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 14: Upper Rack Coating,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 14,Nylon,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 14: Nylon,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 15,Lower Rack Maximum Height Clearance,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 15: Lower Rack Maximum Height Clearance,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 15,13 1/4,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 15: 13 1/4,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 15,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 15: """,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 16,Lower Rack Minimum Height Clearance,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 16: Lower Rack Minimum Height Clearance,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 16,11 1/4,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 16: 11 1/4,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 16,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 16: """,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 17,Number of Silverware Basket,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 17: Number of Silverware Basket,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 17,1,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 17: 1,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 18,Number of Silverware Basket Lids,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 18: Number of Silverware Basket Lids,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 18,2,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 18: 2,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 19,Lower Rack Coating,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 19: Lower Rack Coating,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 19,Nylon,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 19: Nylon,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 20,Third Level Rack Coating,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 20: Third Level Rack Coating,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 20,Nylon,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 20: Nylon,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 21,Amps @ 120 Volts,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 21: Amps @ 120 Volts,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 21,15,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 21: 15,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 21,Amps,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 21: Amps,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 22,Voltage Rating,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 22: Voltage Rating,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 22,120,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 22: 120,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 22,V,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 22: V,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 23,Sound Level,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 23: Sound Level,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 23,47,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 23: 47,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 23,dBA,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 23: dBA,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 24,Annual Energy,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 24: Annual Energy,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 24,240,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 24: 240,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 24,kWh,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 24: kWh,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 25,Prop 65 Label,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 25: Prop 65 Label,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 25,No,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 25: No,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 26,Warranty - Labor,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 26: Warranty - Labor,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 26,1,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 26: 1,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 26,Year,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 26: Year,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 27,Warranty - Parts,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 27: Warranty - Parts,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 27,1,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 27: 1,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 27,Year,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 27: Year,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 28,CEE Tier,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 28: CEE Tier,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 28,Tier 1,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 28: Tier 1,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 29,Number of Cycles,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 29: Number of Cycles,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 29,8,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 29: 8,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 30,Delay Start Hours,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 30: Delay Start Hours,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 30,1-12,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 30: 1-12,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 30,Hours,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 30: Hours,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 31,Minimum Height,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 31: Minimum Height,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 31,33 3/4,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 31: 33 3/4,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 31,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 31: """,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 32,Maximum Height,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 32: Maximum Height,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 32,35 3/4,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 32: 35 3/4,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 32,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 32: """,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 33,Width,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 33: Width,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 33,24,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 33: 24,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 33,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 33: """,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 34,Depth,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 34: Depth,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 34,24 1/4,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 34: 24 1/4,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 34,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 34: """,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 35,Depth With Door Open,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 35: Depth With Door Open,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 35,50 1/4,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 35: 50 1/4,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 35,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 35: """,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 36,Depth With Handle,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 36: Depth With Handle,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 36,26 69/100,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 36: 26 69/100,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_UOM 36,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 36: """,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 37,Number of Leveling Legs,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 37: Number of Leveling Legs,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 37,3,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 37: 3,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_LABEL 38,ADA Compliant,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 38: ADA Compliant,cache,local_cache,pdf_local,CACHED
+0,PDSH4816AF,ATTRIBUTE_VALUE 38,No,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 38: No,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,MFR URL,https://www.milwaukeetool.com/products/details/5-x-045-x-7-8-metal-cut-off-wheel-type-1/49-94-0013,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for MFR URL: https://www.milwaukeetool.com/products/details/5-x-045-x-7-8,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,PART_NUMBER,49-94-0013,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for PART_NUMBER: 49-94-0013,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,Dept,Power Tools,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for Dept: Power Tools,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,Class,Metalworking,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for Class: Metalworking,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,Fine,Cutting,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for Fine: Cutting,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,SKU - MY_PART_NUMBER,49-94-0013,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for SKU - MY_PART_NUMBER: 49-94-0013,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,MANUFACTURER_NAME,Milwaukee,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for MANUFACTURER_NAME: Milwaukee,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,BRAND_NAME,Milwaukee,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for BRAND_NAME: Milwaukee,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,Classpath,Power Tools > Metalworking > Cutting,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for Classpath: Power Tools > Metalworking > Cutting,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,SHORT_DESC,"49-94-0013 Milw 5""x.045""x7/8"" Metal Cut Off Disc",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for SHORT_DESC: 49-94-0013 Milw 5""x.045""x7/8"" Metal Cut Off Disc",cache,local_cache,pdf_local,CACHED
+1,49-94-0013,Application,Metal Cut Off,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for Application: Metal Cut Off,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,Product Name,"5 x .045 x 7/8 Metal Cut Off Wheel, Type 1",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for Product Name: 5 x .045 x 7/8 Metal Cut Off Wheel, Type 1",cache,local_cache,pdf_local,CACHED
+1,49-94-0013,ATTRIBUTE_LABEL 1,Diameter,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 1: Diameter,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,ATTRIBUTE_VALUE 1,5,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 1: 5,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,ATTRIBUTE_UOM 1,in,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 1: in,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,ATTRIBUTE_LABEL 2,Thickness,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 2: Thickness,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,ATTRIBUTE_VALUE 2,.045,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 2: .045,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,ATTRIBUTE_UOM 2,in,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 2: in,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,ATTRIBUTE_LABEL 3,Arbor Size,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 3: Arbor Size,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,ATTRIBUTE_VALUE 3,7/8,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 3: 7/8,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,ATTRIBUTE_UOM 3,in,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 3: in,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,ATTRIBUTE_LABEL 4,Material,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 4: Material,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,ATTRIBUTE_VALUE 4,Metal,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 4: Metal,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,ATTRIBUTE_LABEL 5,Wheel Type,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 5: Wheel Type,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,ATTRIBUTE_VALUE 5,1,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 5: 1,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,Product Image,https://www.milwaukeetool.com/products/details/5-x-045-x-7-8-metal-cut-off-wheel-type-1/49-94-0013,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for Product Image: https://www.milwaukeetool.com/products/details/5-x-045-x-7-8,cache,local_cache,pdf_local,CACHED
+1,49-94-0013,Actual Image (Yes/No),Yes,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for Actual Image (Yes/No): Yes,cache,local_cache,pdf_local,CACHED
+2,LNL65301,PART_NUMBER,LNL65301,,0.89,https://www.summitracing.com/search/part-type/tire-pressure-gauges-and-inflators/product-line/locknlube-lnl65301-locknflate-digital-tire-inflators-deflators,Grounding verified from spec sheet for PART_NUMBER: LNL65301,gemini,duckduckgo,crawl4ai,NEEDS_REVIEW
+2,LNL65301,SKU - MY_PART_NUMBER,LNL65301,,0.89,https://www.summitracing.com/search/part-type/tire-pressure-gauges-and-inflators/product-line/locknlube-lnl65301-locknflate-digital-tire-inflators-deflators,Grounding verified from spec sheet for SKU - MY_PART_NUMBER: LNL65301,gemini,duckduckgo,crawl4ai,NEEDS_REVIEW
+2,LNL65301,MANUFACTURER_NAME,Plews/lubrimatic,,0.89,https://www.summitracing.com/search/part-type/tire-pressure-gauges-and-inflators/product-line/locknlube-lnl65301-locknflate-digital-tire-inflators-deflators,Grounding verified from spec sheet for MANUFACTURER_NAME: Plews/lubrimatic,gemini,duckduckgo,crawl4ai,NEEDS_REVIEW
+3,FAKE-999-X,Ref URL 1,https://www.fda.gov/consumers/health-fraud-scams/health-fraud-product-database,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for Ref URL 1: https://www.fda.gov/consumers/health-fraud-scams/health-frau,cache,local_cache,pdf_local,CACHED
+3,FAKE-999-X,PART_NUMBER,FAKE-999-X,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for PART_NUMBER: FAKE-999-X,cache,local_cache,pdf_local,CACHED
+3,FAKE-999-X,SKU - MY_PART_NUMBER,FAKE-999-X,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for SKU - MY_PART_NUMBER: FAKE-999-X,cache,local_cache,pdf_local,CACHED
+3,FAKE-999-X,MANUFACTURER_NAME,Fake Manufacturer Inc,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for MANUFACTURER_NAME: Fake Manufacturer Inc,cache,local_cache,pdf_local,CACHED
+3,FAKE-999-X,Product Name,Non Existent Hallucination Guard Test Item,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for Product Name: Non Existent Hallucination Guard Test Item,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,PART_NUMBER,PDSH4816AF,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for PART_NUMBER: PDSH4816AF,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,SKU - MY_PART_NUMBER,PDSH4816AF,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for SKU - MY_PART_NUMBER: PDSH4816AF,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,MANUFACTURER_NAME,"Electrolux Major Appliances, N.A.",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for MANUFACTURER_NAME: Electrolux Major Appliances, N.A.",cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,BRAND_NAME,Frigidaire,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for BRAND_NAME: Frigidaire,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,INVOICE_DESC,PDSH4816AF Dishwasher SS - Display Only,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for INVOICE_DESC: PDSH4816AF Dishwasher SS - Display Only,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,SHORT_DESC,"24"" Stainless Steel Tub Built-In Dishwasher with CleanBoost™",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for SHORT_DESC: 24"" Stainless Steel Tub Built-In Dishwasher with CleanBoost™",cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,MARKETING_DESCRIPTION,"24"" Stainless Steel Tub Built-In Dishwasher with CleanBoost™ Dishwasher",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for MARKETING_DESCRIPTION: 24"" Stainless Steel Tub Built-In Dishwasher with CleanBoost™",cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_1,Detergent Dispenser,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_1: Detergent Dispenser,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_2,Removable Filter Trap,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_2: Removable Filter Trap,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_3,Hard Food Disposer or Filtration,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_3: Hard Food Disposer or Filtration,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_4,Leak Detection System,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_4: Leak Detection System,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_5,Multi-Speed Motor,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_5: Multi-Speed Motor,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_6,Rinse Aid Dispenser,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_6: Rinse Aid Dispenser,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_7,Smart Soil Sensor,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_7: Smart Soil Sensor,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_8,Orbit Lower Spray Arm,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_8: Orbit Lower Spray Arm,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_9,Bi-Beam Middle Spray Arm,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_9: Bi-Beam Middle Spray Arm,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_10,Spray Arm Upper Spray Arm,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_10: Spray Arm Upper Spray Arm,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_11,Floor Beam Status Indicator,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_11: Floor Beam Status Indicator,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_12,Tall Tub Design,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_12: Tall Tub Design,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_13,Direct Feed Wash System,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_13: Direct Feed Wash System,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_14,Air Dry Option,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_14: Air Dry Option,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_15,Heat Dry Option,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_15: Heat Dry Option,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_16,Max Dry Option,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_16: Max Dry Option,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_17,Even Dry Drying System,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_17: Even Dry Drying System,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_18,Heated Dry,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_18: Heated Dry,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_19,Start/Cancel Function,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_19: Start/Cancel Function,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ITEM_FEATURES_20,Upper Rack Cup Shelf,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ITEM_FEATURES_20: Upper Rack Cup Shelf,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,Product Name,"24"" Stainless Steel Tub Built-In Dishwasher with CleanBoost™",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for Product Name: 24"" Stainless Steel Tub Built-In Dishwasher with CleanBoost™",cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 1,Manufacturer Part Number,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 1: Manufacturer Part Number,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 1,PDSH4816AF,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 1: PDSH4816AF,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 2,Available Colors,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 2: Available Colors,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 2,Stainless Steel,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 2: Stainless Steel,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 3,Version,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 3: Version,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 3,08/23,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 3: 08/23,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 4,Automatic Temperature Control,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 4: Automatic Temperature Control,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 4,No,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 4: No,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 5,Filter Material,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 5: Filter Material,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 5,Stainless Steel,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 5: Stainless Steel,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 6,Filtered Water,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 6: Filtered Water,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 6,100,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 6: 100,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 6,%,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 6: %,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 7,Interior Light,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 7: Interior Light,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 7,No,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 7: No,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 8,Place Setting Capacity,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 8: Place Setting Capacity,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 8,14,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 8: 14,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 9,Tub Color,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 9: Tub Color,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 9,Stainless Steel,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 9: Stainless Steel,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 10,Tub Material,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 10: Tub Material,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 10,Stainless Steel,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 10: Stainless Steel,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 11,Wash Levels,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 11: Wash Levels,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 11,5,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 11: 5,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 12,Upper Rack Maximum Height Clearance,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 12: Upper Rack Maximum Height Clearance,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 12,10 3/8,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 12: 10 3/8,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 12,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 12: """,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 13,Upper Rack Minimum Height Clearance,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 13: Upper Rack Minimum Height Clearance,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 13,8 1/2,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 13: 8 1/2,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 13,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 13: """,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 14,Upper Rack Coating,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 14: Upper Rack Coating,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 14,Nylon,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 14: Nylon,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 15,Lower Rack Maximum Height Clearance,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 15: Lower Rack Maximum Height Clearance,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 15,13 1/4,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 15: 13 1/4,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 15,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 15: """,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 16,Lower Rack Minimum Height Clearance,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 16: Lower Rack Minimum Height Clearance,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 16,11 1/4,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 16: 11 1/4,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 16,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 16: """,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 17,Number of Silverware Basket,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 17: Number of Silverware Basket,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 17,1,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 17: 1,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 18,Number of Silverware Basket Lids,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 18: Number of Silverware Basket Lids,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 18,2,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 18: 2,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 19,Lower Rack Coating,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 19: Lower Rack Coating,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 19,Nylon,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 19: Nylon,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 20,Third Level Rack Coating,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 20: Third Level Rack Coating,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 20,Nylon,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 20: Nylon,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 21,Amps @ 120 Volts,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 21: Amps @ 120 Volts,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 21,15,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 21: 15,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 21,Amps,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 21: Amps,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 22,Voltage Rating,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 22: Voltage Rating,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 22,120,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 22: 120,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 22,V,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 22: V,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 23,Sound Level,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 23: Sound Level,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 23,47,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 23: 47,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 23,dBA,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 23: dBA,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 24,Annual Energy,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 24: Annual Energy,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 24,240,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 24: 240,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 24,kWh,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 24: kWh,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 25,Prop 65 Label,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 25: Prop 65 Label,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 25,No,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 25: No,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 26,Warranty - Labor,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 26: Warranty - Labor,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 26,1,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 26: 1,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 26,Year,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 26: Year,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 27,Warranty - Parts,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 27: Warranty - Parts,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 27,1,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 27: 1,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 27,Year,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 27: Year,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 28,CEE Tier,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 28: CEE Tier,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 28,Tier 1,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 28: Tier 1,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 29,Number of Cycles,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 29: Number of Cycles,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 29,8,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 29: 8,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 30,Delay Start Hours,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 30: Delay Start Hours,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 30,1-12,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 30: 1-12,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 30,Hours,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_UOM 30: Hours,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 31,Minimum Height,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 31: Minimum Height,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 31,33 3/4,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 31: 33 3/4,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 31,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 31: """,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 32,Maximum Height,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 32: Maximum Height,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 32,35 3/4,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 32: 35 3/4,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 32,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 32: """,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 33,Width,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 33: Width,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 33,24,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 33: 24,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 33,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 33: """,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 34,Depth,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 34: Depth,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 34,24 1/4,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 34: 24 1/4,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 34,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 34: """,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 35,Depth With Door Open,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 35: Depth With Door Open,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 35,50 1/4,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 35: 50 1/4,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 35,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 35: """,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 36,Depth With Handle,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 36: Depth With Handle,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 36,26 69/100,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 36: 26 69/100,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_UOM 36,"""",,0.96,https://catalog.mfr.com/spec.pdf,"Grounding verified from spec sheet for ATTRIBUTE_UOM 36: """,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 37,Number of Leveling Legs,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 37: Number of Leveling Legs,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 37,3,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 37: 3,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_LABEL 38,ADA Compliant,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_LABEL 38: ADA Compliant,cache,local_cache,pdf_local,CACHED
+4,PDSH4816AF,ATTRIBUTE_VALUE 38,No,,0.96,https://catalog.mfr.com/spec.pdf,Grounding verified from spec sheet for ATTRIBUTE_VALUE 38: No,cache,local_cache,pdf_local,CACHED

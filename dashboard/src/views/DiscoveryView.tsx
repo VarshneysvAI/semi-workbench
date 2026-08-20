@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useSemi } from '../engine/SemiContext'
 import { Badge, SectionTitle, StatusDot } from '../components/ui'
-import { LiveDiscovery } from '../components/live'
 import type { Sku } from '../data/seed'
 
 const AUTHORITY_BARS = [
@@ -12,23 +11,21 @@ const AUTHORITY_BARS = [
 ]
 
 export default function DiscoveryView() {
-  const { engine, live } = useSemi()
+  const { engine } = useSemi()
 
   const discoverEvents = useMemo(
-    () => engine.state.events.filter((e) => e.origin === 'discover').slice(0, 30),
+    () => engine.state.events.filter((e: any) => e.origin === 'discover').slice(0, 30),
     [engine.state.events],
   )
   const blockedEvents = useMemo(
-    () => engine.state.events.filter((e) => e.origin === 'validator').slice(0, 20),
+    () => engine.state.events.filter((e: any) => e.origin === 'validator').slice(0, 20),
     [engine.state.events],
   )
   const mfrList = useMemo(() => {
     const set = new Set<string>()
-    engine.state.rows.forEach((r: Sku) => set.add(r.mfr))
+    engine.state.rows.forEach((r: Sku) => { if (r.mfr) set.add(r.mfr) })
     return Array.from(set).sort()
   }, [engine.state.rows])
-
-  void AUTHORITY_BARS
 
   return (
     <div className="mx-auto max-w-[1200px] space-y-5 p-5">
@@ -39,18 +36,14 @@ export default function DiscoveryView() {
         </p>
       </div>
 
-      {live === 'live' ? (
-        <LiveDiscovery />
-      ) : (
-        <>
-          <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid gap-5 lg:grid-cols-2">
         <div className="panel p-4">
           <SectionTitle right={null}>Source funnel by manufacturer</SectionTitle>
           <div className="space-y-3">
-            {mfrList.map((m) => {
+            {mfrList.length ? mfrList.map((m) => {
               const rows = engine.state.rows.filter((r: Sku) => r.mfr === m)
               const kinds = rows.reduce(
-                (acc, r) => {
+                (acc: Record<string, number>, r: Sku) => {
                   r.sources.forEach((s) => (acc[s.kind] = (acc[s.kind] ?? 0) + 1))
                   return acc
                 },
@@ -61,7 +54,7 @@ export default function DiscoveryView() {
                   <div className="mb-2 flex items-center justify-between">
                     <span className="mono text-[12px] font-semibold text-slate-200">{m}</span>
                     <span className="mono font-num text-[12px] text-slate-500">
-                      {rows.reduce((a, r) => a + r.sources.length, 0)} sources
+                      {rows.reduce((a: number, r: Sku) => a + r.sources.length, 0)} sources
                     </span>
                   </div>
                   <div className="flex gap-4">
@@ -82,7 +75,9 @@ export default function DiscoveryView() {
                   </div>
                 </div>
               )
-            })}
+            }) : (
+              <div className="py-8 text-center text-[13px] text-slate-500">Upload a file to see discovery data</div>
+            )}
           </div>
         </div>
 
@@ -97,7 +92,7 @@ export default function DiscoveryView() {
           </SectionTitle>
           <div className="max-h-[300px] space-y-1 overflow-y-auto">
             {blockedEvents.length ? (
-              blockedEvents.map((e) => (
+              blockedEvents.map((e: any) => (
                 <div key={e.id} className="mono rounded-md border border-rose-400/15 bg-rose-400/[0.05] px-2 py-1.5 text-[12px]">
                   <span className="text-rose-300">✕</span>{' '}
                   <span className="text-slate-400">{e.label}</span>
@@ -119,7 +114,7 @@ export default function DiscoveryView() {
         </SectionTitle>
         <div className="max-h-[320px] space-y-1 overflow-y-auto">
           {discoverEvents.length ? (
-            discoverEvents.map((e) => (
+            discoverEvents.map((e: any) => (
               <div key={e.id} className="mono flex gap-2 text-[12px] leading-relaxed text-slate-500">
                 <span className="shrink-0 text-emerald-400">[discover]</span>
                 <span className="min-w-0 flex-1 truncate">{e.label}</span>
@@ -132,8 +127,6 @@ export default function DiscoveryView() {
           )}
         </div>
       </div>
-      </>
-      )}
     </div>
   )
 }

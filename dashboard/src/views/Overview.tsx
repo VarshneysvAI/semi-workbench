@@ -9,21 +9,21 @@ export default function Overview() {
   const events = engine.state.events.slice(0, 26)
   const active = engine.state.rows.find((r) => ['discover', 'extract', 'audit'].includes(r.stage))
 
-  const mfrStats = useMemo(
-    () =>
-      ['NIBCO', 'WATTS', 'APOLLO'].map((m) => {
-        const rows = engine.state.rows.filter((r) => r.mfr === m)
-        const done = rows.filter((r) => r.stage === 'done').length
-        const srcs = rows.reduce((a, r) => a + r.sources.length, 0)
-        return { m, done, total: rows.length, srcs }
-      }),
-    [engine.state.rows],
-  )
+  const mfrStats = useMemo(() => {
+    const mfrSet = new Set<string>()
+    engine.state.rows.forEach((r: any) => { if (r.mfr) mfrSet.add(r.mfr) })
+    return Array.from(mfrSet).slice(0, 6).map((m) => {
+      const rows = engine.state.rows.filter((r: any) => r.mfr === m)
+      const done = rows.filter((r: any) => r.stage === 'done').length
+      const srcs = rows.reduce((a: number, r: any) => a + (r.sources?.length ?? 0), 0)
+      return { m, done, total: rows.length, srcs }
+    })
+  }, [engine.state.rows])
 
   const segments = [
-    { w: (summary.rowsDone / summary.rowsTotal) * 100, color: '#34d399', label: 'accept' },
-    { w: (summary.rowsConflict / summary.rowsTotal) * 100, color: '#fbbf24', label: 'conflict' },
-    { w: (summary.rowsRefused / summary.rowsTotal) * 100, color: '#fb7185', label: 'refuse' },
+    { w: summary.rowsTotal ? (summary.rowsDone / summary.rowsTotal) * 100 : 0, color: '#34d399', label: 'accept' },
+    { w: summary.rowsTotal ? (summary.rowsConflict / summary.rowsTotal) * 100 : 0, color: '#fbbf24', label: 'conflict' },
+    { w: summary.rowsTotal ? (summary.rowsRefused / summary.rowsTotal) * 100 : 0, color: '#fb7185', label: 'refuse' },
   ].filter((s) => s.w > 0)
 
   return (
@@ -78,7 +78,7 @@ export default function Overview() {
               <span className="text-[14px] text-slate-500">/{summary.rowsTotal}</span>
             </span>
           }
-          sub={<Ring pct={worked / summary.rowsTotal} />}
+          sub={<Ring pct={summary.rowsTotal ? worked / summary.rowsTotal : 0} />}
           tone="accent"
         />
         <Kpi

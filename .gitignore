@@ -47,3 +47,9 @@ output.json
 test_input.csv
 test_live.py
 get_graph.py
+.cache/
+logs/
+output/
+output_final*/
+output_test*/
+

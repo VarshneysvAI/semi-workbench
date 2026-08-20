@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: semi-workbench
+    env: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: LLM_API_KEY_NIM
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: PRIMARY_PROVIDER
+        value: nim
+      - key: FALLBACK_PROVIDERS
+        value: gemini
+      - key: NIM_MAX_RPM
+        value: "35"
+      - key: CONCURRENCY
+        value: "2"
+      - key: CACHE_ENABLED
+        value: "true"
+      - key: MAX_ROWS_PER_RUN
+        value: "200"
