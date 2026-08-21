@@ -21,34 +21,31 @@ class NIMProvider(BaseProvider):
         nim_limiter.wait_if_needed()
         start = time.time()
         try:
-            payload = {
-                "model": model,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                "temperature": 0.0,
-                "max_tokens": 8192,
-                "chat_template_kwargs": {"thinking": True, "reasoning_effort": "high"}
-            }
-            resp = requests.post(
-                f"{base_url}/chat/completions",
-                headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-                json=payload,
-                timeout=timeout
+            from openai import OpenAI
+            client = OpenAI(
+              base_url = base_url,
+              api_key = api_key,
+              timeout=timeout
             )
-            if resp.status_code >= 400:
-                logger.warning(f"NIM HTTP {resp.status_code}: {resp.text[:200]}")
-                return ProviderResult("", self.name, time.time() - start, f"NIM HTTP {resp.status_code}")
-                
-            data = resp.json()
-            message = data["choices"][0]["message"]
             
-            reasoning = message.get("reasoning") or message.get("reasoning_content")
+            completion = client.chat.completions.create(
+              model=model,
+              messages=[
+                  {"role":"system","content":system_prompt},
+                  {"role":"user","content":user_prompt}
+              ],
+              temperature=0.0,
+              max_tokens=8192,
+              extra_body={"chat_template_kwargs":{"thinking":True,"reasoning_effort":"high"}},
+              stream=False
+            )
+            
+            message = completion.choices[0].message
+            reasoning = getattr(message, "reasoning", None) or getattr(message, "reasoning_content", None)
             if reasoning:
                 logger.info(f"NIM Reasoning (deepseek): {reasoning[:200]}...")
                 
-            content = message["content"]
+            content = message.content
             return ProviderResult(content, self.name, time.time() - start)
         except Exception as e:
             return ProviderResult("", self.name, time.time() - start, str(e))
