@@ -9,7 +9,7 @@ from backend.pipeline.logger_setup import logger
 
 class ProviderRouter:
     def __init__(self):
-        self.primary = os.getenv("PRIMARY_PROVIDER", "gemini").lower()
+        self.primary = os.getenv("PRIMARY_PROVIDER", "nim").lower()
         self.providers = {
             "gemini": GeminiProvider(),
             "nim": NIMProvider(),
@@ -18,8 +18,8 @@ class ProviderRouter:
 
     def run_extraction(self, system_prompt: str, user_prompt: str):
         # 1. Try Primary
-        provider_name = os.getenv("PRIMARY_PROVIDER", "gemini").lower()
-        provider = self.providers.get(provider_name, GeminiProvider())
+        provider_name = os.getenv("PRIMARY_PROVIDER", "nim").lower()
+        provider = self.providers.get(provider_name, NIMProvider())
         logger.info(f"Using primary provider: {provider.name}")
         res = provider.extract(system_prompt, user_prompt)
         
