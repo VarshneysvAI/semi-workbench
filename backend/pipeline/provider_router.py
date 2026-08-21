@@ -5,7 +5,7 @@ from backend.providers.gemini_provider import GeminiProvider
 from backend.providers.mock_provider import MockProvider
 from backend.pipeline.json_repair import repair_json
 
-logger = logging.getLogger(__name__)
+from backend.pipeline.logger_setup import logger
 
 class ProviderRouter:
     def __init__(self):

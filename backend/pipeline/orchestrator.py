@@ -32,7 +32,7 @@ def write_csv_row(output_dir_path, row_data):
     with events_lock:
         with open(output_dir_path / "Unihack_Delivery_Format_Output.csv", "a", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=UNILOG_HEADER)
-            writer.write(row_data)
+            writer.writerow(row_data)
 
 async def process_single_row(i, row, output_dir_path, use_cache=True):
     logger.info(f"ROW_START: {i}")
