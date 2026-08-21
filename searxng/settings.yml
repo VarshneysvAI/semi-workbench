@@ -1,0 +1,26 @@
+use_default_settings: true
+
+general:
+  debug: false
+  instance_name: "SEMI Private SearXNG Node"
+
+search:
+  safe_search: 0
+  autocomplete: ""
+  default_lang: "en"
+
+server:
+  port: 8080
+  bind_address: "0.0.0.0"
+  secret_key: "semi_searxng_secret_key_production_grade"
+
+engines:
+  - name: google
+    engine: google
+    shortcut: g
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+  - name: bing
+    engine: bing
+    shortcut: b
