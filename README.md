@@ -1,11 +1,7 @@
-<p align="center">
-  <img src="dashboard/public/logo.png" width="160" alt="SEMI Logo"/>
-</p>
-
-<h1 align="center">SEMI — Industrial Intelligence Platform</h1>
+# SEMI — Self-Evolving Manufacturer Intelligence
 
 <p align="center">
-  <strong>Autonomous Product Data Extraction, Hallucination Prevention & 252-Column Unilog Normalization</strong>
+  <img src="dashboard/public/logo.png" width="180" alt="SEMI Logo">
 </p>
 
 <p align="center">
@@ -13,136 +9,124 @@
   <img src="https://img.shields.io/badge/FastAPI-0.100%2B-009688.svg?style=flat&logo=fastapi&logoColor=white" alt="FastAPI">
   <img src="https://img.shields.io/badge/React-18.0-61DAFB.svg?style=flat&logo=react&logoColor=black" alt="React">
   <img src="https://img.shields.io/badge/Vite-5.0-646CFF.svg?style=flat&logo=vite&logoColor=white" alt="Vite">
-  <img src="https://img.shields.io/badge/TailwindCSS-3.4-38B2AC.svg?style=flat&logo=tailwindcss&logoColor=white" alt="TailwindCSS">
   <img src="https://img.shields.io/badge/SQLite-3.0-003B57.svg?style=flat&logo=sqlite&logoColor=white" alt="SQLite">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat" alt="License">
 </p>
 
 ---
 
-## 💡 What is SEMI?
-
-In B2B industrial sales, distributors receive raw catalog spreadsheets containing only basic **Manufacturer Names** and **Part Numbers**. Over 70% of technical attributes—such as operating voltages, dimensions, pressure limits, and compliance standards—are missing.
-
-**SEMI** solves this problem autonomously. Given just a Part Number and Manufacturer, SEMI scours official spec sheets, extracts complete product attributes using LLMs, verifies data against physics constraints to eliminate AI hallucinations, and outputs a B2B-compliant **252-column Unilog delivery CSV**.
+### 🎯 The Hook
+SEMI is an autonomous AI data intelligence engine that converts raw 2-column industrial catalog spreadsheets (Part Number + Manufacturer) into fully enriched, 252-column B2B Unilog delivery files in seconds—with zero human hallucination risks.
 
 ---
 
-## ⚡ How It Works (5-Step Pipeline)
+## 💡 The Problem & Solution
 
-```mermaid
-flowchart LR
-    A[1. Raw CSV] --> B[2. Smart Search]
-    B --> C[3. PDF Scrape & LLM]
-    C --> D[4. Physics & Audit Gate]
-    D --> E[5. 252-Col Unilog CSV]
-```
-
-1. **Ingestion**: Accepts messy CSV files with minimal headers (`Mfg_Part_Num`, `Part_Manuf`).
-2. **Smart Search**: Finds authoritative manufacturer PDF spec sheets while skipping junk consumer sites.
-3. **LLM Extraction**: Uses NVIDIA NIM / Gemini 2.5 to extract 40+ dynamic attributes and exact text evidence.
-4. **Adversarial Audit Engine**: Checks physical boundaries, unit consistency, and flags contradictions. If AI confidence is low, SEMI marks the row `NEEDS_REVIEW` instead of guessing.
-5. **Standardized Export**: Exports ready-to-use 252-column Unilog B2B delivery spreadsheets and lineage audit trails.
+* **The Pain Point:** B2B industrial distributors receive raw catalog spreadsheets missing up to 70%+ of crucial technical attributes (voltage ratings, dimensions, pressure tolerances, and compliance standards). Hiring teams to manually read 100-page manufacturer PDF spec sheets costs millions of dollars annually and causes massive catalog onboarding delays.
+* **Our Solution:** SEMI autonomously scours official manufacturer spec sheets, extracts 40+ dynamic attributes using LLMs, verifies every data point against physics constraints to prevent AI hallucinations, and emits standardized e-commerce delivery files instantly.
 
 ---
 
-## 🖥️ Platform Modules
+## ✨ Core Features
 
-* **Overview & Ingestion**: Drag-and-drop CSV upload, batch size controls, real-time worker telemetry.
-* **Dynamic Inspector Drawer**: Click any row to view extracted attributes, confidence intervals ($[0.85 - 0.99]$), and direct spec sheet links.
-* **Review Queue (`/conflicts`)**: Interactive human-in-the-loop review to resolve brand or spec contradictions with one-click adoption (`Adopt A/B`).
-* **Source Funnel (`/discovery`)**: Displays candidate URLs, domain authority rankings, and anti-bot trigger logs.
-* **Audit Ledger (`/evidence`)**: Line-by-line provenance audit database with exact citations.
-* **Run History (`/history`)**: Persisted execution history with download links for Delivery CSV, Lineage CSV, and Status Reports.
+* **Autonomous Spec Sheet Discovery:** Automatically locates official manufacturer PDF spec sheets while filtering out third-party reseller noise.
+* **LLM Extraction & Provenance Tracking:** Extracts technical specs in parallel with field-level evidence snippets, source URLs, and confidence intervals ($[0.85 - 0.99]$).
+* **5-Tier Adversarial Audit Engine:** Validates data against physical boundaries, dimensional constraints, and unit consistency—refusing to emit hallucinated values.
+* **Human-in-the-Loop Review Queue:** Features an interactive review interface with clickable source links for one-click conflict resolution (`Adopt A/B`).
+* **252-Column Unilog Compliance:** Automatically maps extracted attributes directly into standard B2B e-commerce delivery formats.
 
 ---
 
-## 📊 The 252-Column Unilog Delivery Format
+## 📸 Visual Proof & Interactive Dashboard
 
-SEMI formats extracted attributes directly into the standard B2B e-commerce schema:
+<p align="center">
+  <img src="output_mvp_demo/mvp_1.png" alt="SEMI Overview Dashboard" width="100%">
+  <em>Fig 1 — SEMI Ingestion Dashboard: Batch catalog upload, streaming worker status, and active row metrics.</em>
+</p>
 
-| Field Group | Example Columns | Field Count |
-| :--- | :--- | :--- |
-| **Product Identifiers** | `PART_NUMBER`, `Mfg_Part_Num`, `SKU - MY_PART_NUMBER` | 12 |
-| **Manufacturer & Brand** | `MANUFACTURER_NAME`, `BRAND_NAME`, `E1_Brand` | 7 |
-| **Descriptions** | `SHORT_DESC`, `LONG_DESC1`, `MARKETING_DESCRIPTION` | 8 |
-| **Bullet Features** | `ITEM_FEATURES_1` through `ITEM_FEATURES_20` | 20 |
-| **Dynamic Attributes** | `ATTRIBUTE_LABEL 1..50`, `ATTRIBUTE_VALUE 1..50`, `ATTRIBUTE_UOM 1..50` | 150 |
-| **Physical Dimensions** | `LENGTH`, `HEIGHT`, `WIDTH`, `WEIGHT`, `VOLUME` (+ UOMs) | 10 |
-| **Media Links** | `Product Image`, `Specification Sheet`, `Catalog`, `SDS` | 25 |
+<p align="center">
+  <img src="output_mvp_demo/mvp_3.png" alt="Dynamic Attribute Inspector" width="100%">
+  <em>Fig 2 — Dynamic Attribute Inspector: Click any SKU to inspect real extracted attributes, confidence intervals, and direct PDF citations.</em>
+</p>
+
+<p align="center">
+  <img src="output_mvp_demo/mvp_6.png" alt="Human-in-the-Loop Review Queue" width="100%">
+  <em>Fig 3 — Human-in-the-Loop Review Queue: One-click resolution for catalog vs. web inferred data conflicts.</em>
+</p>
+
+---
+
+## 🛠️ Built With
+
+* **Frontend:** React 18, Vite 5, TailwindCSS 3.4, Lucide Icons
+* **Backend:** Python 3.11+, FastAPI, Uvicorn Async Server
+* **AI & Web Scrapers:** Google Gemini 2.5 / NVIDIA NIM Router, Crawl4AI 0.9, Jina Reader
+* **Database & Storage:** SQLite, Local Storage Persistence Engine
 
 ---
 
 ## 🚀 Getting Started
 
-### Prerequisites
-* **Python**: 3.11 or higher
-* **Node.js**: 18.0 or higher
+### 📋 Prerequisites
+* **Python**: `3.11` or higher
+* **Node.js**: `18.0` or higher (`npm` 9+)
 
-### Environment Setup
-Create a `.env` file inside `backend/`:
-```ini
-PRIMARY_PROVIDER=nim
-FALLBACK_PROVIDERS=gemini
-LLM_API_KEY_NIM=your_nvidia_nim_key
-GOOGLE_API_KEY=your_gemini_key
-CONCURRENCY=3
-CACHE_ENABLED=true
-MAX_ROWS_PER_RUN=200
-```
+### 🔧 Installation & Setup
 
-### Installation & Run
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/VarshneysvAI/semi-workbench.git
+   cd semi-workbench
+   ```
+
+2. **Set up the Backend environment**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
+   pip install -r backend/requirements.txt
+   ```
+
+3. **Configure environment variables**
+   Create a `.env` file in the `backend/` directory:
+   ```env
+   PRIMARY_PROVIDER=nim
+   FALLBACK_PROVIDERS=gemini
+   LLM_API_KEY_NIM=your_nvidia_nim_key
+   GOOGLE_API_KEY=your_gemini_key
+   CONCURRENCY=3
+   CACHE_ENABLED=true
+   MAX_ROWS_PER_RUN=200
+   ```
+
+4. **Build and launch the application**
+   ```bash
+   # Build the production dashboard static bundle
+   cd dashboard && npm install && npm run build && cd ..
+
+   # Run the unified live web server
+   python -m uvicorn backend.live_app:app --host 127.0.0.1 --port 8000
+   ```
+   Open **`http://127.0.0.1:8000`** in your browser.
+
+---
+
+## 🧪 Running Tests & Validation
+
+Validate the pipeline and run edge-case verification tests:
 
 ```bash
-# Clone the repository
-git clone https://github.com/VarshneysvAI/semi-workbench.git
-cd semi-workbench
+# Run backend pytest suite
+pytest backend/tests/
 
-# Setup Python environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-pip install -r backend/requirements.txt
-
-# Build Dashboard UI
-cd dashboard
-npm install
-npm run build
-cd ..
-
-# Launch unified platform
-python -m uvicorn backend.live_app:app --host 127.0.0.1 --port 8000
-```
-Open **`http://127.0.0.1:8000`** in your web browser.
-
----
-
-## 🤖 Headless CLI Execution
-
-Run batch jobs directly from terminal:
-```bash
-python -m backend.cli --input tests/data/mvp_5_rows.csv --output output_mvp_demo --max-rows 5
+# Run CLI batch test on the MVP 5-row dataset
+python -m backend.cli --input tests/data/mvp_5_rows.csv --output output_demo --max-rows 5
 ```
 
-Generated Output Files:
-* `Unihack_Delivery_Format_Output.csv`: 252-column Unilog delivery file.
-* `lineage.csv`: Field-level evidence snippets and confidence scores.
-* `status_report.csv`: Status disposition (`SUCCESS`, `CACHED`, `NEEDS_REVIEW`).
-
 ---
 
-## 🌐 Deployment Options
+## 📜 License & Acknowledgments
 
-### Single-Server Deployment (Render / Railway / AWS)
-FastAPI serves the static frontend directly from `dashboard/dist`:
-* **Build Command**: `cd dashboard && npm install && npm run build && cd .. && pip install -r backend/requirements.txt`
-* **Start Command**: `python -m uvicorn backend.live_app:app --host 0.0.0.0 --port $PORT`
+Distributed under the **MIT License**. See `LICENSE` for more information.
 
-### Decoupled Deployment
-* **Frontend**: Deploy `dashboard/` to Vercel/Netlify with output directory `dist`.
-* **Backend**: Deploy `backend/` to Render/Railway as a FastAPI web service.
-
----
-
-## 🏆 Credits
-
-Developed by **Team VarshneysvAI** for UniHack 2026.
+Developed by **Team VarshneysvAI** for **UniHack 2026**.
 *Track: AI-Powered Product Intelligence for Industrial Commerce*
