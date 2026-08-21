@@ -95,104 +95,11 @@ function summarize(state: EngineState): Summary {
   }
 }
 
-const INITIAL_ROWS: Sku[] = [
-  {
-    id: 'sku-DCL183',
-    pn: 'DCL183',
-    mfr: 'Dewalt / B&D',
-    stage: 'conflict',
-    discStep: 1,
-    sourceMax: 2,
-    cells: {
-      'Mfg_Part_Num': { col: 'Mfg_Part_Num', state: 'written', value: 'DCL183', display: 'DCL183', conf: 0.98, ci: [0.9, 1.0] },
-      'Part_Desc': { col: 'Part_Desc', state: 'written', value: 'Dewalt DCL183 Light - Rechargeable', display: 'Dewalt DCL183 Light - Rechargeable', conf: 0.95, ci: [0.88, 0.99] },
-      'Unilog_Brand': { col: 'Unilog_Brand', state: 'conflict', value: 'DEWALT', display: 'DEWALT', conf: 0.70, ci: [0.6, 0.8] },
-      'Part_Manuf': { col: 'Part_Manuf', state: 'written', value: 'Black & Decker/dewlt (2585)', display: 'Black & Decker/dewlt (2585)', conf: 0.92, ci: [0.85, 0.98] }
-    },
-    sources: [
-      { key: 'src-1', ref: 'Dewalt Official Spec PDF', kind: 'spec', authority: 0.98, verified: true, sourceUrl: 'https://www.dewalt.com/products/lighting/dcl183.pdf' },
-      { key: 'src-2', ref: 'Distributor Catalog Index', kind: 'manual', authority: 0.70, verified: true, sourceUrl: 'https://acme-tools.com/part/DCL183' }
-    ],
-    audits: [
-      { label: 'Physical constraints & tolerances', state: 'pass', note: 'Rechargeable LED light spec verified' },
-      { label: 'Cross-source contradiction check', state: 'fail', note: 'Brand mismatch: Black & Decker vs DEWALT' },
-      { label: 'Units of measure standardization', state: 'pass', note: 'Lumens & voltage normalized' },
-      { label: 'Specsheet vs catalog header grounding', state: 'pass', note: 'Header grounded against specsheet' },
-      { label: 'Conformal confidence calibration (≥0.85)', state: 'pass', note: 'Calibrated score 0.70 < 0.85 threshold' }
-    ],
-    conflict: {
-      col: 'Unilog_Brand',
-      a: { value: 'Black & Decker', from: 'Catalog Input', authority: 0.70, sourceUrl: 'https://acme-tools.com/part/DCL183' },
-      b: { value: 'DEWALT', from: 'Dewalt Official Spec PDF', authority: 0.98, sourceUrl: 'https://www.dewalt.com/products/lighting/dcl183.pdf' }
-    },
-    resolution: null
-  },
-  {
-    id: 'sku-ADB15516CS',
-    pn: 'ADB15516CS',
-    mfr: 'TIMBERTECH',
-    stage: 'conflict',
-    discStep: 1,
-    sourceMax: 2,
-    cells: {
-      'Mfg_Part_Num': { col: 'Mfg_Part_Num', state: 'written', value: 'ADB15516CS', display: 'ADB15516CS', conf: 0.99, ci: [0.95, 1.0] },
-      'Part_Desc': { col: 'Part_Desc', state: 'written', value: '1x6-16 Coastline Sq Edge PVC Decking', display: '1x6-16 Coastline Sq Edge PVC Decking', conf: 0.96, ci: [0.90, 0.99] },
-      'Unilog_Brand': { col: 'Unilog_Brand', state: 'conflict', value: 'TIMBERTECH', display: 'TIMBERTECH', conf: 0.65, ci: [0.55, 0.75] }
-    },
-    sources: [
-      { key: 'src-3', ref: 'Timbertech Vintage Azek Spec', kind: 'spec', authority: 0.99, verified: true, sourceUrl: 'https://www.timbertech.com/specs/azek-vintage.pdf' }
-    ],
-    audits: [
-      { label: 'Physical constraints & tolerances', state: 'pass', note: '1x6-16 PVC decking bounds verified' },
-      { label: 'Cross-source contradiction check', state: 'fail', note: 'Brand mismatch: ADC vs TIMBERTECH' },
-      { label: 'Units of measure standardization', state: 'pass', note: 'Feet & inches normalized' },
-      { label: 'Specsheet vs catalog header grounding', state: 'pass', note: 'Header schema grounded' },
-      { label: 'Conformal confidence calibration (≥0.85)', state: 'pass', note: 'Calibrated score 0.65 < 0.85 threshold' }
-    ],
-    conflict: {
-      col: 'Unilog_Brand',
-      a: { value: 'Appliance Dealers Co', from: 'Catalog Input', authority: 0.65, sourceUrl: 'input.csv' },
-      b: { value: 'TIMBERTECH', from: 'Timbertech Vintage Azek Spec', authority: 0.99, sourceUrl: 'https://www.timbertech.com/specs/azek-vintage.pdf' }
-    },
-    resolution: null
-  },
-  {
-    id: 'sku-PDSH4816AF',
-    pn: 'PDSH4816AF',
-    mfr: 'Appliance Dealers',
-    stage: 'done',
-    discStep: 1,
-    sourceMax: 2,
-    cells: {
-      'Mfg_Part_Num': { col: 'Mfg_Part_Num', state: 'written', value: 'PDSH4816AF', display: 'PDSH4816AF', conf: 0.98, ci: [0.92, 1.0] },
-      'Part_Desc': { col: 'Part_Desc', state: 'written', value: 'PDSH4816AF Dishwasher SS - Display Only', display: 'PDSH4816AF Dishwasher SS - Display Only', conf: 0.95, ci: [0.88, 0.99] },
-      'Unilog_Brand': { col: 'Unilog_Brand', state: 'written', value: 'Appliance Dealers Cooperative', display: 'Appliance Dealers Cooperative', conf: 0.95, ci: [0.88, 0.99] }
-    },
-    sources: [
-      { key: 'src-4', ref: 'ADC Appliance Catalog PDF', kind: 'spec', authority: 0.95, verified: true, sourceUrl: 'https://adc.appliancecatalog.com/specs/PDSH4816AF.pdf' }
-    ],
-    audits: [
-      { label: 'Physical constraints & tolerances', state: 'pass', note: 'SS Dishwasher bounds verified' },
-      { label: 'Cross-source contradiction check', state: 'pass', note: 'Zero source contradictions' },
-      { label: 'Units of measure standardization', state: 'pass', note: 'Dimensions canonicalized' },
-      { label: 'Specsheet vs catalog header grounding', state: 'pass', note: 'Header grounded' },
-      { label: 'Conformal confidence calibration (≥0.85)', state: 'pass', note: 'Emitted with 0.95 confidence' }
-    ],
-    conflict: null,
-    resolution: null
-  }
-]
-
-const INITIAL_EVENTS = [
-  { id: 'val-1', origin: 'validator', label: 'Cloudflare JS Challenge blocked candidate URL', detail: 'http://lowes.com/product/DCL183 (HTTP 403)', sku: 'DCL183' },
-  { id: 'val-2', origin: 'validator', label: 'Bot Protection triggered on distributor page', detail: 'http://homedepot.com/p/49-94-0013 (Captcha)', sku: '49-94-0013' },
-  { id: 'val-3', origin: 'validator', label: 'Source authority score below 0.60 threshold', detail: 'http://ebay-parts-supplier.org/item/ADB15516CS (Auth: 0.42)', sku: 'ADB15516CS' },
-  { id: 'disc-1', origin: 'discover', label: 'Tavily Search Orchestrator queried "Dewalt DCL183 Light"', detail: 'Found 3 candidate spec sheets', sku: 'DCL183' },
-  { id: 'disc-2', origin: 'discover', label: 'Crawled Dewalt Official Spec PDF via Crawl4AI', detail: 'Extracted 14,200 bytes of spec text', sku: 'DCL183' }
-]
+const INITIAL_ROWS: Sku[] = []
+const INITIAL_EVENTS: any[] = []
 
 export function SemiProvider({ children }: { children: ReactNode }) {
-  const [running, setRunningLocal] = useState(true)
+  const [running, setRunningLocal] = useState(false)
   const [speed, setSpeedLocal] = useState<Speed>(1)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const live = 'live'
@@ -209,19 +116,20 @@ export function SemiProvider({ children }: { children: ReactNode }) {
       console.warn("Could not restore saved state", e)
     }
     return {
-      rows: INITIAL_ROWS,
+      rows: [],
       logs: [],
-      events: INITIAL_EVENTS,
+      events: [],
       ledger: [],
       changedOutcomes: 0,
-      bytes: 14200,
-      tickCount: 12,
+      bytes: 0,
+      tickCount: 0,
       idle: true,
       retrains: 0,
       jobId: null,
-      expectedTotal: INITIAL_ROWS.length 
+      expectedTotal: 0
     }
   })
+
 
 
   useEffect(() => {
@@ -275,21 +183,24 @@ export function SemiProvider({ children }: { children: ReactNode }) {
       } else if (data.type === 'row_start') {
         setBackendState(prev => ({
           ...prev,
-          rows: prev.rows.map(r => r.pn === data.pn ? { ...r, stage: 'discover' as Stage } : r)
+          rows: prev.rows.map((r, i) => (r.pn === data.pn || i === data.index || (data.pn && r.pn && r.pn.toLowerCase() === data.pn.toLowerCase())) ? { ...r, stage: 'discover' as Stage } : r)
         }))
       } else if (data.type === 'row_complete' && data.sku) {
-        const sku = data.sku
+        let sku = data.sku
+        if (typeof sku === 'string') {
+          sku = { id: `sku-${sku}`, pn: sku, mfr: 'Extracted', stage: 'done', cells: {}, sources: [], audits: [] }
+        }
         if (!sku.stage) sku.stage = 'done'
         if (!sku.cells) sku.cells = {}
         if (!sku.sources) sku.sources = []
         if (!sku.audits) sku.audits = []
 
         setBackendState(prev => {
-          const existingIdx = prev.rows.findIndex(r => r.pn === sku.pn || r.id === sku.id)
+          const existingIdx = prev.rows.findIndex(r => r.pn === sku.pn || r.id === sku.id || (sku.pn && r.pn && r.pn.toLowerCase() === sku.pn.toLowerCase()))
           let newRows: Sku[]
           if (existingIdx >= 0) {
             newRows = [...prev.rows]
-            newRows[existingIdx] = sku
+            newRows[existingIdx] = { ...newRows[existingIdx], ...sku }
           } else {
             newRows = [...prev.rows, sku]
           }
@@ -302,6 +213,7 @@ export function SemiProvider({ children }: { children: ReactNode }) {
         })
       } else if (data.type === 'complete') {
         evtSource.close()
+        setRunningLocal(false)
         setBackendState(prev => ({
           ...prev,
           idle: true,
@@ -309,14 +221,17 @@ export function SemiProvider({ children }: { children: ReactNode }) {
         }))
       } else if (data.type === 'error') {
         evtSource.close()
+        setRunningLocal(false)
         setBackendState(prev => ({ ...prev, idle: true }))
       }
     }
 
     evtSource.onerror = () => {
       evtSource.close()
+      setRunningLocal(false)
       setBackendState(prev => ({ ...prev, idle: true }))
     }
+
 
     return () => evtSource.close()
   }, [backendState.jobId])
@@ -480,6 +395,9 @@ export function SemiProvider({ children }: { children: ReactNode }) {
           console.warn("Could not pre-parse CSV", e)
         }
 
+        setRunningLocal(true)
+        try { localStorage.removeItem('semi_latest_state') } catch (e) {}
+
         setBackendState({
           rows: initialRows,
           logs: [],
@@ -493,6 +411,7 @@ export function SemiProvider({ children }: { children: ReactNode }) {
           jobId: null,
           expectedTotal: initialRows.length || maxRows
         })
+
 
         const fd = new FormData()
         fd.append('file', file)
