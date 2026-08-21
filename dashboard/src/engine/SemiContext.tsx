@@ -237,6 +237,7 @@ export function SemiProvider({ children }: { children: ReactNode }) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+              job_id: backendState.jobId,
               sku: row.pn,
               attribute: conflict.col,
               human_resolution: chosenVal,

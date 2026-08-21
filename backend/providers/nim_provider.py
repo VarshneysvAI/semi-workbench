@@ -12,7 +12,7 @@ class NIMProvider(BaseProvider):
         api_key = os.getenv("LLM_API_KEY_NIM") or os.getenv("NIM_API_KEY")
         base_url = os.getenv("NIM_BASE_URL", "https://integrate.api.nvidia.com/v1")
         model = os.getenv("LLM_MODEL_NIM", "google/gemma-4-31b-it")
-        timeout = int(os.getenv("NIM_TIMEOUT", "25"))
+        timeout = int(os.getenv("NIM_TIMEOUT", "90"))
 
         
         if not api_key:

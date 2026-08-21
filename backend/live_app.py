@@ -147,6 +147,7 @@ async def stream_logs(job_id: str):
 from pydantic import BaseModel
 
 class ResolveRequest(BaseModel):
+    job_id: str = None
     sku: str
     attribute: str
     human_resolution: str
@@ -154,6 +155,27 @@ class ResolveRequest(BaseModel):
 
 @app.post("/api/resolve")
 def resolve_conflict(req: ResolveRequest):
+    if req.job_id:
+        job_dir = OUTPUT_DIR / req.job_id
+        csv_path = job_dir / "Unihack_Delivery_Format_Output.csv"
+        if csv_path.exists():
+            import csv
+            rows = []
+            headers = []
+            with open(csv_path, "r", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                headers = reader.fieldnames
+                for row in reader:
+                    if row.get("MANUFACTURER_PART_NUMBER") == req.sku:
+                        if req.attribute in row:
+                            row[req.attribute] = req.human_resolution
+                    rows.append(row)
+            
+            with open(csv_path, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=headers)
+                writer.writeheader()
+                writer.writerows(rows)
+                
     return {"status": "success", "sku": req.sku, "resolution": req.human_resolution}
 
 @app.get("/api/export_unilog")
