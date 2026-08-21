@@ -15,10 +15,11 @@ class NIMProvider(BaseProvider):
         model = os.getenv("LLM_MODEL_NIM", "nvidia/nemotron-3.5-lightning-30b-a3b")
         timeout = int(os.getenv("NIM_TIMEOUT", "90"))
 
-        
         if not api_key:
             return ProviderResult("", self.name, 0.0, "NIM_API_KEY not set")
             
+        system_prompt += "\n\nCRITICAL INSTRUCTION: DO NOT OUTPUT ANY THINKING, REASONING, OR EXPLANATION. YOU MUST START YOUR RESPONSE IMMEDIATELY WITH THE RAW JSON OBJECT. ANY OTHER TEXT WILL CAUSE A SYSTEM FAILURE."
+        
         nim_limiter.wait_if_needed()
         start = time.time()
         try:
