@@ -233,5 +233,5 @@ Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for details.
 
 ## 🏆 Team
 
-**Team VarshneysvAI** — UniHack 2026  
+**Team Unit** — UniHack 2026  
 *Track: AI-Powered Product Intelligence for Industrial Commerce*
