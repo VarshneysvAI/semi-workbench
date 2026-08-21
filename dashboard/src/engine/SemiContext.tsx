@@ -8,6 +8,8 @@ import {
 } from 'react'
 export type Speed = 0.5 | 1 | 2 | 4 | 8
 import { type Sku, type Stage } from '../data/seed'
+import { getApiUrl } from '../config'
+
 
 export interface EngineState {
   rows: Sku[]
@@ -235,7 +237,8 @@ export function SemiProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!backendState.jobId) return
-    const evtSource = new EventSource(`/api/stream/${backendState.jobId}`)
+    const evtSource = new EventSource(getApiUrl(`/api/stream/${backendState.jobId}`))
+
     
     evtSource.onmessage = (event) => {
       const data = JSON.parse(event.data)
@@ -494,7 +497,8 @@ export function SemiProvider({ children }: { children: ReactNode }) {
         const fd = new FormData()
         fd.append('file', file)
         fd.append('max_rows', maxRows.toString())
-        const response = await fetch('/api/run', { method: 'POST', body: fd })
+        const response = await fetch(getApiUrl('/api/run'), { method: 'POST', body: fd })
+
         const { job_id } = await response.json()
         setBackendState(prev => ({ ...prev, jobId: job_id }))
       }

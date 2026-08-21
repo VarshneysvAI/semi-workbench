@@ -3,6 +3,8 @@ import { Upload, Download, Menu } from 'lucide-react'
 import { useSemi } from '../engine/SemiContext'
 import { StatusDot } from './ui'
 
+import { getApiUrl } from '../config'
+
 export default function Header({ onToggleNav }: { onToggleNav: () => void }) {
   const { engine, summary, running, live, startJob } = useSemi()
   const [now, setNow] = useState(new Date())
@@ -21,8 +23,9 @@ export default function Header({ onToggleNav }: { onToggleNav: () => void }) {
   }
 
   const handleExport = () => {
-    window.location.href = '/api/export_unilog'
+    window.location.href = getApiUrl('/api/export_unilog')
   }
+
 
 
   const active =

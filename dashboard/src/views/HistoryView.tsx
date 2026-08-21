@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Download, Trash2, History, RefreshCw, FileText, CheckCircle2, AlertTriangle, XCircle, Search } from 'lucide-react'
+import { getApiUrl } from '../config'
 
 interface HistoryRecord {
   job_id: string
@@ -22,7 +23,7 @@ export default function HistoryView() {
   const fetchHistory = async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/history')
+      const res = await fetch(getApiUrl('/api/history'))
       if (res.ok) {
         const data = await res.json()
         setHistory(data)
@@ -42,7 +43,7 @@ export default function HistoryView() {
     if (!confirm('Are you sure you want to delete this run history record and its output files?')) return
     setDeletingId(jobId)
     try {
-      const res = await fetch(`/api/history/${jobId}`, { method: 'DELETE' })
+      const res = await fetch(getApiUrl(`/api/history/${jobId}`), { method: 'DELETE' })
       if (res.ok) {
         setHistory((prev) => prev.filter((item) => item.job_id !== jobId))
       }
@@ -52,6 +53,7 @@ export default function HistoryView() {
       setDeletingId(null)
     }
   }
+
 
   const filtered = history.filter(
     (item) =>
