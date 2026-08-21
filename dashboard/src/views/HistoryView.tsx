@@ -183,7 +183,7 @@ export default function HistoryView() {
                         {item.status === 'COMPLETED' && (
                           <>
                             <a
-                              href={`/api/history/${item.job_id}/download/Unihack_Delivery_Format_Output.csv`}
+                              href={getApiUrl(`/api/history/${item.job_id}/download/Unihack_Delivery_Format_Output.csv`)}
                               target="_blank"
                               rel="noreferrer"
                               title="Download 252-column Unilog Delivery CSV"
@@ -193,7 +193,7 @@ export default function HistoryView() {
                               Delivery CSV
                             </a>
                             <a
-                              href={`/api/history/${item.job_id}/download/status_report.csv`}
+                              href={getApiUrl(`/api/history/${item.job_id}/download/status_report.csv`)}
                               target="_blank"
                               rel="noreferrer"
                               title="Download Status Report CSV"
@@ -203,7 +203,7 @@ export default function HistoryView() {
                               Status Report
                             </a>
                             <a
-                              href={`/api/history/${item.job_id}/download/input.csv`}
+                              href={getApiUrl(`/api/history/${item.job_id}/download/input.csv`)}
                               target="_blank"
                               rel="noreferrer"
                               title="Download Original Input CSV"
