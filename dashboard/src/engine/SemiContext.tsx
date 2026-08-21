@@ -103,44 +103,27 @@ export function SemiProvider({ children }: { children: ReactNode }) {
   const [speed, setSpeedLocal] = useState<Speed>(1)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const live = 'live'
-  const [backendState, setBackendState] = useState<EngineState>(() => {
-    try {
-      const saved = localStorage.getItem('semi_latest_state')
-      if (saved) {
-        const parsed = JSON.parse(saved)
-        if (parsed && Array.isArray(parsed.rows) && parsed.rows.length > 0) {
-          return parsed
-        }
-      }
-    } catch (e) {
-      console.warn("Could not restore saved state", e)
-    }
-    return {
-      rows: [],
-      logs: [],
-      events: [],
-      ledger: [],
-      changedOutcomes: 0,
-      bytes: 0,
-      tickCount: 0,
-      idle: true,
-      retrains: 0,
-      jobId: null,
-      expectedTotal: 0
-    }
-  })
-
-
 
   useEffect(() => {
-    if (backendState.rows.length > 0 || backendState.events.length > 0 || backendState.ledger.length > 0) {
-      try {
-        localStorage.setItem('semi_latest_state', JSON.stringify(backendState))
-      } catch (e) {
-        console.warn("Could not save state to localStorage", e)
-      }
-    }
-  }, [backendState])
+    try {
+      localStorage.removeItem('semi_latest_state')
+    } catch (e) {}
+  }, [])
+
+  const [backendState, setBackendState] = useState<EngineState>({
+    rows: [],
+    logs: [],
+    events: [],
+    ledger: [],
+    changedOutcomes: 0,
+    bytes: 0,
+    tickCount: 0,
+    idle: true,
+    retrains: 0,
+    jobId: null,
+    expectedTotal: 0
+  })
+
 
 
   useEffect(() => {
