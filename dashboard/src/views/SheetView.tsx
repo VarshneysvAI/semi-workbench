@@ -242,7 +242,7 @@ function ValueCell({ sku, col }: { sku: Sku; col: string }) {
   }
 
   return (
-    <div className={`flex h-full items-center justify-end gap-1.5 border-r border-white/[0.05] px-2 py-1 font-mono`}>
+    <div className={`flex h-full items-center justify-end gap-1.5 border-r border-white/[0.05] px-2 py-1 font-mono min-w-0 overflow-hidden`}>
       {cell.state === 'blank' ? (
         <span className="text-[11.5px] text-slate-600">—</span>
       ) : cell.state === 'reading' ? (
@@ -250,8 +250,8 @@ function ValueCell({ sku, col }: { sku: Sku; col: string }) {
           <span className="caret-live">scn·{col}</span>
         </span>
       ) : cell.state === 'written' ? (
-        <div key={`w:${cell.display}:${cell.conf}`} className="flex items-center gap-1.5">
-          <span className="cell-write rounded px-1 text-[12px] text-slate-50">{cell.display}</span>
+        <div key={`w:${cell.display}:${cell.conf}`} className="flex items-center gap-1.5 min-w-0 w-full justify-end">
+          <span className="cell-write rounded px-1 text-[12px] text-slate-50 truncate text-right block" title={cell.display}>{cell.display}</span>
           <span className="mono font-num text-[9.5px]" style={{ color: confColor(cell.conf) }}>
             {cell.conf.toFixed(2)}
           </span>
