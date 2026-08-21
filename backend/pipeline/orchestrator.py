@@ -28,6 +28,12 @@ def write_event(output_dir_path, payload):
             else:
                 fe.write(json.dumps({"type": "row_complete", "sku": payload}) + "\n")
 
+def write_csv_row(output_dir_path, row_data):
+    with events_lock:
+        with open(output_dir_path / "Unihack_Delivery_Format_Output.csv", "a", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=UNILOG_HEADER)
+            writer.write(row_data)
+
 async def process_single_row(i, row, output_dir_path, use_cache=True):
     logger.info(f"ROW_START: {i}")
     mfg_part_num = row.get("Mfg_Part_Num") or row.get("mpn") or ""
@@ -48,7 +54,9 @@ async def process_single_row(i, row, output_dir_path, use_cache=True):
             "sources": [], "cells": {}, "audits": [], "conflict": None, "resolution": None
         }
         write_event(output_dir_path, sku_obj)
-        return map_to_delivery(row, None, UNILOG_HEADER), {"row_index": i, "cache_key": "", "Mfg_Part_Num": "", "status": "MISSING_PART_NUMBER", "provider_used": "", "search_provider": "", "scrape_method": "", "error_reason": "Missing or empty part number"}, None
+        blank_row = map_to_delivery(row, None, UNILOG_HEADER)
+        write_csv_row(output_dir_path, blank_row)
+        return blank_row, {"row_index": i, "cache_key": "", "Mfg_Part_Num": "", "status": "MISSING_PART_NUMBER", "provider_used": "", "search_provider": "", "scrape_method": "", "error_reason": "Missing or empty part number"}, None
 
     cache_key = f"{mfg_part_num}|{manufacturer}"
     
@@ -76,6 +84,7 @@ async def process_single_row(i, row, output_dir_path, use_cache=True):
                 "stage": "done", "discStep": 1, "sourceMax": 1, "sources": [], "cells": {}, "audits": [], "conflict": None, "resolution": None
             }
             write_event(output_dir_path, sku_obj)
+            write_csv_row(output_dir_path, delivery_row)
                 
             return delivery_row, {"row_index": i, "cache_key": cache_key, "Mfg_Part_Num": mfg_part_num, "status": "CACHED", "provider_used": "cache", "search_provider": "", "scrape_method": "", "error_reason": ""}, lineage_list
 
@@ -109,6 +118,7 @@ async def process_single_row(i, row, output_dir_path, use_cache=True):
             "sources": [], "cells": {}, "audits": [], "conflict": None, "resolution": None
         }
         write_event(output_dir_path, sku_obj)
+        write_csv_row(output_dir_path, blank)
             
         return blank, {"row_index": i, "cache_key": cache_key, "Mfg_Part_Num": mfg_part_num, "status": "SOURCE_NOT_FOUND", "provider_used": "", "search_provider": search_prov, "scrape_method": "", "error_reason": "No valid source"}, None
 
@@ -130,6 +140,7 @@ async def process_single_row(i, row, output_dir_path, use_cache=True):
             "sources": [], "cells": {}, "audits": [], "conflict": None, "resolution": None
         }
         write_event(output_dir_path, sku_obj)
+        write_csv_row(output_dir_path, blank)
             
         return blank, {"row_index": i, "cache_key": cache_key, "Mfg_Part_Num": mfg_part_num, "status": "SOURCE_TEXT_EMPTY", "provider_used": "", "search_provider": search_prov, "scrape_method": scrape_method, "error_reason": "Scrape returned empty or too short"}, None
 
@@ -262,7 +273,7 @@ async def process_single_row(i, row, output_dir_path, use_cache=True):
                 "resolution": None
             }
             write_event(output_dir_path, sku_obj)
-
+            write_csv_row(output_dir_path, delivery_row)
                 
             logger.info(f"ROW_COMPLETE: {i} ({status})")
             return delivery_row, status_row, lineage_list
@@ -282,6 +293,7 @@ async def process_single_row(i, row, output_dir_path, use_cache=True):
             blank["DIB_Brand"] = row.get("DIB_Brand", "")
             blank["Part_Manuf"] = row.get("Part_Manuf", "")
             blank["MANUFACTURER_PART_NUMBER"] = row.get("Mfg_Part_Num", "")
+            write_csv_row(output_dir_path, blank)
             return blank, {"row_index": i, "cache_key": cache_key, "Mfg_Part_Num": mfg_part_num, "status": "PARSE_FAILED", "provider_used": provider_used, "search_provider": search_prov, "scrape_method": scrape_method, "error_reason": "No valid data extracted"}, None
     else:
         logger.warning(f"ROW_FAILED: {i} (PARSE_FAILED)")
@@ -300,6 +312,7 @@ async def process_single_row(i, row, output_dir_path, use_cache=True):
         blank["DIB_Brand"] = row.get("DIB_Brand", "")
         blank["Part_Manuf"] = row.get("Part_Manuf", "")
         blank["MANUFACTURER_PART_NUMBER"] = row.get("Mfg_Part_Num", "")
+        write_csv_row(output_dir_path, blank)
         return blank, {"row_index": i, "cache_key": cache_key, "Mfg_Part_Num": mfg_part_num, "status": "PARSE_FAILED", "provider_used": provider_used, "search_provider": search_prov, "scrape_method": scrape_method, "error_reason": "JSON parse failed"}, None
 
 
@@ -315,6 +328,10 @@ async def run_pipeline(input_csv: str, output_dir: str, max_rows: int = 200, dry
         for i, row in enumerate(reader):
             if i >= max_rows: break
             rows.append(row)
+            
+    with open(output_dir_path / "Unihack_Delivery_Format_Output.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=UNILOG_HEADER)
+        writer.writeheader()
 
     actual_concurrency = int(os.environ.get("CONCURRENCY", 1))
     semaphore = asyncio.Semaphore(actual_concurrency)
@@ -334,11 +351,6 @@ async def run_pipeline(input_csv: str, output_dir: str, max_rows: int = 200, dry
         if r[2]:
             if isinstance(r[2], list): lineage_flat.extend(r[2])
             else: lineage_flat.append(r[2])
-
-    with open(output_dir_path / "Unihack_Delivery_Format_Output.csv", "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=UNILOG_HEADER)
-        writer.writeheader()
-        writer.writerows(output_rows)
         
     with open(output_dir_path / "status_report.csv", "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["row_index", "cache_key", "Mfg_Part_Num", "status", "provider_used", "search_provider", "scrape_method", "error_reason"])

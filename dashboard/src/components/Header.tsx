@@ -23,7 +23,11 @@ export default function Header({ onToggleNav }: { onToggleNav: () => void }) {
   }
 
   const handleExport = () => {
-    window.location.href = getApiUrl('/api/export_unilog')
+    if (engine.state.jobId) {
+      window.location.href = getApiUrl(`/api/jobs/${engine.state.jobId}/files/Unihack_Delivery_Format_Output.csv`)
+    } else {
+      window.location.href = getApiUrl('/api/export_unilog')
+    }
   }
 
 
