@@ -1,8 +1,12 @@
 import requests
 import tempfile
-import pypdf
 from bs4 import BeautifulSoup
 from backend.pipeline.logger_setup import logger
+
+try:
+    import pypdf
+except ImportError:
+    pypdf = None
 
 from backend.pipeline.shared_crawler import get_crawler
 
@@ -15,6 +19,9 @@ async def scrape_url(url):
     return await scrape_html(url)
 
 async def scrape_pdf(url):
+    if pypdf is None:
+        logger.warning("pypdf module not installed, falling back to HTML scraper")
+        return await scrape_html(url)
     try:
         res = requests.get(url, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
         if res.status_code == 200:
@@ -29,6 +36,7 @@ async def scrape_pdf(url):
         logger.warning(f"Local PDF parse failed: {e}")
         
     return None, "none"
+
 
 async def scrape_html(url):
     # 1. Try Crawl4AI primary

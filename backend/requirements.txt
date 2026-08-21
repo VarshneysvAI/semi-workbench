@@ -12,9 +12,11 @@ pytest==9.1.1
 python-dotenv==1.2.2
 google-genai==2.17.0
 
-# ---- discovery & extraction: SearXNG, DDG, Crawl4AI ----
+# ---- discovery & extraction: SearXNG, DDG, Crawl4AI, PyPDF ----
 duckduckgo-search>=6.0.0
 crawl4ai>=0.4.0
+pypdf>=4.0.0
+
 
 
 
