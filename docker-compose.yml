@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  semi-backend:
+    build: .
+    container_name: semi_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - SEARXNG_BASE_URLS=http://searxng:8080
+      - DISABLE_PLAYWRIGHT=false
+      - CONCURRENCY=3
+      # Note: Set your LLM_API_KEY_NIM or GEMINI_API_KEY in a local .env file
+    env_file:
+      - backend/.env
+    volumes:
+      - ./output:/app/output
+      - ./backend/history.db:/app/backend/history.db
+    depends_on:
+      - searxng
+    networks:
+      - semi_net
+    restart: unless-stopped
+
+  searxng:
+    container_name: semi_searxng
+    image: searxng/searxng:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8080/
+    volumes:
+      - ./searxng:/etc/searxng:rw
+    networks:
+      - semi_net
+    restart: unless-stopped
+
+networks:
+  semi_net:
+    driver: bridge
