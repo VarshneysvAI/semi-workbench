@@ -29,9 +29,14 @@ async def scrape_pdf(url):
                 f.write(res.content)
                 f.flush()
                 reader = pypdf.PdfReader(f.name)
-                text = " ".join([page.extract_text() for page in reader.pages])
-            logger.info("PDF_PARSED")
-            return clean_text(text[:100000]), "pdf_local"
+                text_pages = []
+                for i, page in enumerate(reader.pages):
+                    if i >= 5: # Limit to first 5 pages for extreme speed
+                        break
+                    text_pages.append(page.extract_text())
+                text = " ".join(text_pages)
+            logger.info("PDF_PARSED (first 5 pages)")
+            return clean_text(text[:30000]), "pdf_local"
     except Exception as e:
         logger.warning(f"Local PDF parse failed: {e}")
         
