@@ -1,16 +1,22 @@
 import sqlite3
 import shutil
+import os
 from pathlib import Path
 from datetime import datetime
 from backend.pipeline.logger_setup import logger
 
-DB_FILE = Path("backend/history.db")
+DB_FILE = Path(os.getenv("HISTORY_DB_PATH", "backend/history.db"))
 
 def get_connection():
     DB_FILE.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(DB_FILE, timeout=20.0)
+    try:
+        conn.execute("PRAGMA journal_mode=WAL;")
+    except Exception:
+        pass
     conn.row_factory = sqlite3.Row
     return conn
+
 
 def init_history_db():
     with get_connection() as conn:
