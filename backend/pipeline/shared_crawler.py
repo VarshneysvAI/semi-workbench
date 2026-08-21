@@ -55,7 +55,7 @@ async def get_crawler():
         
     async with _crawler_locks[loop_id]:
         if _crawler_instance is None:
-            if AsyncWebCrawler is not None:
+            if AsyncWebCrawler is not None and os.getenv("DISABLE_PLAYWRIGHT", "false").lower() != "true":
                 try:
                     _crawler_instance = AsyncWebCrawler(verbose=False)
                     await _crawler_instance.start()

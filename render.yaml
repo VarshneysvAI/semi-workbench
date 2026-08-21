@@ -21,3 +21,5 @@ services:
         value: "true"
       - key: MAX_ROWS_PER_RUN
         value: "200"
+      - key: DISABLE_PLAYWRIGHT
+        value: "true"
