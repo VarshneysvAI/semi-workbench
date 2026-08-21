@@ -233,7 +233,7 @@ export function SemiProvider({ children }: { children: ReactNode }) {
         const chosenUrl = choice === 'A' ? conflict.a.sourceUrl : conflict.b.sourceUrl
         
         try {
-          await fetch('/api/resolve', {
+          await fetch(getApiUrl('/api/resolve'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
