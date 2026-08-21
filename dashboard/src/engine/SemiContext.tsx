@@ -53,7 +53,7 @@ interface SemiApi {
   select: (skuId: string | null) => void
   selectedId: string | null
   selectedSku: Sku | null
-  startJob: (file: File, maxRows: number) => void
+  startJob: (file: File, concurrency: number) => void
 }
 
 const Ctx = createContext<SemiApi | null>(null)
@@ -320,7 +320,8 @@ export function SemiProvider({ children }: { children: ReactNode }) {
       select: (skuId) => setSelectedId(skuId),
       selectedId,
       selectedSku: selectedId ? (engine.state.rows.find((r: Sku) => r.id === selectedId) ?? null) : null,
-      startJob: async (file: File, maxRows: number) => {
+      startJob: async (file: File, concurrency: number) => {
+        const maxRows = 500;
         let initialRows: Sku[] = []
         try {
           const text = await file.text()
@@ -400,6 +401,7 @@ export function SemiProvider({ children }: { children: ReactNode }) {
         const fd = new FormData()
         fd.append('file', file)
         fd.append('max_rows', maxRows.toString())
+        fd.append('concurrency', concurrency.toString())
         const response = await fetch(getApiUrl('/api/run'), { method: 'POST', body: fd })
 
         const { job_id } = await response.json()

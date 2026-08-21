@@ -41,7 +41,7 @@ def serve_root():
     return HTMLResponse("<html><body><h1>SEMI Backend Active</h1><p>Run 'npm run build' in dashboard/ to serve SPA here.</p></body></html>")
 
 @app.post("/api/run")
-async def run_pipeline_api(background_tasks: BackgroundTasks, file: UploadFile = File(...), max_rows: int = Form(100)):
+async def run_pipeline_api(background_tasks: BackgroundTasks, file: UploadFile = File(...), max_rows: int = Form(500), concurrency: int = Form(1)):
     job_id = str(uuid.uuid4())
     job_dir = OUTPUT_DIR / job_id
     job_dir.mkdir(exist_ok=True)
@@ -67,7 +67,7 @@ async def run_pipeline_api(background_tasks: BackgroundTasks, file: UploadFile =
             from backend.pipeline.orchestrator import run_pipeline
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            os.environ["CONCURRENCY"] = os.getenv("CONCURRENCY", "1")
+            os.environ["CONCURRENCY"] = str(concurrency)
             loop.run_until_complete(run_pipeline(
                 input_csv=str(input_path),
                 output_dir=str(job_dir),

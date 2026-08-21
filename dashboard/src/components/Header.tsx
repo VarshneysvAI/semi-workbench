@@ -17,9 +17,9 @@ export default function Header({ onToggleNav }: { onToggleNav: () => void }) {
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const maxRowsStr = prompt("Max rows to process (demo speed control):", "4")
-    const maxRows = parseInt(maxRowsStr || "4", 10) || 4
-    startJob(file, maxRows)
+    const concurrencyStr = prompt("Concurrency (1 for Free Tier, 2-5 for Pro):", "1")
+    const concurrency = parseInt(concurrencyStr || "1", 10) || 1
+    startJob(file, concurrency)
   }
 
   const handleExport = () => {
