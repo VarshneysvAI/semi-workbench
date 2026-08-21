@@ -5,7 +5,7 @@ services:
     build: .
     container_name: semi_backend
     ports:
-      - "8000:8000"
+      - "80:8000"
     environment:
       - SEARXNG_BASE_URLS=http://searxng:8080
       - DISABLE_PLAYWRIGHT=false
