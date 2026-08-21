@@ -67,7 +67,7 @@ async def run_pipeline_api(background_tasks: BackgroundTasks, file: UploadFile =
             from backend.pipeline.orchestrator import run_pipeline
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            os.environ["CONCURRENCY"] = "3"
+            os.environ["CONCURRENCY"] = os.getenv("CONCURRENCY", "1")
             loop.run_until_complete(run_pipeline(
                 input_csv=str(input_path),
                 output_dir=str(job_dir),
