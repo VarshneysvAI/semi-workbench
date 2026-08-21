@@ -19,10 +19,6 @@ crawl4ai>=0.4.0
 pypdf>=4.0.0
 curl-cffi>=0.7.3
 
-
-
-
-
 # ---- optional extraction backends (set the matching env to enable) ----
 # firecrawl-py        # FIRECRAWL_API_KEY -> PDF/web/YouTube via api.firecrawl.dev
 # yt-dlp>=2025.0.0    # YouTube transcripts when no platform subs (free)
