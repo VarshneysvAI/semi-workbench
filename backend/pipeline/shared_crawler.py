@@ -1,5 +1,8 @@
+import os
 import asyncio
 from backend.pipeline.logger_setup import logger
+
+os.environ["PLAYWRIGHT_BROWSERS_PATH"] = "0"
 
 try:
     from crawl4ai import AsyncWebCrawler
