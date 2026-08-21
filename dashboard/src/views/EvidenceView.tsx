@@ -1,8 +1,49 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import { useSemi } from '../engine/SemiContext'
 import Inspector from '../components/Inspector'
 import { Badge, SectionTitle } from '../components/ui'
 import { STAGE_LABELS } from '../data/seed'
+import { getApiUrl } from '../config'
+
+function RawLogsPanel({ jobId }: { jobId: string | null }) {
+  const [logs, setLogs] = useState<string>('')
+  const scrollRef = useRef<HTMLDivElement>(null)
+  
+  useEffect(() => {
+    if (!jobId) return
+    const fetchLogs = () => {
+      fetch(getApiUrl(`/api/jobs/${jobId}/files/pipeline.log`))
+        .then(res => {
+          if (!res.ok) throw new Error('Not found')
+          return res.text()
+        })
+        .then(text => {
+          setLogs(text)
+          if (scrollRef.current) {
+             scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+          }
+        })
+        .catch(() => {})
+    }
+    
+    fetchLogs()
+    const interval = setInterval(fetchLogs, 2000)
+    return () => clearInterval(interval)
+  }, [jobId])
+
+  if (!jobId) return null
+  return (
+    <div className="panel p-4">
+      <SectionTitle right={null}>Live Raw Pipeline Logs</SectionTitle>
+      <div 
+        ref={scrollRef}
+        className="mt-2 bg-[#0a0a0a] border border-white/[0.1] text-emerald-400 font-mono text-[11px] p-4 rounded-md overflow-y-auto max-h-[400px] whitespace-pre-wrap break-all"
+      >
+        {logs || "Waiting for logs..."}
+      </div>
+    </div>
+  )
+}
 
 export default function EvidenceView() {
   const { engine, select, selectedId } = useSemi()
@@ -75,6 +116,9 @@ export default function EvidenceView() {
               </div>
             </div>
           </div>
+          
+          <RawLogsPanel jobId={engine.state.jobId} />
+          
         </div>
       </div>
 
