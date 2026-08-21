@@ -13,7 +13,8 @@ python-dotenv==1.2.2
 google-genai==2.17.0
 
 # ---- discovery: live web search (no key, always real) ----
-ddgs==9.14.4
+duckduckgo-search>=6.0.0
+
 
 # ---- optional extraction backends (set the matching env to enable) ----
 # firecrawl-py        # FIRECRAWL_API_KEY -> PDF/web/YouTube via api.firecrawl.dev

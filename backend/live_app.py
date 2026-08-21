@@ -54,7 +54,6 @@ async def run_pipeline_api(background_tasks: BackgroundTasks, file: UploadFile =
     add_history_record(job_id=job_id, filename=filename, total_rows=max_rows, output_dir=str(job_dir))
         
     def _background_worker():
-        from backend.pipeline.orchestrator import run_pipeline
         import logging
         
         # Configure file logger for this job to stream to UI
@@ -65,6 +64,7 @@ async def run_pipeline_api(background_tasks: BackgroundTasks, file: UploadFile =
         logger.addHandler(file_handler)
         
         try:
+            from backend.pipeline.orchestrator import run_pipeline
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             os.environ["CONCURRENCY"] = "3"
@@ -75,6 +75,7 @@ async def run_pipeline_api(background_tasks: BackgroundTasks, file: UploadFile =
                 dry_run=False,
                 use_cache=True
             ))
+
             
             # Read run summary to update history DB
             summary_path = job_dir / "run_summary.json"

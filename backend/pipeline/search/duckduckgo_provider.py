@@ -1,11 +1,18 @@
 from .base_search import BaseSearchProvider, SearchResult
 from backend.pipeline.logger_setup import logger
-from duckduckgo_search import DDGS
+
+try:
+    from duckduckgo_search import DDGS
+except ImportError:
+    DDGS = None
 
 class DuckDuckGoSearch(BaseSearchProvider):
     name = "duckduckgo"
     
     def search(self, query: str, max_results: int = 10):
+        if DDGS is None:
+            logger.warning("duckduckgo_search module not installed, skipping DuckDuckGo provider")
+            return []
         try:
             results = []
             with DDGS() as ddgs:
@@ -22,3 +29,4 @@ class DuckDuckGoSearch(BaseSearchProvider):
         except Exception as e:
             logger.warning(f"DuckDuckGo search failed: {e}")
             return []
+
