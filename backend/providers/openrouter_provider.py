@@ -5,15 +5,16 @@ import logging
 from openai import OpenAI
 from backend.pipeline.logger_setup import logger
 
-class GroqProvider:
-    name = "groq"
+class OpenRouterProvider:
+    name = "openrouter"
+    
     def __init__(self):
         # We allow multiple API keys to rotate through them if rate limited
-        keys_env = os.environ.get("GROQ_API_KEYS", "")
+        keys_env = os.environ.get("OPENROUTER_API_KEYS", "")
         if keys_env:
             self.api_keys = [k.strip() for k in keys_env.split(",") if k.strip()]
         else:
-            single_key = os.environ.get("GROQ_API_KEY")
+            single_key = os.environ.get("OPENROUTER_API_KEY")
             self.api_keys = [single_key] if single_key else []
             
         self.current_key_idx = 0
@@ -22,7 +23,7 @@ class GroqProvider:
         if not self.api_keys:
             return None
         return OpenAI(
-            base_url="https://api.groq.com/openai/v1",
+            base_url="https://openrouter.ai/api/v1",
             api_key=self.api_keys[self.current_key_idx],
             timeout=90
         )
@@ -31,11 +32,11 @@ class GroqProvider:
         if not self.api_keys:
             return
         self.current_key_idx = (self.current_key_idx + 1) % len(self.api_keys)
-        logger.warning(f"Rotated to Groq API Key #{self.current_key_idx + 1}")
+        logger.warning(f"Rotated to OpenRouter API Key #{self.current_key_idx + 1}")
 
     def extract(self, system_prompt, user_prompt):
         if not self.api_keys:
-            logger.error("No Groq API keys available")
+            logger.error("No OpenRouter API keys available")
             from backend.providers.base_provider import ProviderResult
             return ProviderResult("", self.name, 0.0, "No API key")
             
@@ -51,12 +52,11 @@ class GroqProvider:
                 
             try:
                 res = client.chat.completions.create(
-                    model="llama-3.1-70b-versatile",
+                    model="meta-llama/llama-3.1-70b-instruct",
                     messages=[
-                        {"role": "system", "content": system_prompt},
+                        {"role": "system", "content": system_prompt + "\nOUTPUT ONLY RAW JSON."},
                         {"role": "user", "content": user_prompt}
                     ],
-                    response_format={"type": "json_object"},
                     max_tokens=1500
                 )
                 from backend.providers.base_provider import ProviderResult
@@ -64,7 +64,7 @@ class GroqProvider:
                 
             except Exception as e:
                 err_msg = str(e).lower()
-                logger.warning(f"Groq API Error on Key #{self.current_key_idx + 1}: {e}")
+                logger.warning(f"OpenRouter API Error on Key #{self.current_key_idx + 1}: {e}")
                 
                 # Check for rate limit or authentication errors
                 if "rate_limit" in err_msg or "429" in err_msg or "401" in err_msg or "authentication" in err_msg:
@@ -74,6 +74,6 @@ class GroqProvider:
                     time.sleep(5)
             attempts += 1
             
-        logger.error("All Groq API keys exhausted or rate limited")
+        logger.error("All OpenRouter API keys exhausted or rate limited")
         from backend.providers.base_provider import ProviderResult
         return ProviderResult("", self.name, time.time() - start, "All keys exhausted")

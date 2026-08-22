@@ -3,6 +3,7 @@ import logging
 from backend.providers.nim_provider import NIMProvider
 from backend.providers.gemini_provider import GeminiProvider
 from backend.providers.groq_provider import GroqProvider
+from backend.providers.openrouter_provider import OpenRouterProvider
 from backend.providers.mock_provider import MockProvider
 from backend.pipeline.json_repair import repair_json
 
@@ -14,6 +15,7 @@ class ProviderRouter:
         self.providers = {
             "gemini": GeminiProvider(),
             "groq": GroqProvider(),
+            "openrouter": OpenRouterProvider(),
             "nim": NIMProvider(),
             "mock": MockProvider()
         }
@@ -32,7 +34,7 @@ class ProviderRouter:
         logger.warning(f"{provider.name} failed or returned bad schema. Error: {res.error}. Raw: {res.raw_text[:200] if res.raw_text else 'None'}. Trying Groq provider.")
         
         # Determine fallback providers
-        fallbacks = ["groq", "gemini"]
+        fallbacks = ["groq", "openrouter", "gemini"]
         
         for fallback_name in fallbacks:
             if fallback_name == provider_name:
