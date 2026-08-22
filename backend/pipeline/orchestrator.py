@@ -329,6 +329,11 @@ async def run_pipeline(input_csv: str, output_dir: str, max_rows: int = 200, dry
             if i >= max_rows: break
             rows.append(row)
             
+    if rows:
+        for k in rows[0].keys():
+            if k not in UNILOG_HEADER:
+                UNILOG_HEADER.append(k)
+
     with open(output_dir_path / "Unihack_Delivery_Format_Output.csv", "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=UNILOG_HEADER)
         writer.writeheader()

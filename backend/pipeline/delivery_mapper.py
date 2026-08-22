@@ -1,5 +1,6 @@
 def map_to_delivery(row: dict, audited: dict, UNILOG_HEADER: list) -> dict:
     out = {k: "" for k in UNILOG_HEADER}
+    out.update(row)
     mfg_pn = row.get("Mfg_Part_Num") or row.get("mpn") or ""
     out["Mfg_Part_Num"] = mfg_pn
     out["Part_Desc"] = row.get("Part_Desc") or row.get("description") or ""
