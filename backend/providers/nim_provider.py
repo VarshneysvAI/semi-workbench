@@ -37,7 +37,8 @@ class NIMProvider(BaseProvider):
               ],
               temperature=0.0,
               max_tokens=8192,
-              stream=False
+              stream=False,
+              extra_body={"chat_template_kwargs":{"enable_thinking":False}}
             )
             
             message = completion.choices[0].message
