@@ -54,6 +54,7 @@ interface SemiApi {
   selectedId: string | null
   selectedSku: Sku | null
   startJob: (file: File, concurrency: number) => void
+  loadJob: (jobId: string) => void
 }
 
 const Ctx = createContext<SemiApi | null>(null)
@@ -406,6 +407,23 @@ export function SemiProvider({ children }: { children: ReactNode }) {
 
         const { job_id } = await response.json()
         setBackendState(prev => ({ ...prev, jobId: job_id }))
+      },
+      loadJob: (jobId: string) => {
+        setRunningLocal(true)
+        try { localStorage.removeItem('semi_latest_state') } catch (e) {}
+        setBackendState({
+          rows: [],
+          logs: [],
+          events: [],
+          ledger: [],
+          changedOutcomes: 0,
+          bytes: 0,
+          tickCount: 0,
+          idle: false,
+          retrains: 0,
+          jobId: jobId,
+          expectedTotal: 0
+        })
       }
     }
   }, [engine, running, speed, selectedId, live])

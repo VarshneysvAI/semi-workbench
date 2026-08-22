@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Download, Trash2, History, RefreshCw, FileText, CheckCircle2, AlertTriangle, XCircle, Search } from 'lucide-react'
+import { Download, Trash2, History, RefreshCw, FileText, CheckCircle2, AlertTriangle, XCircle, Search, ExternalLink } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { getApiUrl } from '../config'
+import { useSemi } from '../engine/SemiContext'
 
 interface HistoryRecord {
   job_id: string
@@ -19,6 +21,9 @@ export default function HistoryView() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  
+  const { loadJob } = useSemi()
+  const navigate = useNavigate()
 
   const fetchHistory = async () => {
     setLoading(true)
@@ -180,6 +185,17 @@ export default function HistoryView() {
                     </td>
                     <td className="px-6 py-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => {
+                            loadJob(item.job_id)
+                            navigate('/')
+                          }}
+                          title="Load Job Data into Dashboard"
+                          className="flex items-center gap-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-1.5 text-[11px] font-medium text-indigo-300 hover:bg-indigo-500/20 transition-colors mr-2"
+                        >
+                          <ExternalLink size={13} />
+                          Open in Dashboard
+                        </button>
                         {item.status === 'COMPLETED' && (
                           <>
                             <a
