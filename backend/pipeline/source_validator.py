@@ -15,7 +15,7 @@ def score_source_url(url: str, title: str, manufacturer: str) -> int:
         return -1000
 
     if url_lower.endswith(".pdf"):
-        score += 100
+        return -1000 # Aggressively reject PDFs as requested to protect compute
 
     good_keywords = ["spec", "specification", "manual", "data-sheet", "datasheet", "support", "product", "documentation", "owner", "catalog", "installation", "technical", "pdf"]
     if any(kw in url_lower or kw in title_lower for kw in good_keywords):

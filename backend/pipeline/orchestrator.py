@@ -90,7 +90,7 @@ async def process_single_row(i, row, output_dir_path, use_cache=True):
 
 
 
-    queries = build_queries(row, manufacturer)
+    queries = await build_queries(row, manufacturer)
     all_results = []
     search_prov = "none"
     for q in queries:
