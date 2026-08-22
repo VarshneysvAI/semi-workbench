@@ -146,17 +146,17 @@ async def process_single_row(i, row, output_dir_path, use_cache=True):
 
     system_prompt = build_system_prompt()
     
-    MAX_SOURCE_TEXT_LENGTH = 15000
+    MAX_SOURCE_TEXT_LENGTH = 6000
     def truncate_source_text(text, max_length=MAX_SOURCE_TEXT_LENGTH):
         if len(text) <= max_length:
             return text
-        beginning = text[:15000]
+        beginning = text[:4000]
         spec_keywords = ["specification", "features", "dimensions", "technical"]
         spec_sections = []
         for keyword in spec_keywords:
             idx = text.lower().find(keyword)
             if idx != -1:
-                spec_sections.append(text[idx:idx+5000])
+                spec_sections.append(text[idx:idx+2000])
         result = beginning + "\n\n".join(spec_sections)
         return result[:max_length]
         
