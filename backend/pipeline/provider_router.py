@@ -16,7 +16,7 @@ class ProviderRouter:
             "mock": MockProvider()
         }
 
-    def run_extraction(self, system_prompt: str, user_prompt: str):
+    def run_extraction(self, system_prompt: str, user_prompt: str, expected_key: str = "manufacturer_name"):
         # 1. Try Primary
         provider_name = os.getenv("PRIMARY_PROVIDER", "nim").lower()
         provider = self.providers.get(provider_name, NIMProvider())
@@ -24,7 +24,7 @@ class ProviderRouter:
         res = provider.extract(system_prompt, user_prompt)
         
         parsed = repair_json(res.raw_text)
-        if not res.error and parsed and isinstance(parsed, dict) and "manufacturer_name" in parsed:
+        if not res.error and parsed and isinstance(parsed, dict) and expected_key in parsed:
             return res, parsed
 
         logger.warning(f"{provider.name} failed or returned bad schema. Error: {res.error}. Raw: {res.raw_text[:200]}. Trying fallback provider.")
@@ -35,7 +35,7 @@ class ProviderRouter:
         res = provider.extract(system_prompt, user_prompt)
         
         parsed_fallback = repair_json(res.raw_text)
-        if not res.error and parsed_fallback and isinstance(parsed_fallback, dict) and "manufacturer_name" in parsed_fallback:
+        if not res.error and parsed_fallback and isinstance(parsed_fallback, dict) and expected_key in parsed_fallback:
             return res, parsed_fallback
             
         logger.error(f"All primary & secondary providers failed. Error: {res.error}. Raw text: {res.raw_text[:200]}")

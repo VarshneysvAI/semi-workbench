@@ -19,7 +19,7 @@ COPY . /app
 COPY --from=frontend-builder /app/dashboard/dist /app/dashboard/dist
 
 RUN pip install --no-cache-dir -r backend/requirements.txt
-RUN playwright install chromium
+RUN playwright install
 RUN playwright install-deps
 
 ENV PYTHONUNBUFFERED=1

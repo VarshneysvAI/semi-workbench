@@ -35,7 +35,7 @@ async def build_queries(row, manufacturer):
     
     queries = []
     try:
-        res, parsed_json = await asyncio.to_thread(provider_router.run_extraction, system_prompt, user_prompt)
+        res, parsed_json = await asyncio.to_thread(provider_router.run_extraction, system_prompt, user_prompt, expected_key="query")
         if parsed_json and "query" in parsed_json:
             smart_query = parsed_json["query"]
             logger.info(f"LLM_SEARCH_QUERY_GENERATED: {smart_query}")
