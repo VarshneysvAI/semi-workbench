@@ -25,9 +25,28 @@ function Boot() {
   const [done, setDone] = useState(() => sessionStorage.getItem('semi-booted') === '1')
   const timer = useRef<number | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
+  const [duration, setDuration] = useState<number>(12)
   const [reduced] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
+
+  const dismiss = () => {
+    if (timer.current) window.clearTimeout(timer.current)
+    sessionStorage.setItem('semi-booted', '1')
+    setDone(true)
+  }
+
+  const handleLoadedMetadata = () => {
+    const v = videoRef.current
+    if (v && v.duration && !isNaN(v.duration) && v.duration > 0) {
+      setDuration(v.duration)
+      if (timer.current) window.clearTimeout(timer.current)
+      const cap = (v.duration + 3) * 1000
+      timer.current = window.setTimeout(() => {
+        dismiss()
+      }, cap)
+    }
+  }
 
   useEffect(() => {
     if (done) return
@@ -41,7 +60,7 @@ function Boot() {
     } else {
       dismiss()
     }
-    const cap = reduced ? 800 : 8000
+    const cap = reduced ? 800 : 15000
     timer.current = window.setTimeout(() => {
       dismiss()
     }, cap)
@@ -49,12 +68,6 @@ function Boot() {
       if (timer.current) window.clearTimeout(timer.current)
     }
   }, [done, reduced])
-
-  const dismiss = () => {
-    if (timer.current) window.clearTimeout(timer.current)
-    sessionStorage.setItem('semi-booted', '1')
-    setDone(true)
-  }
 
   return (
     <AnimatePresence>
@@ -77,6 +90,7 @@ function Boot() {
               autoPlay
               muted
               playsInline
+              onLoadedMetadata={handleLoadedMetadata}
               onEnded={dismiss}
               onError={dismiss}
               className="absolute inset-0 h-full w-full object-cover opacity-70"
@@ -85,7 +99,7 @@ function Boot() {
 
           <div className="pointer-events-none absolute inset-0 bg-black/30" />
 
-<motion.div
+          <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.25, ease: EASE }}
@@ -100,7 +114,7 @@ function Boot() {
               <motion.div
                 initial={{ width: '0%' }}
                 animate={{ width: '100%' }}
-                transition={{ duration: reduced ? 1.6 : 8.8, ease: 'linear' }}
+                transition={{ duration: reduced ? 1.6 : duration, ease: 'linear' }}
                 className="h-full bg-white/50"
               />
             </motion.div>
