@@ -41,7 +41,7 @@ function Boot() {
     } else {
       dismiss()
     }
-    const cap = reduced ? 800 : 2000
+    const cap = reduced ? 800 : 8000
     timer.current = window.setTimeout(() => {
       dismiss()
     }, cap)
