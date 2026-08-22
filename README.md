@@ -1,47 +1,29 @@
-# Semi Workbench - Industrial Data Orchestration Pipeline
+<div align="center">
+  <img src="dashboard/public/logo.png" alt="Semi Workbench Logo" width="150" />
 
-**Core Technology & Purpose:** 
-Semi Workbench is a production-grade React (Vite) and FastAPI data orchestration platform. It is engineered to automatically ingest raw industrial/MRO component data, orchestrate real-time web scraping via SearxNG and Crawl4AI, and execute highly structured JSON schema extractions using a resilient, multi-provider LLM cascade (NVIDIA NIM, Groq, OpenRouter, and Gemini).
+  # Semi Workbench
 
----
+  **An autonomous, production-grade industrial data orchestration pipeline**
 
-## 📂 Folder & Directory Structure
+  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+  [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
+  [![Vite](https://img.shields.io/badge/Vite-B73BFE?style=flat&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
+</div>
 
-```text
-semi-workbench/
-├── backend/                  # FastAPI server and core orchestrator logic
-│   ├── pipeline/             # Data lifecycle pipelines, web search, scraping logic
-│   │   ├── search/           # SearxNG integrations and query builders
-│   │   └── provider_router.py# The intelligent LLM fallback cascade engine
-│   ├── providers/            # LLM Engine API adapters (nim, groq, openrouter, gemini)
-│   └── live_app.py           # FastAPI entry point (Server-Sent Events)
-├── dashboard/                # React (Vite) Frontend UI
-│   ├── src/
-│   │   ├── engine/           # State context and API event stream handlers
-│   │   └── views/            # User interface components and dashboards
-│   └── package.json          # Frontend dependencies
-├── searxng/                  # Self-hosted SearxNG Meta-Search engine configuration
-├── Dockerfile                # Multi-stage Docker build (Frontend + Backend + Playwright)
-├── docker-compose.yml        # Multi-container orchestration (Backend + SearxNG)
-└── README.md                 # Project documentation
-```
+Semi Workbench is a high-performance orchestration platform designed to automate the extraction and structuring of complex industrial and MRO (Maintenance, Repair, and Operations) component data. 
 
----
+By combining real-time web scraping via **SearxNG** and **Crawl4AI** with a resilient, multi-provider LLM cascade (NVIDIA NIM, Groq, OpenRouter, and Gemini), the platform reliably normalizes raw input data into 100+ highly structured JSON attributes.
 
-## 📊 Performance & Reliability Metrics
+## Features
 
-The pipeline has been aggressively optimized for production-scale reliability. We transitioned from fragile, single-provider endpoints to a robust, parallel-cascading architecture.
+- **Multi-Provider LLM Cascade**: Built-in intelligent fallback routing (`NIM` → `Groq` → `OpenRouter` → `Gemini`) ensures maximum uptime and rate-limit evasion.
+- **Real-Time Data Streaming**: FastAPI Server-Sent Events (SSE) stream live processing updates directly to the React (Vite) frontend dashboard.
+- **Autonomous Web Scraping**: Headless Playwright integration via Crawl4AI to bypass bot-protection and extract raw HTML for semantic parsing.
+- **Self-Healing Schemas**: Aggressive JSON repairing algorithms instantly recover and format broken LLM outputs.
 
-| Component / Metric | Baseline (Pre-Optimization) | Optimized (Production) | Improvement Loop & Rationale |
-| :--- | :--- | :--- | :--- |
-| **LLM Inference Speed** | 120s - 300s (Timeouts) | **~15s per row** | Disabled `enable_thinking` reasoning blocks in NIM to bypass generation bloat and enforce instant JSON-only outputs. |
-| **Pipeline Reliability** | High failure rate on 429s | **99.9% Uptime** | Integrated an aggressive LLM Fallback Cascade: `NIM -> Groq -> OpenRouter -> Gemini`. |
-| **Scraper Execution** | 0% (Missing Binaries) | **100% Success** | Hardcoded `PLAYWRIGHT_BROWSERS_PATH=0` in Dockerfile to guarantee binary alignment for Crawl4AI. |
-| **Data Extraction** | Broken strings / missing | **100+ structural fields** | Enhanced `json_repair` implementation parsing highly structured taxonomy and UOM mappings. |
+## Architecture
 
----
-
-## 🔄 Architectural Lifecycle (Data Flow)
+The pipeline manages the entire data lifecycle from user injection to final CSV generation.
 
 ```mermaid
 graph TD
@@ -65,46 +47,69 @@ graph TD
     L --> M((Output CSV & SSE Stream))
 ```
 
----
+## Performance Optimization
 
-## 🚀 Installation & Quick Start
+The extraction pipeline is highly tuned for production efficiency.
+
+| Component | Baseline | Optimized | Optimization Rationale |
+| :--- | :--- | :--- | :--- |
+| **LLM Inference Speed** | 120s - 300s (Timeouts) | **~15s per row** | Disabled reasoning blocks (`enable_thinking: False`) in NVIDIA NIM to bypass generation bloat and enforce instant JSON outputs. |
+| **Pipeline Reliability** | High failure rate on 429s | **99.9% Uptime** | Integrated an aggressive LLM Fallback Cascade rotating through multiple free-tier keys. |
+| **Scraper Execution** | 0% (Missing Binaries) | **100% Success** | Set `PLAYWRIGHT_BROWSERS_PATH=0` to guarantee binary alignment for Crawl4AI inside the container. |
+
+## Quick Start
 
 ### Prerequisites
-- Docker & Docker Compose
-- Node.js (v20+)
-- Python 3.11+
-- Valid LLM API Keys (NVIDIA NIM, Groq, OpenRouter)
+- [Docker](https://www.docker.com/) and Docker Compose
+- Valid API Keys (NVIDIA NIM, Groq, OpenRouter)
 
-### Deployment Commands
-To spin up the entire production environment locally using Docker:
+### Installation
 
+1. Clone the repository and configure your environment:
 ```bash
-# 1. Clone the repository
 git clone https://github.com/VarshneysvAI/semi-workbench.git
 cd semi-workbench
 
-# 2. Configure Environment Variables
-# Create a .env file in the backend/ directory with your API keys
+# Configure API Keys
 echo "LLM_API_KEY_NIM=nvapi-your-key-here" > backend/.env
 echo "GROQ_API_KEYS=gsk_key1,gsk_key2" >> backend/.env
 echo "OPENROUTER_API_KEYS=sk-or-v1-key1,sk-or-v1-key2" >> backend/.env
-
-# 3. Build and launch the multi-container environment
-# Note: The Dockerfile automatically builds the React frontend.
-docker-compose build --no-cache
-docker-compose up -d
-
-# 4. Access the Dashboard
-# Open your browser and navigate to: http://localhost:80
 ```
 
----
+2. Build and launch the multi-container environment:
+```bash
+docker-compose build --no-cache
+docker-compose up -d
+```
 
-## 🤖 Agent Readiness & Autonomy Guide
+3. Access the dashboard:
+Open your browser and navigate to `http://localhost:80`.
 
-This repository has been structured for seamless traversal and modification by autonomous AI coding assistants. Agents should refer to the following configuration nodes when updating the system:
+> [!NOTE]
+> The `Dockerfile` handles a multi-stage build, compiling the Vite frontend and serving it statically through the FastAPI backend automatically.
 
-*   **`backend/pipeline/provider_router.py`**: The central nervous system for LLM routing. Modify the `fallbacks = ["groq", "openrouter", "gemini"]` array here to adjust engine priorities.
-*   **`backend/providers/*.py`**: API implementations. All providers inherit from `BaseProvider` and must return a standardized `ProviderResult` object.
-*   **`Dockerfile`**: The container blueprint. **Critical Note for Agents:** Never remove `ENV PLAYWRIGHT_BROWSERS_PATH=0` (Line 22), as it guarantees Crawl4AI successfully resolves the Headless Chrome binary path.
-*   **`dashboard/src/engine/SemiContext.tsx`**: The frontend Server-Sent Events (SSE) listener. All real-time logging and row extraction data pipelines flow through this context.
+## Project Structure
+
+```text
+semi-workbench/
+├── backend/                  # FastAPI server and core orchestrator logic
+│   ├── pipeline/             # Data lifecycle pipelines, web search, scraping logic
+│   ├── providers/            # LLM Engine API adapters (nim, groq, openrouter, gemini)
+│   └── live_app.py           # FastAPI entry point (Server-Sent Events)
+├── dashboard/                # React (Vite) Frontend UI
+│   ├── src/                  
+│   │   ├── engine/           # State context and API event stream handlers
+│   │   └── views/            # User interface components and dashboards
+├── searxng/                  # Self-hosted SearxNG Meta-Search engine configuration
+├── Dockerfile                # Multi-stage Docker build (Frontend + Backend + Playwright)
+└── docker-compose.yml        # Multi-container orchestration (Backend + SearxNG)
+```
+
+## Advanced Configuration
+
+For autonomous agents or developers looking to modify the routing logic:
+
+> [!IMPORTANT]
+> The central fallback logic is defined in `backend/pipeline/provider_router.py`. Modify the `fallbacks` array to adjust the secondary engine priorities.
+
+When rebuilding the Docker image, do not remove `ENV PLAYWRIGHT_BROWSERS_PATH=0` in the `Dockerfile`, as it guarantees Crawl4AI can locate the headless Chromium binary within the Python environment.
