@@ -19,6 +19,7 @@ COPY . /app
 COPY --from=frontend-builder /app/dashboard/dist /app/dashboard/dist
 
 RUN pip install --no-cache-dir -r backend/requirements.txt
+ENV PLAYWRIGHT_BROWSERS_PATH=0
 RUN playwright install
 RUN playwright install-deps
 
