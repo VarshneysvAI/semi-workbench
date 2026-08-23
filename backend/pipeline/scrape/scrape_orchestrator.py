@@ -12,6 +12,10 @@ from backend.pipeline.shared_crawler import get_crawler
 
 async def scrape_url(url):
     logger.info(f"SCRAPE_START: {url}")
+    if url.lower().endswith((".png", ".jpg", ".jpeg", ".webp", ".bmp")):
+        text, method = await scrape_image(url)
+        if text: return text, method
+
     if url.lower().endswith(".pdf") or "pdf" in url.lower():
         text, method = await scrape_pdf(url)
         if text: return text, method
@@ -39,6 +43,30 @@ async def scrape_pdf(url):
             return clean_text(text[:30000]), "pdf_local"
     except Exception as e:
         logger.warning(f"Local PDF parse failed: {e}")
+        
+    return None, "none"
+
+
+async def scrape_image(url):
+    try:
+        from rapidocr_onnxruntime import RapidOCR
+        engine = RapidOCR()
+        res = requests.get(url, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
+        if res.status_code == 200:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as f:
+                f.write(res.content)
+                f.flush()
+                result, elapse = engine(f.name)
+                
+                if result:
+                    text_parts = [line[1] for line in result]
+                    text = " ".join(text_parts)
+                    logger.info("IMAGE_OCR_PARSED")
+                    return clean_text(text[:30000]), "ocr_rapid"
+    except ImportError:
+        logger.warning("rapidocr_onnxruntime not installed, falling back to HTML scraper")
+    except Exception as e:
+        logger.warning(f"Image OCR failed: {e}")
         
     return None, "none"
 
