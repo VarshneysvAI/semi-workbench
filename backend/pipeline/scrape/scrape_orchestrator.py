@@ -50,19 +50,23 @@ async def scrape_pdf(url):
 async def scrape_image(url):
     try:
         from rapidocr_onnxruntime import RapidOCR
+        import os
         engine = RapidOCR()
         res = requests.get(url, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
         if res.status_code == 200:
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as f:
+            fd, path = tempfile.mkstemp(suffix=".png")
+            with os.fdopen(fd, 'wb') as f:
                 f.write(res.content)
-                f.flush()
-                result, elapse = engine(f.name)
-                
+            
+            try:
+                result, elapse = engine(path)
                 if result:
                     text_parts = [line[1] for line in result]
                     text = " ".join(text_parts)
                     logger.info("IMAGE_OCR_PARSED")
                     return clean_text(text[:30000]), "ocr_rapid"
+            finally:
+                os.remove(path)
     except ImportError:
         logger.warning("rapidocr_onnxruntime not installed, falling back to HTML scraper")
     except Exception as e:
