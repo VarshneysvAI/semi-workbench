@@ -198,7 +198,7 @@ def export_unilog():
     sample_dir.mkdir(parents=True, exist_ok=True)
     sample_file = sample_dir / "Unihack_Delivery_Format_Output.csv"
     if not sample_file.exists():
-        from backend.pipeline.orchestrator import UNILOG_HEADER
+        from backend.pipeline.delivery_header import UNILOG_HEADER
         with open(sample_file, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=UNILOG_HEADER)
             writer.writeheader()

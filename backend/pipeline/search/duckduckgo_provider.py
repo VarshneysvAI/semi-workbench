@@ -5,7 +5,7 @@ from .base_search import BaseSearchProvider, SearchResult
 from backend.pipeline.logger_setup import logger
 
 try:
-    from duckduckgo_search import DDGS
+    from ddgs import DDGS
 except ImportError:
     DDGS = None
 

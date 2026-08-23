@@ -52,7 +52,7 @@ class OpenRouterProvider:
                 
             try:
                 res = client.chat.completions.create(
-                    model="meta-llama/llama-3.1-70b-instruct",
+                    model="nvidia/nemotron-3.5-lightning:free",
                     messages=[
                         {"role": "system", "content": system_prompt + "\nOUTPUT ONLY RAW JSON."},
                         {"role": "user", "content": user_prompt}

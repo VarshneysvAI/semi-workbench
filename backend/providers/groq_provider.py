@@ -51,12 +51,11 @@ class GroqProvider:
                 
             try:
                 res = client.chat.completions.create(
-                    model="llama-3.1-70b-versatile",
+                    model="qwen/qwen3.6-27b",
                     messages=[
-                        {"role": "system", "content": system_prompt},
+                        {"role": "system", "content": system_prompt + "\nOUTPUT RAW JSON ONLY."},
                         {"role": "user", "content": user_prompt}
                     ],
-                    response_format={"type": "json_object"},
                     max_tokens=1500
                 )
                 from backend.providers.base_provider import ProviderResult

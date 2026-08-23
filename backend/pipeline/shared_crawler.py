@@ -61,7 +61,8 @@ async def get_crawler():
                     await _crawler_instance.start()
                     logger.info("Crawl4AI AsyncWebCrawler initialized successfully.")
                 except Exception as e:
-                    logger.warning(f"Crawl4AI AsyncWebCrawler start failed ({e}), using HTTPX fallback.")
+                    clean_err = str(e).encode('ascii', 'replace').decode('ascii').split('\n')[0]
+                    logger.warning(f"Crawl4AI AsyncWebCrawler start failed ({clean_err}), using HTTPX fallback.")
                     _crawler_instance = SimpleHttpxCrawler()
             else:
                 logger.info("Crawl4AI not installed, using HTTPX/BeautifulSoup crawler fallback.")

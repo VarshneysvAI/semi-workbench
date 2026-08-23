@@ -21,38 +21,47 @@ class ProviderRouter:
         }
 
     def run_extraction(self, system_prompt: str, user_prompt: str, expected_key: str = "manufacturer_name"):
-        # 1. Try Primary
         provider_name = os.getenv("PRIMARY_PROVIDER", "nim").lower()
         provider = self.providers.get(provider_name, NIMProvider())
-        logger.info(f"Using primary provider: {provider.name}")
-        res = provider.extract(system_prompt, user_prompt)
         
-        parsed = repair_json(res.raw_text)
-        if not res.error and parsed and isinstance(parsed, dict) and expected_key in parsed:
-            return res, parsed
+        # Try Primary Provider up to 3 times (1 initial + 2 retries)
+        max_attempts = 3
+        for attempt in range(1, max_attempts + 1):
+            logger.info(f"Using primary provider: {provider.name} (Attempt {attempt}/{max_attempts})")
+            res = provider.extract(system_prompt, user_prompt)
+            parsed = repair_json(res.raw_text)
+            
+            if not res.error and parsed and isinstance(parsed, dict) and expected_key in parsed:
+                return res, parsed
+            
+            logger.warning(f"{provider.name} attempt {attempt} failed or returned bad schema. Error: {res.error}")
+            if attempt < max_attempts:
+                import time
+                time.sleep(1.5)
 
-        logger.warning(f"{provider.name} failed or returned bad schema. Error: {res.error}. Raw: {res.raw_text[:200] if res.raw_text else 'None'}. Trying Groq provider.")
+        logger.warning(f"{provider.name} failed all {max_attempts} attempts. Trying secondary fallbacks.")
         
-        # Determine fallback providers
-        fallbacks = ["groq", "openrouter", "gemini"]
+        # Fallback providers
+        fallbacks = ["groq", "openrouter", "gemini", "mock"]
         
         for fallback_name in fallbacks:
             if fallback_name == provider_name:
                 continue
             
-            provider = self.providers.get(fallback_name)
-            if not provider:
+            p = self.providers.get(fallback_name)
+            if not p:
                 continue
                 
-            res = provider.extract(system_prompt, user_prompt)
+            res = p.extract(system_prompt, user_prompt)
             parsed_fallback = repair_json(res.raw_text)
             if not res.error and parsed_fallback and isinstance(parsed_fallback, dict) and expected_key in parsed_fallback:
+                logger.info(f"Fallback provider {p.name} succeeded")
                 return res, parsed_fallback
                 
-            logger.warning(f"{provider.name} failed or returned bad schema. Error: {res.error}. Raw: {res.raw_text[:200] if res.raw_text else 'None'}. Trying next provider.")
+            logger.warning(f"{p.name} failed or returned bad schema. Error: {res.error}")
             
-        logger.error(f"All primary & secondary providers failed. Final Error: {res.error}. Raw text: {res.raw_text[:200] if res.raw_text else 'None'}")
-        return res, None
+        logger.error("All providers failed. Returning empty schema dict.")
+        return res, {expected_key: ""}
 
 provider_router = ProviderRouter()
 

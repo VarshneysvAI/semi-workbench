@@ -15,7 +15,7 @@ requests>=2.31.0
 openai>=1.40.0
 
 # ---- discovery & extraction: SearXNG, DDG, Crawl4AI, PyPDF ----
-duckduckgo-search>=6.0.0
+ddgs>=6.0.0
 crawl4ai>=0.4.0
 pypdf>=4.0.0
 curl-cffi>=0.7.3
