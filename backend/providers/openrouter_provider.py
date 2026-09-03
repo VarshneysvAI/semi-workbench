@@ -52,12 +52,13 @@ class OpenRouterProvider:
                 
             try:
                 res = client.chat.completions.create(
-                    model="nvidia/nemotron-3.5-lightning:free",
+                    model=os.getenv("OPENROUTER_MODEL", "google/gemini-2.0-flash-lite-001"),
                     messages=[
                         {"role": "system", "content": system_prompt + "\nOUTPUT ONLY RAW JSON."},
                         {"role": "user", "content": user_prompt}
                     ],
-                    max_tokens=1500
+                    max_tokens=1500,
+                    response_format={"type": "json_object"}
                 )
                 from backend.providers.base_provider import ProviderResult
                 return ProviderResult(res.choices[0].message.content, self.name, time.time() - start)

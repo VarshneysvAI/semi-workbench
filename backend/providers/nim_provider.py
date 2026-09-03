@@ -12,7 +12,7 @@ class NIMProvider(BaseProvider):
     def extract(self, system_prompt: str, user_prompt: str) -> ProviderResult:
         api_key = os.getenv("LLM_API_KEY_NIM") or os.getenv("NIM_API_KEY")
         base_url = os.getenv("NIM_BASE_URL", "https://integrate.api.nvidia.com/v1")
-        model = os.getenv("LLM_MODEL_NIM", "nvidia/nemotron-3.5-lightning-30b-a3b")
+        model = os.getenv("LLM_MODEL_NIM", "meta/llama-3.3-70b-instruct")
         timeout = int(os.getenv("NIM_TIMEOUT", "90"))
 
         if not api_key:
