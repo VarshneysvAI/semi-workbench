@@ -35,6 +35,13 @@ class ProviderRouter:
                 return res, parsed
             
             logger.warning(f"{provider.name} attempt {attempt} failed or returned bad schema. Error: {res.error}")
+            
+            # If authorization failed (403/401), don't waste time on retries
+            err_str = str(res.error or "")
+            if "403" in err_str or "401" in err_str or "Authorization failed" in err_str or "Forbidden" in err_str:
+                logger.warning(f"{provider.name} authorization failed ({res.error}). Skipping retries and trying fallbacks.")
+                break
+
             if attempt < max_attempts:
                 import time
                 time.sleep(1.5)
