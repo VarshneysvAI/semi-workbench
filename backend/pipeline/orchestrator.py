@@ -369,7 +369,7 @@ async def run_pipeline(input_csv: str, output_dir: str, max_rows: int = 200, dry
     actual_csv_path = convert_to_csv(input_file_path, target_csv_path)
 
     rows = []
-    with open(actual_csv_path, "r", encoding="utf-8") as f:
+    with open(actual_csv_path, "r", encoding="utf-8-sig", errors="replace") as f:
         reader = csv.DictReader(f)
         for i, row in enumerate(reader):
             if i >= max_rows: break

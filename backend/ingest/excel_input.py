@@ -43,7 +43,7 @@ class ParseResult:
 
 def convert_to_csv(input_path: str | Path, output_csv_path: str | Path) -> Path:
     """Convert an .xlsx, .xls, or binary Excel/CSV file to standard CSV format.
-    If the file is already a valid CSV, copies or returns it.
+    Handles non-UTF-8 encodings (Latin-1, CP1252, UTF-8-SIG) gracefully.
     """
     src = Path(input_path)
     dst = Path(output_csv_path)
@@ -64,7 +64,16 @@ def convert_to_csv(input_path: str | Path, output_csv_path: str | Path) -> Path:
         frame = pd.read_excel(src, dtype=str, keep_default_na=False)
         frame.to_csv(dst, index=False, encoding="utf-8")
     else:
-        if src.resolve() != dst.resolve():
+        converted = False
+        for enc in ("utf-8-sig", "utf-8", "latin1", "cp1252", "iso-8859-1"):
+            try:
+                frame = pd.read_csv(src, dtype=str, keep_default_na=False, encoding=enc)
+                frame.to_csv(dst, index=False, encoding="utf-8")
+                converted = True
+                break
+            except Exception:
+                continue
+        if not converted and src.resolve() != dst.resolve():
             import shutil
             shutil.copyfile(src, dst)
     return dst
