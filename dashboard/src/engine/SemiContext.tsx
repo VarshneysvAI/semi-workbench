@@ -55,6 +55,7 @@ interface SemiApi {
   selectedSku: Sku | null
   startJob: (file: File, concurrency: number) => void
   loadJob: (jobId: string) => void
+  retryJob: (jobId: string) => Promise<void>
 }
 
 const Ctx = createContext<SemiApi | null>(null)
@@ -411,6 +412,41 @@ export function SemiProvider({ children }: { children: ReactNode }) {
       loadJob: (jobId: string) => {
         setRunningLocal(true)
         try { localStorage.removeItem('semi_latest_state') } catch (e) {}
+        setBackendState({
+          rows: [],
+          logs: [],
+          events: [],
+          ledger: [],
+          changedOutcomes: 0,
+          bytes: 0,
+          tickCount: 0,
+          idle: false,
+          retrains: 0,
+          jobId: jobId,
+          expectedTotal: 0
+        })
+      },
+      retryJob: async (jobId: string) => {
+        setRunningLocal(true)
+        try { localStorage.removeItem('semi_latest_state') } catch (e) {}
+        setBackendState({
+          rows: [],
+          logs: [],
+          events: [],
+          ledger: [],
+          changedOutcomes: 0,
+          bytes: 0,
+          tickCount: 0,
+          idle: false,
+          retrains: 0,
+          jobId: null,
+          expectedTotal: 0
+        })
+        try {
+          await fetch(getApiUrl(`/api/jobs/${jobId}/retry`), { method: 'POST' })
+        } catch (err) {
+          console.error('Retry job endpoint error:', err)
+        }
         setBackendState({
           rows: [],
           logs: [],

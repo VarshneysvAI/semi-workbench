@@ -40,6 +40,60 @@ def serve_root():
         return FileResponse(DIST_DIR / "index.html")
     return HTMLResponse("<html><body><h1>SEMI Backend Active</h1><p>Run 'npm run build' in dashboard/ to serve SPA here.</p></body></html>")
 
+def _execute_job(job_id: str, job_dir: Path, input_path: Path, max_rows: int = 500, concurrency: int = 1):
+    import logging
+    
+    # Reset done marker so log streaming works for retry runs
+    done_marker = job_dir / "done.marker"
+    if done_marker.exists():
+        try:
+            done_marker.unlink()
+        except Exception: pass
+        
+    log_file = job_dir / "pipeline.log"
+    file_handler = logging.FileHandler(log_file)
+    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+    logger = logging.getLogger("semi_pipeline")
+    logger.addHandler(file_handler)
+    
+    try:
+        from backend.pipeline.orchestrator import run_pipeline
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        os.environ["CONCURRENCY"] = str(concurrency)
+        loop.run_until_complete(run_pipeline(
+            input_csv=str(input_path),
+            output_dir=str(job_dir),
+            max_rows=max_rows,
+            dry_run=False,
+            use_cache=True
+        ))
+
+        summary_path = job_dir / "run_summary.json"
+        success_count, needs_review, failed_count = 0, 0, 0
+        if summary_path.exists():
+            try:
+                summary_data = json.loads(summary_path.read_text(encoding="utf-8"))
+                success_count = summary_data.get("success", 0)
+                needs_review = summary_data.get("needs_review", 0)
+                failed_count = summary_data.get("parse_failed", 0) + summary_data.get("source_not_found", 0)
+            except Exception: pass
+        
+        update_history_record(
+            job_id=job_id, status="COMPLETED",
+            success_count=success_count,
+            needs_review_count=needs_review,
+            failed_count=failed_count
+        )
+    except Exception as e:
+        update_history_record(job_id=job_id, status="FAILED")
+        logger.error(f"Background worker failed for job {job_id}: {e}")
+    finally:
+        logger.removeHandler(file_handler)
+        with open(job_dir / "done.marker", "w") as f:
+            f.write("DONE")
+
+
 @app.post("/api/run")
 async def run_pipeline_api(background_tasks: BackgroundTasks, file: UploadFile = File(...), max_rows: int = Form(500), concurrency: int = Form(1)):
     job_id = str(uuid.uuid4())
@@ -62,59 +116,39 @@ async def run_pipeline_api(background_tasks: BackgroundTasks, file: UploadFile =
             shutil.copyfile(uploaded_path, input_path)
 
     add_history_record(job_id=job_id, filename=filename, total_rows=max_rows, output_dir=str(job_dir))
-        
-    def _background_worker():
-        import logging
-        
-        # Configure file logger for this job to stream to UI
-        log_file = job_dir / "pipeline.log"
-        file_handler = logging.FileHandler(log_file)
-        file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-        logger = logging.getLogger("semi_pipeline")
-        logger.addHandler(file_handler)
-        
-        try:
-            from backend.pipeline.orchestrator import run_pipeline
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            os.environ["CONCURRENCY"] = str(concurrency)
-            loop.run_until_complete(run_pipeline(
-                input_csv=str(input_path),
-                output_dir=str(job_dir),
-                max_rows=max_rows,
-                dry_run=False,
-                use_cache=True
-            ))
-
-            
-            # Read run summary to update history DB
-            summary_path = job_dir / "run_summary.json"
-            success_count, needs_review, failed_count = 0, 0, 0
-            if summary_path.exists():
-                try:
-                    summary_data = json.loads(summary_path.read_text(encoding="utf-8"))
-                    success_count = summary_data.get("success", 0)
-                    needs_review = summary_data.get("needs_review", 0)
-                    failed_count = summary_data.get("parse_failed", 0) + summary_data.get("source_not_found", 0)
-                except Exception: pass
-            
-            update_history_record(
-                job_id=job_id, status="COMPLETED",
-                success_count=success_count,
-                needs_review_count=needs_review,
-                failed_count=failed_count
-            )
-        except Exception as e:
-            update_history_record(job_id=job_id, status="FAILED")
-            logger.error(f"Background worker failed: {e}")
-        finally:
-            logger.removeHandler(file_handler)
-            with open(job_dir / "done.marker", "w") as f:
-                f.write("DONE")
-                
-    background_tasks.add_task(_background_worker)
-    
+    background_tasks.add_task(_execute_job, job_id, job_dir, input_path, max_rows, concurrency)
     return {"job_id": job_id, "status": "queued"}
+
+
+@app.post("/api/jobs/{job_id}/retry")
+@app.post("/api/retry/{job_id}")
+async def retry_job_api(job_id: str, background_tasks: BackgroundTasks, concurrency: int = Form(1)):
+    job_dir = OUTPUT_DIR / job_id
+    if not job_dir.exists():
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Job directory not found")
+
+    input_path = job_dir / "input.csv"
+    if not input_path.exists():
+        candidates = list(job_dir.glob("*.csv")) + list(job_dir.glob("*.xlsx")) + list(job_dir.glob("*.xls"))
+        if not candidates:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=400, detail="No input dataset found to retry")
+        input_path = candidates[0]
+
+    from backend.ingest.excel_input import convert_to_csv
+    converted_path = job_dir / "input.csv"
+    try:
+        convert_to_csv(input_path, converted_path)
+    except Exception:
+        pass
+
+    record = get_history_record(job_id)
+    total_rows = record.get("total_rows", 500) if record else 500
+
+    update_history_record(job_id=job_id, status="RUNNING", success_count=0, needs_review_count=0, failed_count=0)
+    background_tasks.add_task(_execute_job, job_id, job_dir, converted_path, total_rows, concurrency)
+    return {"job_id": job_id, "status": "queued", "message": f"Retrying job {job_id}"}
 
 @app.get("/api/stream/{job_id}")
 async def stream_logs(job_id: str):

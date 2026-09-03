@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Download, Trash2, History, RefreshCw, FileText, CheckCircle2, AlertTriangle, XCircle, Search, ExternalLink } from 'lucide-react'
+import { Download, Trash2, History, RefreshCw, FileText, CheckCircle2, AlertTriangle, XCircle, Search, ExternalLink, RotateCcw } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { getApiUrl } from '../config'
 import { useSemi } from '../engine/SemiContext'
@@ -21,9 +21,22 @@ export default function HistoryView() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [retryingId, setRetryingId] = useState<string | null>(null)
   
-  const { loadJob } = useSemi()
+  const { loadJob, retryJob } = useSemi()
   const navigate = useNavigate()
+
+  const handleRetry = async (jobId: string) => {
+    setRetryingId(jobId)
+    try {
+      await retryJob(jobId)
+      navigate('/')
+    } catch (err) {
+      console.error('Failed to retry run:', err)
+    } finally {
+      setRetryingId(null)
+    }
+  }
 
   const fetchHistory = async () => {
     setLoading(true)
@@ -186,12 +199,21 @@ export default function HistoryView() {
                     <td className="px-6 py-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
                         <button
+                          onClick={() => handleRetry(item.job_id)}
+                          disabled={retryingId === item.job_id || item.status === 'RUNNING'}
+                          title="Re-run extraction pipeline for this dataset"
+                          className="flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1.5 text-[11px] font-medium text-amber-300 hover:bg-amber-500/20 transition-colors"
+                        >
+                          <RotateCcw size={13} className={retryingId === item.job_id ? 'animate-spin' : ''} />
+                          Retry Run
+                        </button>
+                        <button
                           onClick={() => {
                             loadJob(item.job_id)
                             navigate('/')
                           }}
                           title="Load Job Data into Dashboard"
-                          className="flex items-center gap-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-1.5 text-[11px] font-medium text-indigo-300 hover:bg-indigo-500/20 transition-colors mr-2"
+                          className="flex items-center gap-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-1.5 text-[11px] font-medium text-indigo-300 hover:bg-indigo-500/20 transition-colors"
                         >
                           <ExternalLink size={13} />
                           Open in Dashboard
