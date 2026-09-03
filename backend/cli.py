@@ -6,7 +6,7 @@ from backend.pipeline.orchestrator import run_pipeline
 
 def main():
     parser = argparse.ArgumentParser(description="SEMI Pipeline CLI")
-    parser.add_argument("--input", required=True, help="Input CSV path")
+    parser.add_argument("--input", required=True, help="Input CSV or Excel (.xlsx/.xls) path")
     parser.add_argument("--output", default="output", help="Output directory")
     parser.add_argument("--max-rows", type=int, default=200)
     parser.add_argument("--dry-run", action="store_true")

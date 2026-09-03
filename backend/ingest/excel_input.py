@@ -17,10 +17,11 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 _COL_ALIASES: dict[str, tuple[str, ...]] = {
-    "manufacturer": ("manufacturer", "brand", "make", "company", "vendor"),
+    "manufacturer": ("manufacturer", "brand", "make", "company", "vendor", "part_manuf", "part manuf", "mfr", "e1_brand", "unilog_brand", "dib_brand"),
     "part_number": (
         "part_number", "part no", "part no.", "partno", "mpn",
         "sku", "model", "model no", "catalog number", "catalog_number",
+        "mfg_part_num", "mfg part num", "mfg part no", "manufacturer_part_number",
     ),
 }
 
@@ -40,6 +41,35 @@ class ParseResult:
     source: Path
 
 
+def convert_to_csv(input_path: str | Path, output_csv_path: str | Path) -> Path:
+    """Convert an .xlsx, .xls, or binary Excel/CSV file to standard CSV format.
+    If the file is already a valid CSV, copies or returns it.
+    """
+    src = Path(input_path)
+    dst = Path(output_csv_path)
+    dst.parent.mkdir(parents=True, exist_ok=True)
+
+    is_excel = src.suffix.lower() in (".xlsx", ".xls")
+    if not is_excel and src.exists():
+        try:
+            with open(src, "rb") as f:
+                header = f.read(4)
+                if header.startswith(b"PK\x03\x04") or header.startswith(b"\xd0\xcf\x11\xe0"):
+                    is_excel = True
+        except Exception:
+            pass
+
+    if is_excel:
+        logger.info("Converting Excel file %s to CSV at %s", src, dst)
+        frame = pd.read_excel(src, dtype=str, keep_default_na=False)
+        frame.to_csv(dst, index=False, encoding="utf-8")
+    else:
+        if src.resolve() != dst.resolve():
+            import shutil
+            shutil.copyfile(src, dst)
+    return dst
+
+
 def parse_input_workbook(path: str | Path, sheet_name: str | int = 0) -> ParseResult:
     """Parse an Unilog-style workbook into ProductRecord row candidates.
 
@@ -54,9 +84,9 @@ def parse_input_workbook(path: str | Path, sheet_name: str | int = 0) -> ParseRe
         raise ValueError(f"Expected an .xlsx/.xls/.csv workbook, got {source.suffix!r}")
 
     if source.suffix.lower() == ".csv":
-        frame = pd.read_csv(source, dtype=str)
+        frame = pd.read_csv(source, dtype=str, keep_default_na=False)
     else:
-        frame = pd.read_excel(source, sheet_name=sheet_name, dtype=str)
+        frame = pd.read_excel(source, sheet_name=sheet_name, dtype=str, keep_default_na=False)
     header_map = _match_columns(list(frame.columns))
     missing = {"manufacturer", "part_number"} - set(header_map)
     if missing:

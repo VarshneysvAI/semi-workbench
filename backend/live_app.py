@@ -46,11 +46,21 @@ async def run_pipeline_api(background_tasks: BackgroundTasks, file: UploadFile =
     job_dir = OUTPUT_DIR / job_id
     job_dir.mkdir(exist_ok=True)
     
-    input_path = job_dir / "input.csv"
-    with open(input_path, "wb") as f:
+    filename = file.filename or "input.csv"
+    uploaded_path = job_dir / filename
+    with open(uploaded_path, "wb") as f:
         shutil.copyfileobj(file.file, f)
 
-    filename = file.filename or "input.csv"
+    input_path = job_dir / "input.csv"
+    from backend.ingest.excel_input import convert_to_csv
+    try:
+        convert_to_csv(uploaded_path, input_path)
+    except Exception as exc:
+        import logging
+        logging.getLogger("semi_pipeline").error(f"Error converting uploaded file to CSV: {exc}")
+        if uploaded_path != input_path:
+            shutil.copyfile(uploaded_path, input_path)
+
     add_history_record(job_id=job_id, filename=filename, total_rows=max_rows, output_dir=str(job_dir))
         
     def _background_worker():

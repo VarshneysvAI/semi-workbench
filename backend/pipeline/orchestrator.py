@@ -157,11 +157,22 @@ def _build_sku_event(mfg_part_num, manufacturer, stage, best_source=None, base_c
     }
 
 
+def _get_row_val(row: dict, candidates: tuple[str, ...]) -> str:
+    for key in candidates:
+        if row.get(key):
+            return str(row[key]).strip()
+    lower_row = {str(k).strip().lower(): str(v).strip() for k, v in row.items() if v is not None}
+    for key in candidates:
+        if lower_row.get(key.lower()):
+            return lower_row[key.lower()]
+    return ""
+
+
 async def process_single_row(i, row, output_dir_path, header, use_cache=True):
     """Process a single input row through the full extraction pipeline."""
     logger.info(f"ROW_START: {i}")
-    mfg_part_num = row.get("Mfg_Part_Num") or row.get("mpn") or ""
-    manufacturer = row.get("Part_Manuf") or row.get("manufacturer") or ""
+    mfg_part_num = _get_row_val(row, ("Mfg_Part_Num", "part_number", "part no", "partno", "mpn", "sku", "model", "MANUFACTURER_PART_NUMBER", "PART_NUMBER"))
+    manufacturer = _get_row_val(row, ("Part_Manuf", "manufacturer", "brand", "make", "company", "vendor", "MANUFACTURER_NAME", "BRAND_NAME"))
     
     write_event(output_dir_path, {
         "type": "row_start",
@@ -352,8 +363,13 @@ async def run_pipeline(input_csv: str, output_dir: str, max_rows: int = 200, dry
     output_dir_path = Path(output_dir)
     output_dir_path.mkdir(parents=True, exist_ok=True)
     
+    from backend.ingest.excel_input import convert_to_csv
+    input_file_path = Path(input_csv)
+    target_csv_path = output_dir_path / "converted_input.csv"
+    actual_csv_path = convert_to_csv(input_file_path, target_csv_path)
+
     rows = []
-    with open(input_csv, "r", encoding="utf-8") as f:
+    with open(actual_csv_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for i, row in enumerate(reader):
             if i >= max_rows: break
